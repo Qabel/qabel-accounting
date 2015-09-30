@@ -61,3 +61,6 @@ docs/_build/
 target/
 
 db.sqlite3
+
+# Pycharm
+.idea/
