@@ -1,6 +1,7 @@
 import pytest
 
 from django.contrib.auth.models import User
+from rest_framework.test import APIClient
 
 USERNAME = 'qabel_user'
 
@@ -16,3 +17,8 @@ def user(db):
         u.is_superuser = False
         u.save()
     return u
+
+
+@pytest.fixture
+def api_client():
+    return APIClient()

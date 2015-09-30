@@ -21,4 +21,5 @@ urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url('^accounts/', include('django.contrib.auth.urls')),
     url('^accounts/profile', views.profile),
+    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 ]
