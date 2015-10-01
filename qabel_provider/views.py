@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
-from rest_framework import viewsets, mixins
+from rest_framework import viewsets, mixins, permissions
 from .serializers import UserSerializer, ProfileSerializer
 
 
@@ -10,12 +10,13 @@ def profile(request):
 
 
 class UserViewSet(mixins.RetrieveModelMixin,
-                     mixins.UpdateModelMixin,
-                     viewsets.GenericViewSet):
+                  mixins.UpdateModelMixin,
+                  viewsets.GenericViewSet):
     """
     API endpoint that allows users to be viewed or edited.
     """
     serializer_class = UserSerializer
+    permission_classes = (permissions.IsAuthenticated,)
 
     def get_object(self):
         return self.request.user
@@ -28,6 +29,7 @@ class ProfileViewSet(mixins.RetrieveModelMixin,
     API endpoint that allows users to be viewed or edited.
     """
     serializer_class = ProfileSerializer
+    permission_classes = (permissions.IsAuthenticated,)
 
     def get_object(self):
         return self.request.user.profile
