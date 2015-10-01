@@ -1,8 +1,15 @@
 import json
+import pytest
 
 
 def loads(foo):
     return json.loads(foo.decode('utf-8'))
+
+
+@pytest.fixture
+def user_client(api_client, user):
+    api_client.force_authenticate(user)
+    return api_client
 
 
 def test_login(api_client, user):
@@ -35,11 +42,14 @@ def test_get_own_user(api_client, user):
         == loads(response.content)
 
 
-def test_update_email(api_client, user):
-    api_client.force_authenticate(user)
-    response = api_client.patch('/api/v0/user', {'email': 'foo@example.com'})
+def test_update_email(user_client):
+    response = user_client.patch('/api/v0/user', {'email': 'foo@example.com'})
     assert response.status_code == 200
-    response = api_client.get('/api/v0/user/')
+    response = user_client.get('/api/v0/user/')
     assert {"username": "qabel_user", "email": "foo@example.com"}\
         == loads(response.content)
 
+
+def test_verify_email(user_client):
+    response = user_client.patch('/api/v0/user', {'email': 'invalid'})
+    assert response.status_code == 400
