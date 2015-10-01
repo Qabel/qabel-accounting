@@ -9,7 +9,7 @@ Python 3.4 or 3.5
 
 Create a virtualenv for the project
 
-	virtualenv ../venv
+	virtualenv -p python3.4 ../venv
 	source ../venv/bin/activate
 	pip install -r requirements.txt
 
