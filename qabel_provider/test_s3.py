@@ -12,15 +12,23 @@ def download(url):
     return requests.get(url)
 
 
-def test_sign_policy(s3_session, user):
-    url, payload = s3_session.sign_upload(user)
-    filename = s3_session.user_prefix(user)+'testfile'
-    response = upload(url, payload, filename, io.StringIO('foobar'))
+def check_policy(policy):
+    response = upload(policy.base_url, policy.fields, policy.filename('testfile'), io.StringIO('foobar'))
     assert response.status_code == 204, response.text
-    get = download('/'.join([url, filename]))
+    get = download(policy.url('testfile'))
     assert get.content == b'foobar'
     assert get.status_code == 200
+    return get
 
 
+def test_sign_policy(s3_session, user):
+    policy = s3_session.create_policy(user)
+    check_policy(policy)
+
+
+def test_no_metadata_in_get(s3_session, user):
+    policy = s3_session.create_policy(user)
+    get = check_policy(policy)
+    assert get.headers.get('x-amz-meta-revoke', None) is None
 
 
