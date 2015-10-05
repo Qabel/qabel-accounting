@@ -1,5 +1,5 @@
 import pytest
-from qabel_provider import s3
+from qabel_provider import aws
 
 from django.contrib.auth.models import User
 from rest_framework.test import APIClient
@@ -26,4 +26,4 @@ def api_client():
 
 @pytest.fixture
 def s3_session():
-    return s3.Session('qabel-travis')
+    return aws.Session()

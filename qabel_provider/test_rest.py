@@ -58,3 +58,19 @@ def test_update_email(user_client):
 def test_verify_email(user_client):
     response = user_client.patch('/api/v0/user', {'email': 'invalid'})
     assert response.status_code == 400
+
+
+def test_get_federation_token(user_client):
+    response = user_client.post('/api/v0/token')
+    assert response.status_code == 201
+    j = response.data
+    c = j['Credentials']
+    assert c['AccessKeyId']
+    assert c['SecretAccessKey']
+    assert c['SessionToken']
+    assert c['Expiration']
+    u = j['FederatedUser']
+    assert u['FederatedUserId']
+    assert u['Arn']
+    assert int(j['PackedPolicySize'])
+
