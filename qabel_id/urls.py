@@ -29,9 +29,10 @@ profile = views.ProfileViewSet.as_view({
 })
 
 rest_urls = [
-    url(r'^profile', profile),
-    url(r'^user', user),
-    url(r'^token', views.token),
+    url(r'^$', views.api_root, name='api-root'),
+    url(r'^profile/', profile, name='api-profile'),
+    url(r'^user/', user, name='api-user'),
+    url(r'^token/', views.token, name='api-token'),
 ]
 
 urlpatterns = [

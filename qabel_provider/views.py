@@ -3,8 +3,10 @@ from django.contrib.auth.decorators import login_required
 from rest_framework import viewsets, mixins, permissions
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from rest_framework.reverse import reverse
 from .serializers import UserSerializer, ProfileSerializer
 from . import aws
+
 
 @login_required
 def profile(request):
@@ -48,3 +50,11 @@ TEST_POLICY = """\
 def token(request):
     return Response(_session.create_token(request.user, TEST_POLICY, 900), status=201)
 
+
+@api_view(('GET',))
+def api_root(request, format=None):
+    return Response({
+        'token': reverse('api-token', request=request, format=format),
+        'user': reverse('api-user', request=request, format=format),
+        'profile': reverse('api-profile', request=request, format=format),
+    })
