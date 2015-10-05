@@ -48,7 +48,7 @@ def test_get_own_user(api_client, user):
 
 
 def test_update_email(user_client):
-    response = user_client.patch('/api/v0/user', {'email': 'foo@example.com'})
+    response = user_client.patch('/api/v0/user/', {'email': 'foo@example.com'})
     assert response.status_code == 200
     response = user_client.get('/api/v0/user/')
     assert {"username": "qabel_user", "email": "foo@example.com"}\
@@ -56,12 +56,12 @@ def test_update_email(user_client):
 
 
 def test_verify_email(user_client):
-    response = user_client.patch('/api/v0/user', {'email': 'invalid'})
+    response = user_client.patch('/api/v0/user/', {'email': 'invalid'})
     assert response.status_code == 400
 
 
 def test_get_federation_token(user_client):
-    response = user_client.post('/api/v0/token')
+    response = user_client.post('/api/v0/token/')
     assert response.status_code == 201
     j = response.data
     c = j['Credentials']
