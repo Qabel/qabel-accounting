@@ -1,10 +1,8 @@
-TEST_POLICY = """\
-{"Version":"2012-10-17","Statement":[{"Sid":"Stmt1","Effect":"Allow","Action":"s3:*","Resource":"*"}]}\
-"""
+from . import aws
 
 
 def test_federate_token(s3_session, user):
-    token = s3_session.create_token(user, TEST_POLICY, 900)
+    token = s3_session.create_token(user, aws.TEST_POLICY, 900)
     assert token['Credentials']
     assert token['FederatedUser']
     assert user.username in token['FederatedUser']['FederatedUserId']

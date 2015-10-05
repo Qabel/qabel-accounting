@@ -40,15 +40,12 @@ class ProfileViewSet(mixins.RetrieveModelMixin,
 
 
 _session = aws.Session()
-TEST_POLICY = """\
-{"Version":"2012-10-17","Statement":[{"Sid":"Stmt1","Effect":"Allow","Action":"s3:*","Resource":"*"}]}\
-"""
 
 
 @api_view(['POST'])
 @login_required
 def token(request):
-    return Response(_session.create_token(request.user, TEST_POLICY, 900), status=201)
+    return Response(_session.create_token(request.user, aws.TEST_POLICY, 900), status=201)
 
 
 @api_view(('GET',))

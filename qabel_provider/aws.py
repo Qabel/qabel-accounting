@@ -1,19 +1,29 @@
 import boto3
 
 
+TEST_POLICY = """\
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "Stmt1444045543000",
+            "Effect": "Allow",
+            "Action": [
+                "s3:GetObject",
+                "s3:PutObject"
+            ],
+            "Resource": [
+                "arn:aws:s3:::qabel/*"
+            ]
+        }
+    ]
+}
+"""
+
+
 class Session:
     def __init__(self):
         self._sts = boto3.client('sts')
-
-    def _conditions(self, user):
-        conditions = [
-            {"acl": "public-read"},
-            ["starts-with", "$x-amz-meta-revoke", ''],
-            ["starts-with", "$key", self.user_prefix(user)]]
-        return conditions
-
-    def user_prefix(self, user):
-        return "user/{0}/".format(user.id)
 
     def create_token(self, user, policy, duration):
         return self._sts.get_federation_token(
