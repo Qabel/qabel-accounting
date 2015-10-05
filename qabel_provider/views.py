@@ -45,7 +45,10 @@ _session = aws.Session()
 @api_view(['POST'])
 @login_required
 def token(request):
-    return Response(_session.create_token(request.user, aws.TEST_POLICY, 900), status=201)
+    return Response(_session.create_token(request.user,
+                                          aws.Policy(request.user).json,
+                                          900),
+                    status=201)
 
 
 @api_view(('GET',))

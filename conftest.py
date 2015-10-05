@@ -27,3 +27,8 @@ def api_client():
 @pytest.fixture
 def s3_session():
     return aws.Session()
+
+@pytest.fixture
+def s3_policy(user):
+    return aws.Policy(user)
+

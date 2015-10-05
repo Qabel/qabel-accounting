@@ -1,24 +1,37 @@
+import json
 import boto3
 
 
-TEST_POLICY = """\
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Sid": "Stmt1444045543000",
-            "Effect": "Allow",
-            "Action": [
-                "s3:GetObject",
-                "s3:PutObject"
-            ],
-            "Resource": [
-                "arn:aws:s3:::qabel/*"
-            ]
+class Policy:
+
+    def __init__(self, user):
+        self.user = user
+        self.policy = {
+            "Version": "2012-10-17",
+            "Statement": []
         }
-    ]
-}
-"""
+        self.append(
+            {
+                "Sid": "Stmt1444045543000",
+                "Effect": "Allow",
+                "Action": [
+                    "s3:GetObject",
+                    "s3:PutObject"
+                ],
+                "Resource": [
+                    "arn:aws:s3:::qabel/" + self._user_prefix()
+                ]
+            })
+
+    def append(self, statement):
+        self.policy['Statement'].append(statement)
+
+    def _user_prefix(self):
+        return 'user/{0}/'.format(self.user.id)
+
+    @property
+    def json(self):
+        return json.dumps(self.policy)
 
 
 class Session:
