@@ -17,6 +17,8 @@ Run the migrations
 
 	./manage.py migrate
 
+Configure the AWS account as shown in the [Boto 3 docs](https://boto3.readthedocs.org/en/latest/guide/quickstart.html#configuration)
+
 ## Running tests
 
 The tests are run by the py.test framework. You can choose which browser you want to use for the functional tests.
