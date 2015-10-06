@@ -12,7 +12,6 @@ class Policy:
         }
         self.append(
             {
-                "Sid": "Stmt1444045543000",
                 "Effect": "Allow",
                 "Action": [
                     "s3:GetObject",
