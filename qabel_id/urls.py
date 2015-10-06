@@ -17,8 +17,22 @@ from django.conf.urls import include, url
 from django.contrib import admin
 from qabel_provider import views
 
+# noinspection PyCallByClass
+user = views.UserViewSet.as_view({
+    'get': 'retrieve',
+    'patch': 'partial_update',
+})
+
+# noinspection PyCallByClass
+profile = views.ProfileViewSet.as_view({
+    'get': 'retrieve',
+})
+
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url('^accounts/', include('django.contrib.auth.urls')),
     url('^accounts/profile', views.profile),
+    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    url(r'^api/v0/profile', profile),
+    url(r'^api/v0/user', user),
 ]
