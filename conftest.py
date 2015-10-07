@@ -1,4 +1,5 @@
 import pytest
+from qabel_provider import aws
 
 from django.contrib.auth.models import User
 from rest_framework.test import APIClient
@@ -22,3 +23,12 @@ def user(db):
 @pytest.fixture
 def api_client():
     return APIClient()
+
+@pytest.fixture
+def s3_session():
+    return aws.Session()
+
+@pytest.fixture
+def s3_policy(user):
+    return aws.Policy(user)
+

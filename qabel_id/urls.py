@@ -28,11 +28,17 @@ profile = views.ProfileViewSet.as_view({
     'get': 'retrieve',
 })
 
+rest_urls = [
+    url(r'^$', views.api_root, name='api-root'),
+    url(r'^profile/', profile, name='api-profile'),
+    url(r'^user/', user, name='api-user'),
+    url(r'^token/', views.token, name='api-token'),
+]
+
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url('^accounts/', include('django.contrib.auth.urls')),
     url('^accounts/profile', views.profile),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    url(r'^api/v0/profile', profile),
-    url(r'^api/v0/user', user),
+    url(r'^api/v0/', include(rest_urls))
 ]
