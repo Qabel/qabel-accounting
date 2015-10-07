@@ -18,12 +18,6 @@ from django.contrib import admin
 from qabel_provider import views
 
 # noinspection PyCallByClass
-user = views.UserViewSet.as_view({
-    'get': 'retrieve',
-    'patch': 'partial_update',
-})
-
-# noinspection PyCallByClass
 profile = views.ProfileViewSet.as_view({
     'get': 'retrieve',
 })
@@ -31,14 +25,13 @@ profile = views.ProfileViewSet.as_view({
 rest_urls = [
     url(r'^$', views.api_root, name='api-root'),
     url(r'^profile/', profile, name='api-profile'),
-    url(r'^user/', user, name='api-user'),
     url(r'^token/', views.token, name='api-token'),
+    url(r'^auth/', include('rest_auth.urls'))
 ]
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url('^accounts/', include('django.contrib.auth.urls')),
     url('^accounts/profile', views.profile),
-    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^api/v0/', include(rest_urls))
 ]
