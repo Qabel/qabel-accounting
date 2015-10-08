@@ -13,19 +13,6 @@ def profile(request):
     return render(request, 'accounts/profile.html')
 
 
-class UserViewSet(mixins.RetrieveModelMixin,
-                  mixins.UpdateModelMixin,
-                  viewsets.GenericViewSet):
-    """
-    API endpoint that allows users to be viewed or edited.
-    """
-    serializer_class = UserSerializer
-    permission_classes = (permissions.IsAuthenticated,)
-
-    def get_object(self):
-        return self.request.user
-
-
 class ProfileViewSet(mixins.RetrieveModelMixin,
                      mixins.UpdateModelMixin,
                      viewsets.GenericViewSet):
@@ -50,11 +37,16 @@ def token(request):
                                           900),
                     status=201)
 
-
 @api_view(('GET',))
 def api_root(request, format=None):
     return Response({
         'token': reverse('api-token', request=request, format=format),
-        'user': reverse('api-user', request=request, format=format),
         'profile': reverse('api-profile', request=request, format=format),
+        'login': reverse('rest_login', request=request, format=format),
+        'logout': reverse('rest_logout', request=request, format=format),
+        'user': reverse('rest_user_details', request=request, format=format),
+        'password_change': reverse('rest_password_change', request=request, format=format),
+        'password_reset': reverse('rest_password_reset', request=request, format=format),
+        'password_confirm': reverse('rest_password_reset_confirm', request=request, format=format),
+
     })
