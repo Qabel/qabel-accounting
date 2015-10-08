@@ -35,7 +35,7 @@ def test_get_profile(api_client, user):
 
 def test_anonymous_profile(api_client):
     response = api_client.get('/api/v0/profile/')
-    assert response.status_code == 403
+    assert response.status_code == 401
 
 
 def test_get_own_user(api_client, user):
