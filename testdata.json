@@ -1,0 +1,52 @@
+[
+  {
+    "fields": {
+      "last_login": "2015-10-07T12:44:00.015Z",
+      "first_name": "",
+      "username": "testadmin",
+      "last_name": "",
+      "password": "pbkdf2_sha256$20000$1UJSjjgdAztq$UXdM3vykYA0Cr701wqOzZJK03SU+1I47Nj5z60AEwwg=",
+      "user_permissions": [],
+      "is_staff": true,
+      "email": "testadmin@example.com",
+      "is_active": true,
+      "groups": [],
+      "is_superuser": true,
+      "date_joined": "2015-10-07T12:43:37.344Z"
+    },
+    "pk": 1,
+    "model": "auth.user"
+  },
+  {
+    "fields": {
+      "last_login": null,
+      "first_name": "",
+      "username": "testuser",
+      "last_name": "",
+      "password": "pbkdf2_sha256$20000$nrvtwYIbo9O0$Z2CEW5MbUM6geod1e35pAdI2YLFzcQbikk\/fktMfq18=",
+      "user_permissions": [],
+      "is_staff": false,
+      "email": "testuser@example.com",
+      "is_active": true,
+      "groups": [],
+      "is_superuser": false,
+      "date_joined": "2015-10-07T12:44:17Z"
+    },
+    "pk": 2,
+    "model": "auth.user"
+  },
+  {
+    "fields": {
+      "quota": 0
+    },
+    "pk": 1,
+    "model": "qabel_provider.profile"
+  },
+  {
+    "fields": {
+      "quota": 100
+    },
+    "pk": 2,
+    "model": "qabel_provider.profile"
+  }
+]
