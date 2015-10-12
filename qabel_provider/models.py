@@ -8,6 +8,10 @@ class Profile(models.Model):
     user = models.OneToOneField(User, primary_key=True, on_delete=models.CASCADE)
     quota = models.PositiveIntegerField(verbose_name="Storage quota", default=0)
 
+    @property
+    def prefix(self):
+        return 'user/{0}/'.format(self.user.id)
+
 
 @receiver(post_save, sender=User)
 def create_profile_for_new_user(sender, created, instance, **kwargs):

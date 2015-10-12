@@ -19,15 +19,12 @@ class Policy:
                     "s3:ListBucket",
                 ],
                 "Resource": [
-                    "arn:aws:s3:::qabel/" + self._user_prefix()
+                    "arn:aws:s3:::qabel/" + self.user.profile.prefix
                 ]
             })
 
     def append(self, statement):
         self.policy['Statement'].append(statement)
-
-    def _user_prefix(self):
-        return 'user/{0}/'.format(self.user.id)
 
     @property
     def json(self):
