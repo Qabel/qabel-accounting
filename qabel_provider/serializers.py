@@ -14,8 +14,9 @@ class UserSerializer(serializers.ModelSerializer):
 class ProfileSerializer(serializers.ModelSerializer):
 
     prefix = serializers.CharField(read_only=True)
+    bucket = serializers.CharField(read_only=True)
 
     class Meta:
         model = Profile
-        fields = ('quota', 'prefix')
+        fields = ('quota', 'prefix', 'bucket')
 

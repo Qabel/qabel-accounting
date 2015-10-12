@@ -33,6 +33,7 @@ def test_get_profile(api_client, user):
     profile = loads(response.content)
     assert 0 == profile['quota']
     assert user.profile.prefix == profile['prefix']
+    assert 'qabel' == profile['bucket']
 
 
 def test_anonymous_profile(api_client):

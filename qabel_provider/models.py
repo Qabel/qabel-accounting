@@ -8,6 +8,8 @@ class Profile(models.Model):
     user = models.OneToOneField(User, primary_key=True, on_delete=models.CASCADE)
     quota = models.PositiveIntegerField(verbose_name="Storage quota", default=0)
 
+    bucket = 'qabel'
+
     @property
     def prefix(self):
         return 'user/{0}/'.format(self.user.id)

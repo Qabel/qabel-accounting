@@ -19,7 +19,8 @@ class Policy:
                     "s3:ListBucket",
                 ],
                 "Resource": [
-                    "arn:aws:s3:::qabel/" + self.user.profile.prefix
+                    "arn:aws:s3:::{}/{}".format(self.user.profile.bucket,
+                                                self.user.profile.prefix)
                 ]
             })
 
