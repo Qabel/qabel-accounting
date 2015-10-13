@@ -30,7 +30,10 @@ def test_get_profile(api_client, user):
     api_client.force_authenticate(user)
     response = api_client.get('/api/v0/profile/')
     assert response.status_code == 200
-    assert {"quota": 0} == loads(response.content)
+    profile = loads(response.content)
+    assert 0 == profile['quota']
+    assert user.profile.prefix == profile['prefix']
+    assert 'qabel' == profile['bucket']
 
 
 def test_anonymous_profile(api_client):
