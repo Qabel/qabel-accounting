@@ -1,5 +1,6 @@
 import json
 import pytest
+from django.conf import settings
 
 
 def loads(foo):
@@ -33,7 +34,8 @@ def test_get_profile(api_client, user):
     profile = loads(response.content)
     assert 0 == profile['quota']
     assert user.profile.prefix == profile['prefix']
-    assert 'qabel' == profile['bucket']
+    assert 'qabel' == settings.BUCKET
+    assert settings.BUCKET == profile['bucket']
 
 
 def test_anonymous_profile(api_client):
