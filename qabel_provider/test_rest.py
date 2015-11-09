@@ -8,7 +8,7 @@ def loads(foo):
 
 
 @pytest.fixture
-def user_client(api_client, user):
+def user_client(api_client, user, prefix):
     api_client.force_authenticate(user)
     return api_client
 
@@ -49,6 +49,26 @@ def test_get_own_user(api_client, user):
     response = api_client.get('/api/v0/auth/user/')
     assert {"username": "foobar", "email": "", "first_name": "", "last_name": ""}\
         == loads(response.content)
+
+
+def test_get_list_of_user_prefixes(api_client, user, prefix):
+    api_client.force_authenticate(user)
+    response = api_client.get('/api/v0/prefix/')
+    assert response.status_code == 200
+    profile = loads(response.content)
+    assert str(prefix.id) == profile[0]['id']
+
+
+def test_create_new_prefix(api_client, user, prefix):
+    api_client.force_authenticate(user)
+    response = api_client.post('/api/v0/prefix/', {'user': user })
+    assert response.status_code == 201
+    assert response.content != str(prefix.id)
+
+
+def test_anonymous_prefix(api_client):
+    response = api_client.get('/api/v0/prefix/')
+    assert response.status_code == 401
 
 
 def test_get_federation_token(user_client):

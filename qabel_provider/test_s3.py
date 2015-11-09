@@ -1,4 +1,4 @@
-def test_federate_token(s3_session, user, s3_policy):
+def test_federate_token(s3_session, user, s3_policy, prefix):
     actions = s3_policy.policy['Statement'][0]['Action']
     assert 's3:GetObject' in actions
     assert 's3:PutObject' in actions
