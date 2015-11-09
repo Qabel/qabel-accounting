@@ -33,7 +33,6 @@ def test_get_profile(api_client, user):
     assert response.status_code == 200
     profile = loads(response.content)
     assert 0 == profile['quota']
-    assert user.profile.prefix == profile['prefix']
     assert 'qabel' == settings.BUCKET
     assert settings.BUCKET == profile['bucket']
 

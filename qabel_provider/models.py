@@ -11,10 +11,6 @@ class Profile(models.Model):
 
     bucket = settings.BUCKET
 
-    @property
-    def prefix(self):
-        return 'user/{0}/'.format(self.user.id)
-
 
 @receiver(post_save, sender=User)
 def create_profile_for_new_user(sender, created, instance, **kwargs):
