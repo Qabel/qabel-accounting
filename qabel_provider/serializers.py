@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Profile
+from .models import Profile, Prefix
 from django.contrib.auth.models import User
 
 
@@ -18,4 +18,11 @@ class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
         fields = ('quota', 'bucket')
+
+class PrefixSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Prefix
+        field = ('id', 'user')
+        read_only = ('id')
 
