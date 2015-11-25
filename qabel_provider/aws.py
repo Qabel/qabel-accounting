@@ -10,6 +10,8 @@ class Policy:
             "Version": "2012-10-17",
             "Statement": []
         }
+        resources = ["arn:aws:s3:::{}/{},".format(self.user.profile.bucket,
+                                                    str(prefix.id)) for prefix in user.prefix_set.all()]
         self.append(
             {
                 "Effect": "Allow",
@@ -18,10 +20,7 @@ class Policy:
                     "s3:PutObject",
                     "s3:ListBucket",
                 ],
-                "Resource": [
-                    "arn:aws:s3:::{}/{}".format(self.user.profile.bucket,
-                                                self.user.profile.prefix)
-                ]
+                "Resource": resources
             })
 
     def append(self, statement):

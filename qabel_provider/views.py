@@ -4,9 +4,10 @@ from rest_framework import viewsets, mixins, permissions
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
-from .serializers import UserSerializer, ProfileSerializer
+from .serializers import UserSerializer, ProfileSerializer, PrefixSerializer
 from . import aws
-
+from rest_framework.views import APIView
+from django.contrib.auth.models import User
 
 @login_required
 def profile(request):
@@ -50,3 +51,21 @@ def api_root(request, format=None):
         'password_confirm': reverse('rest_password_reset_confirm', request=request, format=format),
 
     })
+
+
+class PrefixList(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get(self, request, format=None):
+        prefixes = request.user.prefix_set.all()
+        serializer = PrefixSerializer(prefixes, many=True)
+        return Response(serializer.data)
+
+    def post(self, request, format=None):
+        user = User.objects.get(username=request.data['user'])
+        data = {'user': user.id}
+        serializer = PrefixSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=201)
+        return Response(serializer.errors, status=400)

@@ -2,6 +2,7 @@ import pytest
 from qabel_provider import aws
 
 from django.contrib.auth.models import User
+from qabel_provider.models import Prefix
 from rest_framework.test import APIClient
 
 USERNAME = 'qabel_user'
@@ -19,6 +20,15 @@ def user(db):
         u.save()
     return u
 
+@pytest.fixture
+def prefix(db):
+    try:
+        p = Prefix.objects.get()
+    except Prefix.DoesNotExist:
+        u = User.objects.get(username=USERNAME)
+        p = Prefix(u.id)
+        p.save()
+    return p
 
 @pytest.fixture
 def api_client():
@@ -29,6 +39,6 @@ def s3_session():
     return aws.Session()
 
 @pytest.fixture
-def s3_policy(user):
+def s3_policy(user, prefix):
     return aws.Policy(user)
 

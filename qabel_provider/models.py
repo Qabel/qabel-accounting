@@ -3,6 +3,7 @@ from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.conf import settings
+import uuid
 
 
 class Profile(models.Model):
@@ -11,13 +12,17 @@ class Profile(models.Model):
 
     bucket = settings.BUCKET
 
-    @property
-    def prefix(self):
-        return 'user/{0}/'.format(self.user.id)
-
 
 @receiver(post_save, sender=User)
 def create_profile_for_new_user(sender, created, instance, **kwargs):
     if created:
         profile = Profile(user=instance)
         profile.save()
+
+
+class Prefix(models.Model):
+    user = models.ForeignKey(User)
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+
+    def __str__(self):
+        return str(self.id)
