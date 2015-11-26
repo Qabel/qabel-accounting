@@ -19,10 +19,4 @@ class ProfileSerializer(serializers.ModelSerializer):
         model = Profile
         fields = ('quota', 'bucket')
 
-class PrefixSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Prefix
-        field = ('id', 'user')
-        read_only = ('id')
 
