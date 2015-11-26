@@ -4,8 +4,9 @@ from rest_framework import viewsets, mixins, permissions
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
-from .serializers import UserSerializer, ProfileSerializer, PrefixSerializer
+from .serializers import UserSerializer, ProfileSerializer
 from . import aws
+from . import models
 from rest_framework.views import APIView
 from django.contrib.auth.models import User
 
@@ -43,6 +44,7 @@ def api_root(request, format=None):
     return Response({
         'token': reverse('api-token', request=request, format=format),
         'profile': reverse('api-profile', request=request, format=format),
+        'prefix': reverse('api-prefix', request=request, format=format),
         'login': reverse('rest_login', request=request, format=format),
         'logout': reverse('rest_logout', request=request, format=format),
         'user': reverse('rest_user_details', request=request, format=format),
@@ -58,14 +60,8 @@ class PrefixList(APIView):
 
     def get(self, request, format=None):
         prefixes = request.user.prefix_set.all()
-        serializer = PrefixSerializer(prefixes, many=True)
-        return Response(serializer.data)
+        return Response([prefix.id for prefix in prefixes])
 
     def post(self, request, format=None):
-        user = User.objects.get(username=request.data['user'])
-        data = {'user': user.id}
-        serializer = PrefixSerializer(data=data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=201)
-        return Response(serializer.errors, status=400)
+        prefix = models.Prefix.objects.create(user=request.user)
+        return Response(prefix.id, status=201)

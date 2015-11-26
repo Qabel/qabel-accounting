@@ -55,22 +55,23 @@ def test_get_list_of_user_prefixes(api_client, user, prefix):
     api_client.force_authenticate(user)
     response = api_client.get('/api/v0/prefix/')
     assert response.status_code == 200
-    profile = loads(response.content)
-    assert str(prefix.id) == profile[0]['id']
+    prefixes = loads(response.content)
+    assert str(prefix.id) == prefixes[0]
 
 
 def test_create_multiple_prefixes(api_client, user, prefix):
     api_client.force_authenticate(user)
-    response = api_client.post('/api/v0/prefix/', {'user': user })
-    first_prefix = response.content
+    response = api_client.post('/api/v0/prefix/')
+    first_prefix = loads(response.content)
     assert response.status_code == 201
     assert first_prefix != str(prefix.id)
-    response = api_client.post('/api/v0/prefix/', {'user': user })
-    second_prefix = response.content
+    response = api_client.post('/api/v0/prefix/')
+    second_prefix = loads(response.content)
     assert response.status_code == 201
     assert second_prefix != str(prefix.id)
     assert first_prefix != second_prefix
     assert user.prefix_set.count() == 3
+    assert {str(prefix.id), first_prefix, second_prefix} == set(loads(api_client.get('/api/v0/prefix/').content))
 
 
 def test_anonymous_prefix(api_client):
