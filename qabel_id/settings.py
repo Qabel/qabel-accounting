@@ -37,10 +37,14 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
     'rest_framework',
     'rest_framework.authtoken',
     'rest_auth',
     'qabel_provider',
+    'allauth',
+    'allauth.account',
+    'rest_auth.registration',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -115,3 +119,5 @@ STATIC_URL = '/static/'
 
 # The bucket name on S3
 BUCKET = 'qabel'
+
+SITE_ID = 1
