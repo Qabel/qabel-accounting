@@ -1,6 +1,7 @@
 import json
 import pytest
 from django.conf import settings
+from django.contrib.auth.models import User
 
 
 def loads(foo):
@@ -11,6 +12,14 @@ def loads(foo):
 def user_client(api_client, user, prefix):
     api_client.force_authenticate(user)
     return api_client
+
+@pytest.mark.django_db
+def test_register_user(api_client):
+    response = api_client.post('/api/v0/auth/registration/',
+                               {'username': 'test_user', 'email': 'test@example.com', 'password1': 'test1234',
+                                'password2': 'test1234'})
+    assert response.status_code == 201
+    assert User.objects.all().count() == 1
 
 
 def test_login(api_client, user):
