@@ -1,5 +1,6 @@
 import json
 import pytest
+import tempfile
 from django.conf import settings
 from django.contrib.auth.models import User
 
@@ -102,3 +103,23 @@ def test_get_federation_token(user_client):
     assert u['Arn']
     assert int(j['PackedPolicySize'])
 
+
+def test_file_resource(api_client, user, prefix):
+    api_client.force_authenticate(user)
+    with tempfile.NamedTemporaryFile() as file:
+        content = b"Test data"
+        file.write(content)
+        file.seek(0)
+        path = '/api/v0/files/{}/test'.format(str(prefix.id))
+        response = api_client.post(path,
+                                   {'file': file})
+        assert response.content == b'Upload complete'
+        response = api_client.get(path)
+        assert list(response.streaming_content)[0] == content
+
+        response = api_client.delete(path)
+        assert response.status_code == 200
+        assert response.content == b'File deleted'
+
+        response = api_client.get(path)
+        assert response.status_code == 404
