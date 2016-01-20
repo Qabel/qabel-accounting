@@ -89,21 +89,6 @@ def test_anonymous_prefix(api_client):
     assert response.status_code == 401
 
 
-def test_get_federation_token(user_client):
-    response = user_client.post('/api/v0/token/')
-    assert response.status_code == 201
-    j = response.data
-    c = j['Credentials']
-    assert c['AccessKeyId']
-    assert c['SecretAccessKey']
-    assert c['SessionToken']
-    assert c['Expiration']
-    u = j['FederatedUser']
-    assert u['FederatedUserId']
-    assert u['Arn']
-    assert int(j['PackedPolicySize'])
-
-
 def test_file_resource(api_client, user, prefix):
     api_client.force_authenticate(user)
     with tempfile.NamedTemporaryFile() as file:
