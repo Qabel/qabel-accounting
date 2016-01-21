@@ -71,9 +71,11 @@ def file_resource(request, prefix, file_path, format=None):
 
     All methods require authentication and upload/delete require that the
      user has access to the specified prefix.
+
+     Delete requests for file that do not exists are always successful
     :param request: rest request
-    :param prefix: UUID-like string that is used as prefix on the storage
-    :param file_path: either a UUID or /blocks/<UUID> and the path of the file
+    :param prefix: string that is used as prefix on the storage
+    :param file_path: path of the file in the prefix
     :param format: ignored, because the resource never responds with a body that is not a file
     :return: FileResponse|HttpResponseBadRequest|HttpResponse(status=204)
     """
