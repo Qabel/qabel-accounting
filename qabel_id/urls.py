@@ -25,7 +25,6 @@ profile = views.ProfileViewSet.as_view({
 rest_urls = [
     url(r'^$', views.api_root, name='api-root'),
     url(r'^profile/', profile, name='api-profile'),
-    url(r'^token/', views.token, name='api-token'),
     url(r'^prefix/', views.PrefixList.as_view(), name='api-prefix'),
     url(r'^auth/', include('rest_auth.urls')),
     url(r'^auth/registration/', include('rest_auth.registration.urls')),
