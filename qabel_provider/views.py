@@ -85,11 +85,11 @@ def file_resource(request, prefix, file_path, format=None):
         if file is None:
             return HttpResponseBadRequest("No file given")
         transfer.upload_file(file.temporary_file_path(), settings.BUCKET, '{}/{}'.format(prefix, file_path))
-        return HttpResponse("Upload complete")
+        return HttpResponse(status=204)
     elif request.method == 'DELETE':
         if prefix not in (str(p.id) for p in request.user.prefix_set.all()):
             return HttpResponseForbidden('Prefix {} not in allowed prefixes: {}'.format(
                     (prefix, ','.join(str(p.id) for p in request.user.prefix_set.all()))
             ))
         s3.Object(settings.BUCKET, '{}/{}'.format(prefix, file_path)).delete()
-        return HttpResponse('File deleted')
+        return HttpResponse(status=204)
