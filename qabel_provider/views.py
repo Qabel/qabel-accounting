@@ -66,30 +66,39 @@ s3 = boto3.resource('s3')
 @api_view(('GET', 'POST', 'DELETE'))
 @login_required()
 def file_resource(request, prefix, file_path, format=None):
+    """
+    Handles uploads, downloads and deletes on the storage backend.
+
+    All methods require authentication and upload/delete require that the
+     user has access to the specified prefix.
+    :param request: rest request
+    :param prefix: UUID-like string that is used as prefix on the storage
+    :param file_path: either a UUID or /blocks/<UUID> and the path of the file
+    :param format: ignored, because the resource never responds with a body that is not a file
+    :return: FileResponse|HttpResponseBadRequest|HttpResponse(status=204)
+    """
+    file_key = '{}/{}'.format(prefix, file_path)
     if request.method == 'GET':
         try:
             with tempfile.NamedTemporaryFile('wb') as temp:
-                transfer.download_file(settings.BUCKET, '{}/{}'.format(prefix, file_path), temp.name)
+                transfer.download_file(settings.BUCKET, file_key, temp.name)
                 temp.flush()
                 response = FileResponse(open(temp.name, 'rb'),
                                         content_type='application/octet-stream')
                 return response
         except ClientError:
+            # boto3 error, which means that he download failed
             raise Http404("File not found")
-    elif request.method == 'POST':
+    else:
         if prefix not in (str(p.id) for p in request.user.prefix_set.all()):
             return HttpResponseForbidden('Prefix {} not in allowed prefixes: {}'.format(
                     (prefix, ','.join(str(p.id) for p in request.user.prefix_set.all()))
             ))
-        file = request.FILES.get('file', None)
-        if file is None:
-            return HttpResponseBadRequest("No file given")
-        transfer.upload_file(file.temporary_file_path(), settings.BUCKET, '{}/{}'.format(prefix, file_path))
-        return HttpResponse(status=204)
-    elif request.method == 'DELETE':
-        if prefix not in (str(p.id) for p in request.user.prefix_set.all()):
-            return HttpResponseForbidden('Prefix {} not in allowed prefixes: {}'.format(
-                    (prefix, ','.join(str(p.id) for p in request.user.prefix_set.all()))
-            ))
-        s3.Object(settings.BUCKET, '{}/{}'.format(prefix, file_path)).delete()
+        if request.method == 'POST':
+            file = request.FILES.get('file', None)
+            if file is None:
+                return HttpResponseBadRequest("No file given")
+            transfer.upload_file(file.temporary_file_path(), settings.BUCKET, file_key)
+        elif request.method == 'DELETE':
+            s3.Object(settings.BUCKET, file_key).delete()
         return HttpResponse(status=204)

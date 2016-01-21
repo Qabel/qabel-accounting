@@ -98,13 +98,12 @@ def test_file_resource(api_client, user, prefix):
         path = '/api/v0/files/{}/test'.format(str(prefix.id))
         response = api_client.post(path,
                                    {'file': file})
-        assert response.content == b'Upload complete'
+        assert response.status_code == 204
         response = api_client.get(path)
         assert list(response.streaming_content)[0] == content
 
         response = api_client.delete(path)
-        assert response.status_code == 200
-        assert response.content == b'File deleted'
+        assert response.status_code == 204
 
         response = api_client.get(path)
         assert response.status_code == 404
