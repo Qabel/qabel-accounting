@@ -93,13 +93,11 @@ def file_resource(request, prefix, file_path, format=None):
             raise Http404("File not found")
     else:
         if prefix not in (str(p.id) for p in request.user.prefix_set.all()):
-            return HttpResponseForbidden('Prefix {} not in allowed prefixes: {}'.format(
-                    (prefix, ','.join(str(p.id) for p in request.user.prefix_set.all()))
-            ))
+            return HttpResponseForbidden()
         if request.method == 'POST':
             file = request.FILES.get('file', None)
             if file is None:
-                return HttpResponseBadRequest("No file given")
+                return HttpResponseBadRequest()
             transfer.upload_file(file.temporary_file_path(), settings.BUCKET, file_key)
         elif request.method == 'DELETE':
             s3.Object(settings.BUCKET, file_key).delete()
