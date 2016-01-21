@@ -107,3 +107,20 @@ def test_file_resource(api_client, user, prefix):
 
         response = api_client.get(path)
         assert response.status_code == 404
+
+
+def test_invalid_file_resource_requests(api_client, user, prefix):
+    api_client.force_authenticate(user)
+    with tempfile.NamedTemporaryFile() as file:
+        content = b"Test data"
+        file.write(content)
+        file.seek(0)
+        path = '/api/v0/files/invalid/test'
+        response = api_client.post(path,
+                                   {'file': file})
+        assert response.status_code == 404
+        response = api_client.get(path)
+        assert response.status_code == 404
+
+        response = api_client.delete(path)
+        assert response.status_code == 204
