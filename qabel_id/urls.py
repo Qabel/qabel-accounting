@@ -28,7 +28,8 @@ rest_urls = [
     url(r'^prefix/', views.PrefixList.as_view(), name='api-prefix'),
     url(r'^auth/', include('rest_auth.urls')),
     url(r'^auth/registration/', include('rest_auth.registration.urls')),
-    url(r'^files/(?P<prefix>[\d\w-]+)/(?P<file_path>[\d\w-]+)', views.file_resource, name='api-files'),
+    url(r'^auth/(?P<prefix>[\d\w-]+)/(?P<file_path>[\d\w-]+)',
+        views.auth_resource, name='api-auth'),
 ]
 
 urlpatterns = [

@@ -65,40 +65,24 @@ s3 = boto3.resource('s3')
 
 @api_view(('GET', 'POST', 'DELETE'))
 @login_required()
-def file_resource(request, prefix, file_path, format=None):
+def auth_resource(request, prefix, file_path, format=None):
     """
-    Handles uploads, downloads and deletes on the storage backend.
+    Handles auth for uploads, downloads and deletes on the storage backend.
 
-    All methods require authentication and upload/delete require that the
-     user has access to the specified prefix.
+    This resource is meant for the block server which can call it to check
+    if the user is authenticated. The block server should set the same
+    Authorization header that itself received by the user.
 
-     Delete requests for file that do not exists are always successful
     :param request: rest request
     :param prefix: string that is used as prefix on the storage
     :param file_path: path of the file in the prefix
     :param format: ignored, because the resource never responds with a body that is not a file
-    :return: FileResponse|HttpResponseBadRequest|HttpResponse(status=204)
+    :return: HttpResponseBadRequest|HttpResponse(status=204)|HttpResponse(status=403)
     """
-    file_key = '{}/{}'.format(prefix, file_path)
     if request.method == 'GET':
-        try:
-            with tempfile.NamedTemporaryFile('wb') as temp:
-                transfer.download_file(settings.BUCKET, file_key, temp.name)
-                temp.flush()
-                response = FileResponse(open(temp.name, 'rb'),
-                                        content_type='application/octet-stream')
-                return response
-        except ClientError:
-            # boto3 error, which means that he download failed
-            raise Http404("File not found")
+        return HttpResponse(status=204)
     else:
         if prefix not in (str(p.id) for p in request.user.prefix_set.all()):
             return HttpResponseForbidden()
-        if request.method == 'POST':
-            file = request.FILES.get('file', None)
-            if file is None:
-                return HttpResponseBadRequest()
-            transfer.upload_file(file.temporary_file_path(), settings.BUCKET, file_key)
-        elif request.method == 'DELETE':
-            s3.Object(settings.BUCKET, file_key).delete()
-        return HttpResponse(status=204)
+        else:
+            return HttpResponse(status=204)
