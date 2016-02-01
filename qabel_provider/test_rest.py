@@ -23,6 +23,16 @@ def test_register_user(api_client):
     assert User.objects.all().count() == 1
 
 
+@pytest.mark.django_db
+def test_forgotten_password(api_client, user):
+    response2 = api_client.post('/api/v0/auth/login/', {'username': user.username, 'password': 'password'})
+    assert response2.status_code == 200
+    response = api_client.post('/api/v0/auth/password/change/',
+                               {'new_password1': 'new_password', 'new_password2': 'new_password', 'old_password': 'password'})
+    assert response.status_code == 200
+    u = User.objects.get(username='qabel_user')
+    assert u.password != user.password
+
 def test_login(api_client, user):
     response = api_client.post('/api/v0/auth/login/', {'username': user.username, 'password': 'password'})
     assert "key" in loads(response.content)
