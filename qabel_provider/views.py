@@ -58,10 +58,6 @@ class PrefixList(APIView):
         prefix = models.Prefix.objects.create(user=request.user)
         return Response(prefix.id, status=201)
 
-client = boto3.client('s3')
-transfer = boto3.s3.transfer.S3Transfer(client)
-s3 = boto3.resource('s3')
-
 
 @api_view(('GET', 'POST', 'DELETE'))
 @login_required()
@@ -76,7 +72,7 @@ def auth_resource(request, prefix, file_path, format=None):
     :param request: rest request
     :param prefix: string that is used as prefix on the storage
     :param file_path: path of the file in the prefix
-    :param format: ignored, because the resource never responds with a body that is not a file
+    :param format: ignored, because the resource never responds with a body
     :return: HttpResponseBadRequest|HttpResponse(status=204)|HttpResponse(status=403)
     """
     if request.method == 'GET':
