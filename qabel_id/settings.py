@@ -124,3 +124,6 @@ SITE_ID = 1
 
 API_SECRET = 'Changeme'
 
+# The old password is required to change it to a new password
+OLD_PASSWORD_FIELD_ENABLED = True
+
