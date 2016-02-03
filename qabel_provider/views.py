@@ -1,18 +1,14 @@
-import boto3
-import tempfile
-from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
+from django.http import HttpResponse, HttpResponseForbidden
+from django.shortcuts import render
 from rest_framework import viewsets, mixins, permissions
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
-from .serializers import ProfileSerializer
-from . import models
 from rest_framework.views import APIView
-from botocore.exceptions import ClientError
-from django.http import Http404, HttpResponse, FileResponse, HttpResponseForbidden, \
-    HttpResponseBadRequest
-from django.conf import settings
+
+from . import models
+from .serializers import ProfileSerializer
 
 
 @login_required
