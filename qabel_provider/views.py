@@ -35,6 +35,7 @@ class ProfileViewSet(mixins.RetrieveModelMixin,
 def api_root(request, format=None):
     return Response({
         'profile': reverse('api-profile', request=request, format=format),
+        'quota': reverse('api-quota', request=request, format=format),
         'prefix': reverse('api-prefix', request=request, format=format),
         'login': reverse('rest_login', request=request, format=format),
         'logout': reverse('rest_logout', request=request, format=format),
