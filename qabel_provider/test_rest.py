@@ -81,7 +81,8 @@ def test_create_multiple_prefixes(api_client, user, prefix):
     assert second_prefix != str(prefix.id)
     assert first_prefix != second_prefix
     assert user.prefix_set.count() == 3
-    assert {str(prefix.id), first_prefix, second_prefix} == set(loads(api_client.get('/api/v0/prefix/').content))
+    assert {str(prefix.id), first_prefix, second_prefix} ==\
+           set(loads(api_client.get('/api/v0/prefix/').content))
 
 
 def test_anonymous_prefix(api_client):
