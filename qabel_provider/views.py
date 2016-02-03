@@ -2,7 +2,7 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseForbidden
 from django.shortcuts import render
-from django.db.transaction import atomic
+from django.utils.crypto import constant_time_compare
 from rest_framework import viewsets, mixins, permissions
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -58,6 +58,12 @@ class PrefixList(APIView):
         return Response(prefix.id, status=201)
 
 
+def check_api_key(request):
+    api_key = request.META.get('APISECRET', None)
+    return constant_time_compare(
+            api_key, settings.API_SECRET)
+
+
 @api_view(('GET', 'POST', 'DELETE'))
 @login_required
 def auth_resource(request, prefix, file_path, format=None):
@@ -74,8 +80,7 @@ def auth_resource(request, prefix, file_path, format=None):
     :param format: ignored, because the resource never responds with a body
     :return: HttpResponseBadRequest|HttpResponse(status=204)|HttpResponse(status=403)
     """
-    api_key = request.META.get('APISECRET', None)
-    if api_key != settings.API_SECRET:
+    if not check_api_key(request):
         return HttpResponseForbidden("Invalid API key")
     if request.method == 'GET':
         return HttpResponse(status=204)
@@ -89,8 +94,7 @@ def auth_resource(request, prefix, file_path, format=None):
 @api_view(('POST',))
 @login_required
 def quota(request):
-    api_key = request.META.get('APISECRET', None)
-    if api_key != settings.API_SECRET:
+    if not check_api_key(request):
         return HttpResponseForbidden("Invalid API key")
     try:
         prefix_name, action, size = request.data['prefix'], request.data['action'], request.data['size']
