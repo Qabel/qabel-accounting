@@ -122,7 +122,3 @@ BUCKET = 'qabel'
 
 SITE_ID = 1
 
-# force file creation for uploads. This is a workaround
-# so we don't have to handle the in-memory upload objects
-# when dealing the uploads to S3
-FILE_UPLOAD_MAX_MEMORY_SIZE = 0
