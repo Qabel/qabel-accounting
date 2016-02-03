@@ -126,3 +126,5 @@ SITE_ID = 1
 # so we don't have to handle the in-memory upload objects
 # when dealing the uploads to S3
 FILE_UPLOAD_MAX_MEMORY_SIZE = 0
+# The old password is required to change it to a new password
+OLD_PASSWORD_FIELD_ENABLED = True
