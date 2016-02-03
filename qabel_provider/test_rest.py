@@ -83,23 +83,59 @@ def test_anonymous_prefix(api_client):
     assert response.status_code == 401
 
 
-def test_auth_resource(user_client, prefix):
+def test_auth_resource(user_api_client, prefix, api_secret):
+    path = '/api/v0/auth/{}/test'.format(str(prefix.id))
+    response = user_api_client.post(path)
+    assert response.status_code == 204
+    response = user_api_client.get(path)
+    assert response.status_code == 204
+
+    response = user_api_client.delete(path)
+    assert response.status_code == 204
+
+
+def test_failed_auth_resource_requests(user_api_client, user, api_secret):
+    path = '/api/v0/auth/invalid/test'
+    response = user_api_client.post(path)
+    assert response.status_code == 403
+    response = user_api_client.get(path)
+    assert response.status_code == 204
+    response = user_api_client.delete(path)
+    assert response.status_code == 403
+
+
+def test_auth_resource_api_key(user_client, prefix, api_secret):
     path = '/api/v0/auth/{}/test'.format(str(prefix.id))
     response = user_client.post(path)
-    assert response.status_code == 204
-    response = user_client.get(path)
-    assert response.status_code == 204
-
-    response = user_client.delete(path)
-    assert response.status_code == 204
+    assert response.status_code == 403, "Should require APISECRET header"
 
 
-def test_failed_auth_resource_requests(user_client, user):
-    path = '/api/v0/auth/invalid/test'
-    response = user_client.post(path)
+def test_quota_tracking_post(user_client, prefix, profile, api_secret):
+    path = '/api/v0/quota/'
+    size = 2492
+
+    response = user_client.post(path, {
+        "prefix": str(prefix),
+        "file_path": "foo/bar/baz.txt",
+        "action": "store",
+        "size": size},
+        APISECRET=api_secret)
+    assert response.status_code == 204
+    prefix.refresh_from_db()
+    assert prefix.size == size
+    user = prefix.user
+    profile = user.profile
+    assert profile.used_storage == size
+    profile.refresh_from_db()
+
+
+def test_invalid_api_key(user_client, prefix, profile, api_secret):
+    path = '/api/v0/quota/'
+
+    response = user_client.post(path, {
+        "prefix": str(prefix),
+        "file_path": "foo/bar/baz.txt",
+        "action": "store",
+        "size": 1})
     assert response.status_code == 403
-    response = user_client.get(path)
-    assert response.status_code == 204
 
-    response = user_client.delete(path)
-    assert response.status_code == 403

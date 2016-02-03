@@ -32,3 +32,6 @@ Firefox:
 ## Production setup
 
 See the [django documentation](https://docs.djangoproject.com/en/1.8/howto/deployment/)
+
+In your django settings you have to set an API_SECRET that should be known only by the
+qabel-block server.

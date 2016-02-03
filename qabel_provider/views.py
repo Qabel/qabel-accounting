@@ -1,6 +1,8 @@
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseForbidden
 from django.shortcuts import render
+from django.db.transaction import atomic
 from rest_framework import viewsets, mixins, permissions
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -56,7 +58,7 @@ class PrefixList(APIView):
 
 
 @api_view(('GET', 'POST', 'DELETE'))
-@login_required()
+@login_required
 def auth_resource(request, prefix, file_path, format=None):
     """
     Handles auth for uploads, downloads and deletes on the storage backend.
@@ -71,6 +73,9 @@ def auth_resource(request, prefix, file_path, format=None):
     :param format: ignored, because the resource never responds with a body
     :return: HttpResponseBadRequest|HttpResponse(status=204)|HttpResponse(status=403)
     """
+    api_key = request.META.get('APISECRET', None)
+    if api_key != settings.API_SECRET:
+        return HttpResponseForbidden("Invalid API key")
     if request.method == 'GET':
         return HttpResponse(status=204)
     else:
@@ -78,3 +83,18 @@ def auth_resource(request, prefix, file_path, format=None):
             return HttpResponseForbidden()
         else:
             return HttpResponse(status=204)
+
+
+@api_view(('POST',))
+@login_required
+def quota(request):
+    api_key = request.META.get('APISECRET', None)
+    if api_key != settings.API_SECRET:
+        return HttpResponseForbidden("Invalid API key")
+    try:
+        prefix_name, action, size = request.data['prefix'], request.data['action'], request.data['size']
+    except KeyError:
+        return HttpResponse(status=400)
+    prefix = models.Prefix.get_by_name(prefix_name)
+    models.handle_request(action, size, prefix, request.user)
+    return HttpResponse(status=204)

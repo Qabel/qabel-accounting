@@ -122,3 +122,5 @@ BUCKET = 'qabel'
 
 SITE_ID = 1
 
+API_SECRET = 'Changeme'
+
