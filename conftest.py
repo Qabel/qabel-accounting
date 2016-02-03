@@ -34,3 +34,10 @@ def api_client():
     return APIClient()
 
 
+
+@pytest.fixture
+def user_client(api_client, user, prefix):
+    api_client.force_authenticate(user)
+    return api_client
+
+

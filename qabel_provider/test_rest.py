@@ -1,6 +1,5 @@
 import json
 import pytest
-import tempfile
 from django.conf import settings
 from django.contrib.auth.models import User
 
@@ -9,37 +8,33 @@ def loads(foo):
     return json.loads(foo.decode('utf-8'))
 
 
-@pytest.fixture
-def user_client(api_client, user, prefix):
-    api_client.force_authenticate(user)
-    return api_client
-
 @pytest.mark.django_db
 def test_register_user(api_client):
     response = api_client.post('/api/v0/auth/registration/',
-                               {'username': 'test_user', 'email': 'test@example.com', 'password1': 'test1234',
+                               {'username': 'test_user',
+                                'email': 'test@example.com',
+                                'password1': 'test1234',
                                 'password2': 'test1234'})
     assert response.status_code == 201
     assert User.objects.all().count() == 1
 
 
 def test_login(api_client, user):
-    response = api_client.post('/api/v0/auth/login/', {'username': user.username, 'password': 'password'})
+    response = api_client.post('/api/v0/auth/login/',
+                               {'username': user.username, 'password': 'password'})
     assert "key" in loads(response.content)
 
 
-def test_get_user(api_client, user):
-    api_client.force_authenticate(user)
-    response = api_client.get('/api/v0/auth/user/')
+def test_get_user(user_client):
+    response = user_client.get('/api/v0/auth/user/')
     assert response.status_code == 200
     assert {"first_name": "", "last_name": "",
             "username": "qabel_user", "email": "qabeluser@example.com"}\
         == loads(response.content)
 
 
-def test_get_profile(api_client, user):
-    api_client.force_authenticate(user)
-    response = api_client.get('/api/v0/profile/')
+def test_get_profile(user_client):
+    response = user_client.get('/api/v0/profile/')
     assert response.status_code == 200
     profile = loads(response.content)
     assert 0 == profile['quota']
@@ -61,28 +56,26 @@ def test_get_own_user(api_client, user):
         == loads(response.content)
 
 
-def test_get_list_of_user_prefixes(api_client, user, prefix):
-    api_client.force_authenticate(user)
-    response = api_client.get('/api/v0/prefix/')
+def test_get_list_of_user_prefixes(user_client, prefix):
+    response = user_client.get('/api/v0/prefix/')
     assert response.status_code == 200
     prefixes = loads(response.content)
     assert str(prefix.id) == prefixes[0]
 
 
-def test_create_multiple_prefixes(api_client, user, prefix):
-    api_client.force_authenticate(user)
-    response = api_client.post('/api/v0/prefix/')
+def test_create_multiple_prefixes(user_client, user, prefix):
+    response = user_client.post('/api/v0/prefix/')
     first_prefix = loads(response.content)
     assert response.status_code == 201
     assert first_prefix != str(prefix.id)
-    response = api_client.post('/api/v0/prefix/')
+    response = user_client.post('/api/v0/prefix/')
     second_prefix = loads(response.content)
     assert response.status_code == 201
     assert second_prefix != str(prefix.id)
     assert first_prefix != second_prefix
     assert user.prefix_set.count() == 3
     assert {str(prefix.id), first_prefix, second_prefix} ==\
-           set(loads(api_client.get('/api/v0/prefix/').content))
+           set(loads(user_client.get('/api/v0/prefix/').content))
 
 
 def test_anonymous_prefix(api_client):
@@ -90,25 +83,23 @@ def test_anonymous_prefix(api_client):
     assert response.status_code == 401
 
 
-def test_auth_resource(api_client, user, prefix):
-    api_client.force_authenticate(user)
+def test_auth_resource(user_client, prefix):
     path = '/api/v0/auth/{}/test'.format(str(prefix.id))
-    response = api_client.post(path)
+    response = user_client.post(path)
     assert response.status_code == 204
-    response = api_client.get(path)
-    assert response.status_code == 204
-
-    response = api_client.delete(path)
+    response = user_client.get(path)
     assert response.status_code == 204
 
+    response = user_client.delete(path)
+    assert response.status_code == 204
 
-def test_failed_auth_resource_requests(api_client, user):
-    api_client.force_authenticate(user)
+
+def test_failed_auth_resource_requests(user_client, user):
     path = '/api/v0/auth/invalid/test'
-    response = api_client.post(path)
+    response = user_client.post(path)
     assert response.status_code == 403
-    response = api_client.get(path)
+    response = user_client.get(path)
     assert response.status_code == 204
 
-    response = api_client.delete(path)
+    response = user_client.delete(path)
     assert response.status_code == 403
