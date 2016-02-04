@@ -34,3 +34,11 @@ Firefox:
 ## Production setup
 
 See the [django documentation](https://docs.djangoproject.com/en/1.8/howto/deployment/)
+
+## Development
+
+To use the dummy mail backend, see: [django documentation for email](https://docs.djangoproject.com/en/1.9/topics/email/#dummy-backend)
+
+Insert this line in qabel_id/settings.py :
+
+    EMAIL_BACKEND = 'django.core.mail.backends.dummy.EmailBackend'
