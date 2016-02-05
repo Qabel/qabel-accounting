@@ -91,7 +91,8 @@ def test_create_multiple_prefixes(api_client, user, prefix):
     assert second_prefix != str(prefix.id)
     assert first_prefix != second_prefix
     assert user.prefix_set.count() == 3
-    assert {str(prefix.id), first_prefix, second_prefix} == set(loads(api_client.get('/api/v0/prefix/').content))
+    assert {str(prefix.id), first_prefix, second_prefix} ==\
+           set(loads(api_client.get('/api/v0/prefix/').content))
 
 
 def test_anonymous_prefix(api_client):
@@ -99,38 +100,25 @@ def test_anonymous_prefix(api_client):
     assert response.status_code == 401
 
 
-def test_file_resource(api_client, user, prefix):
+def test_auth_resource(api_client, user, prefix):
     api_client.force_authenticate(user)
-    with tempfile.NamedTemporaryFile() as file:
-        content = b"Test data"
-        file.write(content)
-        file.seek(0)
-        path = '/api/v0/files/{}/test'.format(str(prefix.id))
-        response = api_client.post(path,
-                                   {'file': file})
-        assert response.status_code == 204
-        response = api_client.get(path)
-        assert list(response.streaming_content)[0] == content
+    path = '/api/v0/auth/{}/test'.format(str(prefix.id))
+    response = api_client.post(path)
+    assert response.status_code == 204
+    response = api_client.get(path)
+    assert response.status_code == 204
 
-        response = api_client.delete(path)
-        assert response.status_code == 204
-
-        response = api_client.get(path)
-        assert response.status_code == 404
+    response = api_client.delete(path)
+    assert response.status_code == 204
 
 
-def test_invalid_file_resource_requests(api_client, user, prefix):
+def test_failed_auth_resource_requests(api_client, user):
     api_client.force_authenticate(user)
-    with tempfile.NamedTemporaryFile() as file:
-        content = b"Test data"
-        file.write(content)
-        file.seek(0)
-        path = '/api/v0/files/invalid/test'
-        response = api_client.post(path,
-                                   {'file': file})
-        assert response.status_code == 404
-        response = api_client.get(path)
-        assert response.status_code == 404
+    path = '/api/v0/auth/invalid/test'
+    response = api_client.post(path)
+    assert response.status_code == 403
+    response = api_client.get(path)
+    assert response.status_code == 204
 
-        response = api_client.delete(path)
-        assert response.status_code == 204
+    response = api_client.delete(path)
+    assert response.status_code == 403
