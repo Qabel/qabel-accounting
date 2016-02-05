@@ -19,18 +19,43 @@ def user(db):
         u.save()
     return u
 
+
 @pytest.fixture
-def prefix(db):
+def prefix(db, user):
     try:
         p = Prefix.objects.get()
     except Prefix.DoesNotExist:
-        u = User.objects.get(username=USERNAME)
-        p = Prefix(u.id)
+        p = Prefix(user.id)
         p.save()
     return p
+
+
+@pytest.fixture
+def profile(user):
+    return user.profile
+
 
 @pytest.fixture
 def api_client():
     return APIClient()
 
+
+@pytest.fixture
+def api_secret(settings):
+    secret = "FOOBAR"
+    settings.API_SECRET = secret
+    return secret
+
+
+@pytest.fixture
+def user_client(api_client, user, prefix):
+    api_client.force_authenticate(user)
+    return api_client
+
+
+@pytest.fixture
+def user_api_client(user, api_secret):
+    client = APIClient(APISECRET=api_secret)
+    client.force_authenticate(user)
+    return client
 

@@ -1,6 +1,8 @@
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseForbidden
 from django.shortcuts import render
+from django.utils.crypto import constant_time_compare
 from rest_framework import viewsets, mixins, permissions
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -33,6 +35,7 @@ class ProfileViewSet(mixins.RetrieveModelMixin,
 def api_root(request, format=None):
     return Response({
         'profile': reverse('api-profile', request=request, format=format),
+        'quota': reverse('api-quota', request=request, format=format),
         'prefix': reverse('api-prefix', request=request, format=format),
         'login': reverse('rest_login', request=request, format=format),
         'logout': reverse('rest_logout', request=request, format=format),
@@ -55,8 +58,14 @@ class PrefixList(APIView):
         return Response(prefix.id, status=201)
 
 
+def check_api_key(request):
+    api_key = request.META.get('APISECRET', None)
+    return constant_time_compare(
+            api_key, settings.API_SECRET)
+
+
 @api_view(('GET', 'POST', 'DELETE'))
-@login_required()
+@login_required
 def auth_resource(request, prefix, file_path, format=None):
     """
     Handles auth for uploads, downloads and deletes on the storage backend.
@@ -71,6 +80,8 @@ def auth_resource(request, prefix, file_path, format=None):
     :param format: ignored, because the resource never responds with a body
     :return: HttpResponseBadRequest|HttpResponse(status=204)|HttpResponse(status=403)
     """
+    if not check_api_key(request):
+        return HttpResponseForbidden("Invalid API key")
     if request.method == 'GET':
         return HttpResponse(status=204)
     else:
@@ -78,3 +89,17 @@ def auth_resource(request, prefix, file_path, format=None):
             return HttpResponseForbidden()
         else:
             return HttpResponse(status=204)
+
+
+@api_view(('POST',))
+@login_required
+def quota(request):
+    if not check_api_key(request):
+        return HttpResponseForbidden("Invalid API key")
+    try:
+        prefix_name, action, size = request.data['prefix'], request.data['action'], request.data['size']
+    except KeyError:
+        return HttpResponse(status=400)
+    prefix = models.Prefix.get_by_name(prefix_name)
+    models.handle_request(action, size, prefix, request.user)
+    return HttpResponse(status=204)

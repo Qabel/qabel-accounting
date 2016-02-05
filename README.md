@@ -40,3 +40,6 @@ To use the dummy mail backend, see: [django documentation for email](https://doc
 Insert this line in qabel_id/settings.py :
 
     EMAIL_BACKEND = 'django.core.mail.backends.dummy.EmailBackend'
+
+In your django settings you have to set an API_SECRET that should be known only by the
+qabel-block server.
