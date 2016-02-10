@@ -59,7 +59,7 @@ class PrefixList(APIView):
 
 
 def check_api_key(request):
-    api_key = request.META.get('APISECRET', None)
+    api_key = request.META.get('HTTP_APISECRET', None)
     return constant_time_compare(
             api_key, settings.API_SECRET)
 
@@ -81,7 +81,7 @@ def auth_resource(request, prefix, file_path, format=None):
     :return: HttpResponseBadRequest|HttpResponse(status=204)|HttpResponse(status=403)
     """
     if not check_api_key(request):
-        return HttpResponseForbidden("Invalid API key")
+        return HttpResponse("Invalid API key", status=400)
     if request.method == 'GET':
         return HttpResponse(status=204)
     else:
@@ -95,7 +95,7 @@ def auth_resource(request, prefix, file_path, format=None):
 @login_required
 def quota(request):
     if not check_api_key(request):
-        return HttpResponseForbidden("Invalid API key")
+        return HttpResponse("Invalid API key", status=400)
     try:
         prefix_name, action, size = request.data['prefix'], request.data['action'], request.data['size']
     except KeyError:
