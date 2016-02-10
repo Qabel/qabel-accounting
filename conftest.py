@@ -55,7 +55,7 @@ def user_client(api_client, user, prefix):
 
 @pytest.fixture
 def user_api_client(user, api_secret):
-    client = APIClient(APISECRET=api_secret)
+    client = APIClient(HTTP_APISECRET=api_secret)
     client.force_authenticate(user)
     return client
 

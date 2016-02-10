@@ -117,7 +117,7 @@ def test_failed_auth_resource_requests(user_api_client, user, api_secret):
 def test_auth_resource_api_key(user_client, prefix, api_secret):
     path = '/api/v0/auth/{}/test'.format(str(prefix.id))
     response = user_client.post(path)
-    assert response.status_code == 403, "Should require APISECRET header"
+    assert response.status_code == 400, "Should require APISECRET header"
 
 
 def test_quota_tracking_post(user_client, prefix, profile, api_secret):
@@ -129,7 +129,7 @@ def test_quota_tracking_post(user_client, prefix, profile, api_secret):
         "file_path": "foo/bar/baz.txt",
         "action": "store",
         "size": size},
-        APISECRET=api_secret)
+        HTTP_APISECRET=api_secret)
     assert response.status_code == 204
     prefix.refresh_from_db()
     assert prefix.size == size
@@ -147,5 +147,5 @@ def test_invalid_api_key(user_client, prefix, profile, api_secret):
         "file_path": "foo/bar/baz.txt",
         "action": "store",
         "size": 1})
-    assert response.status_code == 403
+    assert response.status_code == 400
 
