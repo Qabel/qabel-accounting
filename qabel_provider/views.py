@@ -51,11 +51,11 @@ class PrefixList(APIView):
 
     def get(self, request, format=None):
         prefixes = request.user.prefix_set.all()
-        return Response([prefix.id for prefix in prefixes])
+        return Response(dict(prefixes=[prefix.id for prefix in prefixes]))
 
     def post(self, request, format=None):
         prefix = models.Prefix.objects.create(user=request.user)
-        return Response(prefix.id, status=201)
+        return Response(dict(prefix=prefix.id), status=201)
 
 
 def check_api_key(request):
