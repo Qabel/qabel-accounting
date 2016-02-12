@@ -1,3 +1,5 @@
+import logging
+
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseForbidden
@@ -11,6 +13,8 @@ from rest_framework.views import APIView
 
 from . import models
 from .serializers import ProfileSerializer
+
+logger = logging.getLogger(__name__)
 
 
 @login_required
@@ -80,12 +84,16 @@ def auth_resource(request, prefix, file_path, format=None):
     :param format: ignored, because the resource never responds with a body
     :return: HttpResponseBadRequest|HttpResponse(status=204)|HttpResponse(status=403)
     """
+    logger.debug('Auth resource called: user={}, prefix={}'.format(request.user.username,
+                                                                   prefix))
     if not check_api_key(request):
+        logger.warning('Called with invalid API key')
         return HttpResponse("Invalid API key", status=400)
     if request.method == 'GET':
         return HttpResponse(status=204)
     else:
         if prefix not in (str(p.id) for p in request.user.prefix_set.all()):
+            logger.debug('Access denied: user={}, prefix={}'.format(request.user.username, prefix))
             return HttpResponseForbidden()
         else:
             return HttpResponse(status=204)
@@ -95,10 +103,14 @@ def auth_resource(request, prefix, file_path, format=None):
 @login_required
 def quota(request):
     if not check_api_key(request):
+        logger.warning('Called with invalid API key')
         return HttpResponse("Invalid API key", status=400)
+    logger.debug('Quota resource called: data={}'.format(repr(request.data)))
     try:
-        prefix_name, action, size = request.data['prefix'], request.data['action'], request.data['size']
+        prefix_name, action, size = request.data['prefix'], request.data['action'],\
+                                    request.data['size']
     except KeyError:
+        logger.warning('Could not extract info from request data')
         return HttpResponse(status=400)
     prefix = models.Prefix.get_by_name(prefix_name)
     models.handle_request(action, size, prefix, request.user)
