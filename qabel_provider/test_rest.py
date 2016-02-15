@@ -2,6 +2,9 @@ import json
 import pytest
 from django.conf import settings
 from django.contrib.auth.models import User
+from datetime import timedelta
+from django.utils import timezone
+from django.core import mail
 
 
 def loads(foo):
@@ -112,6 +115,32 @@ def test_failed_auth_resource_requests(user_api_client, user, api_secret):
     assert response.status_code == 204
     response = user_api_client.delete(path)
     assert response.status_code == 403
+
+
+def test_failed_auth_resource_after_7_days(user_api_client, prefix, api_secret, user):
+    user.profile.needs_confirmation_after = timezone.now() - timedelta(days=7)
+    user.profile.save()
+    user.profile.refresh_from_db()
+    path = '/api/v0/auth/{}/test'.format(str(prefix.id))
+    response = user_api_client.post(path)
+    assert response.status_code == 403
+    assert response.content == b'E-Mail address is not confirmed'
+    assert len(mail.outbox) == 1
+    assert mail.outbox[0].subject == 'Please confirm your e-mail address'
+    assert mail.outbox[0].body == 'Please confirm your e-mail address with this link:'
+
+    # Check, that no new mail is send within 24 hours
+    response = user_api_client.post(path)
+    assert response.status_code == 403
+    assert len(mail.outbox) == 1
+
+    # Check, that a new mail is send after 24 hours
+    user.profile.next_confirmation_mail = timezone.now() - timedelta(minutes=1)
+    user.profile.save()
+    user.profile.refresh_from_db()
+    response = user_api_client.post(path)
+    assert response.status_code == 403
+    assert len(mail.outbox) == 2
 
 
 def test_auth_resource_api_key(user_client, prefix, api_secret):

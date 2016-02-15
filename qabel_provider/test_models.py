@@ -1,3 +1,5 @@
+from datetime import timedelta
+from django.utils import timezone
 import pytest
 from qabel_provider import models
 
@@ -69,3 +71,39 @@ def test_quota_invalid_method(prefix):
 def test_prefix_by_str(prefix):
     assert prefix.id == models.Prefix.get_by_name(str(prefix)).id
 
+
+def test_profile_is_not_confirmed_but_allowed(profile):
+    assert profile.is_allowed()
+
+
+def test_profile_is_confirmed_and_allowed(profile):
+    profile.is_confirmed = True
+    profile.save()
+    profile.refresh_from_db()
+    assert profile.is_allowed()
+
+
+def test_profile_is_disabled(profile):
+    profile.is_disabled = True
+    profile.save()
+    profile.refresh_from_db()
+    assert not profile.is_allowed()
+
+    profile.is_confirmed = True
+    profile.save()
+    profile.refresh_from_db()
+    assert not profile.is_allowed()
+
+
+def test_profile_is_not_confirmed_and_confirmation_date_exceeded(profile):
+    profile.needs_confirmation_after = timezone.now()
+    profile.save()
+    profile.refresh_from_db()
+    assert not profile.is_allowed()
+
+
+def test_email_sent_1_day_ago(profile):
+    profile.email_confirmation_date = timezone.now() - timedelta(days=1)
+    profile.save()
+    profile.refresh_from_db()
+    assert not profile.was_email_sent_last_24_hours()
