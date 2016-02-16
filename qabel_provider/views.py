@@ -2,7 +2,6 @@ import logging
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
-from django.core import mail
 from django.http import HttpResponse, HttpResponseForbidden
 from django.shortcuts import render
 from django.utils.crypto import constant_time_compare
@@ -93,12 +92,7 @@ def auth_resource(request, prefix, file_path, format=None):
     if request.method == 'GET':
         return HttpResponse(status=204)
     else:
-        if not request.user.profile.is_allowed():
-            if not request.user.profile.was_email_sent_last_24_hours():
-                send_confirmation_mail(request.user.email)
-                request.user.profile.set_next_mail_date()
-            request.user.profile.is_disabled = True
-            request.user.profile.save()
+        if request.user.profile.check_confirmation_and_send_mail():
             return HttpResponseForbidden(content='E-Mail address is not confirmed')
         if prefix not in (str(p.id) for p in request.user.prefix_set.all()):
             logger.debug('Access denied: user={}, prefix={}'.format(request.user.username, prefix))
@@ -123,9 +117,3 @@ def quota(request):
     prefix = models.Prefix.get_by_name(prefix_name)
     models.handle_request(action, size, prefix, request.user)
     return HttpResponse(status=204)
-
-
-def send_confirmation_mail(email):
-    mail.send_mail('Please confirm your e-mail address',
-                   'Please confirm your e-mail address with this link:',
-                   'qabel@qabel.de', [email])
