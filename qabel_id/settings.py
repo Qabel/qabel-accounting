@@ -127,3 +127,5 @@ API_SECRET = 'Changeme'
 # The old password is required to change it to a new password
 OLD_PASSWORD_FIELD_ENABLED = True
 
+# Email settings
+DEFAULT_FROM_EMAIL = "noreply@qabel.de"

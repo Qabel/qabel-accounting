@@ -92,6 +92,8 @@ def auth_resource(request, prefix, file_path, format=None):
     if request.method == 'GET':
         return HttpResponse(status=204)
     else:
+        if request.user.profile.check_confirmation_and_send_mail():
+            return HttpResponse(status=401, content='E-Mail address is not confirmed')
         if prefix not in (str(p.id) for p in request.user.prefix_set.all()):
             logger.debug('Access denied: user={}, prefix={}'.format(request.user.username, prefix))
             return HttpResponseForbidden()
