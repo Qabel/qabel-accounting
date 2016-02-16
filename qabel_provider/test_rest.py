@@ -123,7 +123,7 @@ def test_failed_auth_resource_after_7_days(user_api_client, prefix, api_secret, 
     user.profile.refresh_from_db()
     path = '/api/v0/auth/{}/test'.format(str(prefix.id))
     response = user_api_client.post(path)
-    assert response.status_code == 403
+    assert response.status_code == 401
     assert response.content == b'E-Mail address is not confirmed'
     assert len(mail.outbox) == 1
     assert mail.outbox[0].subject == 'Please confirm your e-mail address'
@@ -131,7 +131,7 @@ def test_failed_auth_resource_after_7_days(user_api_client, prefix, api_secret, 
 
     # Check, that no new mail is send within 24 hours
     response = user_api_client.post(path)
-    assert response.status_code == 403
+    assert response.status_code == 401
     assert len(mail.outbox) == 1
 
     # Check, that a new mail is send after 24 hours
@@ -139,7 +139,7 @@ def test_failed_auth_resource_after_7_days(user_api_client, prefix, api_secret, 
     user.profile.save()
     user.profile.refresh_from_db()
     response = user_api_client.post(path)
-    assert response.status_code == 403
+    assert response.status_code == 401
     assert len(mail.outbox) == 2
 
 
