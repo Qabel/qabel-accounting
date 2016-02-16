@@ -5,10 +5,11 @@ from django.dispatch import receiver
 from django.conf import settings
 from django.db.models import Sum
 from django.db.transaction import atomic
+from django_prometheus.models import ExportModelOperationsMixin
 import uuid
 
 
-class Profile(models.Model):
+class Profile(models.Model, ExportModelOperationsMixin('profile')):
     user = models.OneToOneField(User, primary_key=True, on_delete=models.CASCADE)
     quota = models.PositiveIntegerField(verbose_name="Storage quota", default=0)
     used_storage = models.PositiveIntegerField(verbose_name="Used storage", default=0)
@@ -29,7 +30,7 @@ def create_profile_for_new_user(sender, created, instance, **kwargs):
         profile.save()
 
 
-class Prefix(models.Model):
+class Prefix(models.Model, ExportModelOperationsMixin('prefix')):
     user = models.ForeignKey(User)
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     size = models.PositiveIntegerField(
