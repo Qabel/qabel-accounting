@@ -60,7 +60,7 @@ class Profile(models.Model):
     def send_confirmation_mail(self, email):
         mail.send_mail('Please confirm your e-mail address',
                        'Please confirm your e-mail address with this link:',
-                       "qabel@qabel.de", [email])
+                       settings.DEFAULT_FROM_EMAIL, [email])
 
 @receiver(post_save, sender=User)
 def create_profile_for_new_user(sender, created, instance, **kwargs):
