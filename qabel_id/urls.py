@@ -37,5 +37,6 @@ urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url('^accounts/', include('django.contrib.auth.urls')),
     url('^accounts/profile', views.profile),
-    url(r'^api/v0/', include(rest_urls))
+    url(r'^api/v0/', include(rest_urls)),
+    url('', include('django_prometheus.urls')),
 ]
