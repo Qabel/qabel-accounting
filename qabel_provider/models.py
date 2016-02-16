@@ -23,7 +23,7 @@ class Profile(models.Model):
     created_at = models.DateTimeField(verbose_name='Creation date and time', auto_now_add=True)
     is_confirmed = models.BooleanField(verbose_name='User confirmed profile', default=False)
     is_disabled = models.BooleanField(verbose_name='Profile is disabled', default=False)
-    next_confirmation_mail = models.DateTimeField(verbose_name='Date of the last email confirmation', null=True,
+    next_confirmation_mail = models.DateTimeField(verbose_name='Date of the next email confirmation', null=True,
                                                   blank=True)
     needs_confirmation_after = models.DateTimeField(default=confirmation_days)
 
