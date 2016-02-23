@@ -38,6 +38,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
+    'django_prometheus',
     'rest_framework',
     'rest_framework.authtoken',
     'rest_auth',
@@ -48,6 +49,7 @@ INSTALLED_APPS = (
 )
 
 MIDDLEWARE_CLASSES = (
+    'django_prometheus.middleware.PrometheusBeforeMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -57,6 +59,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.middleware.locale.LocaleMiddleware',
+    'django_prometheus.middleware.PrometheusAfterMiddleware',
 )
 
 ROOT_URLCONF = 'qabel_id.urls'
@@ -128,3 +131,5 @@ API_SECRET = 'Changeme'
 # The old password is required to change it to a new password
 OLD_PASSWORD_FIELD_ENABLED = True
 
+# Email settings
+DEFAULT_FROM_EMAIL = "noreply@qabel.de"

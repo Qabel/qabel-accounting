@@ -2,6 +2,9 @@ import json
 import pytest
 from django.conf import settings
 from django.contrib.auth.models import User
+from datetime import timedelta
+from django.utils import timezone
+from django.core import mail
 
 
 def loads(foo):
@@ -69,23 +72,23 @@ def test_get_own_user(api_client, user):
 def test_get_list_of_user_prefixes(user_client, prefix):
     response = user_client.get('/api/v0/prefix/')
     assert response.status_code == 200
-    prefixes = loads(response.content)
+    prefixes = loads(response.content)['prefixes']
     assert str(prefix.id) == prefixes[0]
 
 
 def test_create_multiple_prefixes(user_client, user, prefix):
     response = user_client.post('/api/v0/prefix/')
-    first_prefix = loads(response.content)
+    first_prefix = loads(response.content)['prefix']
     assert response.status_code == 201
     assert first_prefix != str(prefix.id)
     response = user_client.post('/api/v0/prefix/')
-    second_prefix = loads(response.content)
+    second_prefix = loads(response.content)['prefix']
     assert response.status_code == 201
     assert second_prefix != str(prefix.id)
     assert first_prefix != second_prefix
     assert user.prefix_set.count() == 3
     assert {str(prefix.id), first_prefix, second_prefix} ==\
-           set(loads(user_client.get('/api/v0/prefix/').content))
+           set(loads(user_client.get('/api/v0/prefix/').content)['prefixes'])
 
 
 def test_anonymous_prefix(api_client):
@@ -114,10 +117,36 @@ def test_failed_auth_resource_requests(user_api_client, user, api_secret):
     assert response.status_code == 403
 
 
+def test_failed_auth_resource_after_7_days(user_api_client, prefix, api_secret, user):
+    user.profile.needs_confirmation_after = timezone.now() - timedelta(days=7)
+    user.profile.save()
+    user.profile.refresh_from_db()
+    path = '/api/v0/auth/{}/test'.format(str(prefix.id))
+    response = user_api_client.post(path)
+    assert response.status_code == 401
+    assert response.content == b'E-Mail address is not confirmed'
+    assert len(mail.outbox) == 1
+    assert mail.outbox[0].subject == 'Please confirm your e-mail address'
+    assert mail.outbox[0].body == 'Please confirm your e-mail address with this link:'
+
+    # Check, that no new mail is send within 24 hours
+    response = user_api_client.post(path)
+    assert response.status_code == 401
+    assert len(mail.outbox) == 1
+
+    # Check, that a new mail is send after 24 hours
+    user.profile.next_confirmation_mail = timezone.now() - timedelta(minutes=1)
+    user.profile.save()
+    user.profile.refresh_from_db()
+    response = user_api_client.post(path)
+    assert response.status_code == 401
+    assert len(mail.outbox) == 2
+
+
 def test_auth_resource_api_key(user_client, prefix, api_secret):
     path = '/api/v0/auth/{}/test'.format(str(prefix.id))
     response = user_client.post(path)
-    assert response.status_code == 403, "Should require APISECRET header"
+    assert response.status_code == 400, "Should require APISECRET header"
 
 
 def test_quota_tracking_post(user_client, prefix, profile, api_secret):
@@ -129,7 +158,7 @@ def test_quota_tracking_post(user_client, prefix, profile, api_secret):
         "file_path": "foo/bar/baz.txt",
         "action": "store",
         "size": size},
-        APISECRET=api_secret)
+        HTTP_APISECRET=api_secret)
     assert response.status_code == 204
     prefix.refresh_from_db()
     assert prefix.size == size
@@ -147,7 +176,7 @@ def test_invalid_api_key(user_client, prefix, profile, api_secret):
         "file_path": "foo/bar/baz.txt",
         "action": "store",
         "size": 1})
-    assert response.status_code == 403
+    assert response.status_code == 400
 
 
 def test_logout(api_client, user):

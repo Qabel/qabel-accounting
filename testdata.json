@@ -37,14 +37,16 @@
   },
   {
     "fields": {
-      "quota": 0
+      "quota": 0,
+      "created_at": "2015-10-07T12:43:37.344Z"
     },
     "pk": 1,
     "model": "qabel_provider.profile"
   },
   {
     "fields": {
-      "quota": 100
+      "quota": 100,
+      "created_at": "2015-10-07T12:44:17Z"
     },
     "pk": 2,
     "model": "qabel_provider.profile"
