@@ -51,6 +51,7 @@ def test_get_profile(user_client):
     assert response.status_code == 200
     profile = loads(response.content)
     assert 0 == profile['quota']
+    assert 0 == profile['used_storage']
     assert 'qabel' == settings.BUCKET
     assert settings.BUCKET == profile['bucket']
 

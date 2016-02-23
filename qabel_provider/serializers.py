@@ -17,6 +17,6 @@ class ProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Profile
-        fields = ('quota', 'bucket')
+        fields = ('quota', 'bucket', 'used_storage')
 
 
