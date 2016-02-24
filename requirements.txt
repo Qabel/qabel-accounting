@@ -7,6 +7,6 @@ pytest-splinter==1.7.0
 djangorestframework==3.2.4
 Markdown==2.6.2
 django-filter==0.11.0
--e git://github.com/Tivix/django-rest-auth.git@152b0a6fb622703b19e568df138fb96eaf1060af#egg=django-rest-auth
+-e git://github.com/jasinai/django-rest-auth.git@UnignoreMoFiles#egg=django-rest-auth
 django-allauth==0.24.1
 django-prometheus==1.0.4
