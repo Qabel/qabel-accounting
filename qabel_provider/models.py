@@ -30,8 +30,6 @@ class Profile(models.Model, ExportModelOperationsMixin('profile')):
     plus_notification_mail = models.BooleanField(default=False)
     pro_notification_mail = models.BooleanField(default=False)
 
-    bucket = settings.BUCKET
-
     @property
     def prefix_downloads(self) -> int:
         result = self.user.prefix_set.aggregate(Sum('downloads'))
