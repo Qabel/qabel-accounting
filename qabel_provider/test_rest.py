@@ -177,3 +177,9 @@ def test_invalid_api_key(user_client, prefix, profile, api_secret):
         "size": 1})
     assert response.status_code == 400
 
+
+def test_logout(api_client, user):
+    # We need to be logged in to logout
+    api_client.post('/api/v0/auth/login/', {'username': user.username, 'password': 'password'})
+    response = api_client.post('/api/v0/auth/logout/', HTTP_ACCEPT_LANGUAGE='de')
+    assert response.content == b'{"success":"Erfolgreich ausgeloggt."}'
