@@ -27,6 +27,8 @@ class Profile(models.Model, ExportModelOperationsMixin('profile')):
     next_confirmation_mail = models.DateTimeField(verbose_name='Date of the next email confirmation', null=True,
                                                   blank=True)
     needs_confirmation_after = models.DateTimeField(default=confirmation_days)
+    plus_notification_mail = models.BooleanField(default=False)
+    pro_notification_mail = models.BooleanField(default=False)
 
     bucket = settings.BUCKET
 
