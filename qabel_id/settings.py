@@ -133,3 +133,7 @@ OLD_PASSWORD_FIELD_ENABLED = True
 
 # Email settings
 DEFAULT_FROM_EMAIL = "noreply@qabel.de"
+
+REST_AUTH_REGISTER_SERIALIZERS = {
+    'REGISTER_SERIALIZER': 'qabel_provider.serializers.UserSerializer'
+}
