@@ -64,3 +64,4 @@ db.sqlite3
 
 # Pycharm
 .idea/
+/qabel_id/settings/local_settings.py

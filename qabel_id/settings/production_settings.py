@@ -1,4 +1,6 @@
 from .base_settings import *
+import json
+ALLOWED_HOSTS = ['localhost']
 
 DEBUG = False
 
@@ -20,13 +22,18 @@ DATABASES = {
     }
 }
 
+LOGGING_CONFIG_FILE = os.path.join(BASE_DIR, '..', 'logging.json')
+
 try:
     from .local_settings import *
 except ImportError:
     import sys
+
     print("""\
 To use the production settings, create a file 'local_settings.py' in qabel_id/settings
  which defines at least the options SECRET_KEY, API_SECRET and DATABASES\
 """, file=sys.stderr)
     exit(1)
 
+with open(LOGGING_CONFIG_FILE) as config_file:
+    LOGGING = json.load(config_file)
