@@ -28,8 +28,6 @@ class Profile(models.Model, ExportModelOperationsMixin('profile')):
                                                   blank=True)
     needs_confirmation_after = models.DateTimeField(default=confirmation_days)
 
-    bucket = settings.BUCKET
-
     @property
     def prefix_downloads(self) -> int:
         result = self.user.prefix_set.aggregate(Sum('downloads'))
