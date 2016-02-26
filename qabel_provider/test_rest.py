@@ -20,6 +20,55 @@ def test_register_user(api_client):
                                 'password2': 'test1234'})
     assert response.status_code == 201
     assert User.objects.all().count() == 1
+    u = User.objects.get(username='test_user')
+    assert not u.profile.plus_notification_mail
+    assert not u.profile.pro_notification_mail
+
+
+@pytest.mark.django_db
+def test_register_user_interested_in_qabel_plus(api_client):
+    response = api_client.post('/api/v0/auth/registration/',
+                               {'username': 'test_user',
+                                'email': 'test@example.com',
+                                'password1': 'test1234',
+                                'password2': 'test1234',
+                                'plus': True})
+    assert response.status_code == 201
+    assert User.objects.all().count() == 1
+    u = User.objects.get(username='test_user')
+    assert u.profile.plus_notification_mail
+    assert not u.profile.pro_notification_mail
+
+
+@pytest.mark.django_db
+def test_register_user_interested_in_qabel_pro(api_client):
+    response = api_client.post('/api/v0/auth/registration/',
+                               {'username': 'test_user',
+                                'email': 'test@example.com',
+                                'password1': 'test1234',
+                                'password2': 'test1234',
+                                'pro': True})
+    assert response.status_code == 201
+    assert User.objects.all().count() == 1
+    u = User.objects.get(username='test_user')
+    assert not u.profile.plus_notification_mail
+    assert u.profile.pro_notification_mail
+
+
+@pytest.mark.django_db
+def test_register_user_interested_in_qabel_plus_and_pro(api_client):
+    response = api_client.post('/api/v0/auth/registration/',
+                               {'username': 'test_user',
+                                'email': 'test@example.com',
+                                'password1': 'test1234',
+                                'password2': 'test1234',
+                                'plus': True,
+                                'pro': True})
+    assert response.status_code == 201
+    assert User.objects.all().count() == 1
+    u = User.objects.get(username='test_user')
+    assert u.profile.plus_notification_mail
+    assert u.profile.pro_notification_mail
 
 
 @pytest.mark.django_db

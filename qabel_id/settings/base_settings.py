@@ -2,7 +2,6 @@ import os
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-
 ALLOWED_HOSTS = []
 
 # Application definition
@@ -59,7 +58,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'qabel_id.wsgi.application'
 
-
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.BasicAuthentication',
@@ -67,7 +65,6 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',
     )
 }
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i19n/
@@ -85,5 +82,8 @@ USE_TZ = True
 # The old password is required to change it to a new password
 OLD_PASSWORD_FIELD_ENABLED = True
 
-SITE_ID = 1
+REST_AUTH_REGISTER_SERIALIZERS = {
+    'REGISTER_SERIALIZER': 'qabel_provider.serializers.UserSerializer'
+}
 
+SITE_ID = 1
