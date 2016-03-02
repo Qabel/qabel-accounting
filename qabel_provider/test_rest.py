@@ -70,6 +70,14 @@ def test_register_user_interested_in_qabel_plus_and_pro(api_client):
     assert u.profile.plus_notification_mail
     assert u.profile.pro_notification_mail
 
+@pytest.mark.django_db
+def test_register_user_without_email_should_fail(api_client):
+    response = api_client.post('/api/v0/auth/registration/',
+                               {'username': 'test_user',
+                                'password1': 'test1234',
+                                'password2': 'test1234'})
+    assert response.status_code == 400
+    assert User.objects.all().count() == 0
 
 @pytest.mark.django_db
 def test_forgotten_password(api_client, user):
