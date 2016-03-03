@@ -1,8 +1,7 @@
 import pytest
-
 from django.contrib.auth.models import User
-from qabel_provider.models import Prefix
 from rest_framework.test import APIClient
+from rest_framework.authtoken.models import Token
 
 USERNAME = 'qabel_user'
 
@@ -21,18 +20,13 @@ def user(db):
 
 
 @pytest.fixture
-def prefix(db, user):
-    try:
-        p = Prefix.objects.get()
-    except Prefix.DoesNotExist:
-        p = Prefix(user.id)
-        p.save()
-    return p
+def profile(user):
+    return user.profile
 
 
 @pytest.fixture
-def profile(user):
-    return user.profile
+def token(user):
+    return Token.objects.create(user=user).key
 
 
 @pytest.fixture
@@ -48,14 +42,13 @@ def api_secret(settings):
 
 
 @pytest.fixture
-def user_client(api_client, user, prefix):
+def user_client(api_client, user):
     api_client.force_authenticate(user)
     return api_client
 
 
 @pytest.fixture
-def user_api_client(user, api_secret):
+def external_api_client(user, api_secret):
     client = APIClient(HTTP_APISECRET=api_secret)
-    client.force_authenticate(user)
     return client
 

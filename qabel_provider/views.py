@@ -2,7 +2,7 @@ import logging
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, HttpResponseForbidden
+from django.http import HttpResponse
 from django.shortcuts import render
 from django.utils.crypto import constant_time_compare
 from rest_framework import viewsets, mixins, permissions
@@ -10,6 +10,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 from rest_framework.views import APIView
+from rest_framework.authtoken.models import Token
 
 from . import models
 from .serializers import ProfileSerializer
@@ -68,9 +69,8 @@ def check_api_key(request):
             api_key, settings.API_SECRET)
 
 
-@api_view(('GET', 'POST', 'DELETE'))
-@login_required
-def auth_resource(request, prefix, file_path, format=None):
+@api_view(('POST',))
+def auth_resource(request, format=None):
     """
     Handles auth for uploads, downloads and deletes on the storage backend.
 
@@ -79,41 +79,31 @@ def auth_resource(request, prefix, file_path, format=None):
     Authorization header that itself received by the user.
 
     :param request: rest request
-    :param prefix: string that is used as prefix on the storage
-    :param file_path: path of the file in the prefix
     :param format: ignored, because the resource never responds with a body
     :return: HttpResponseBadRequest|HttpResponse(status=204)|HttpResponse(status=403)
     """
-    logger.debug('Auth resource called: user={}, prefix={}'.format(request.user.username,
-                                                                   prefix))
     if not check_api_key(request):
         logger.warning('Called with invalid API key')
         return HttpResponse("Invalid API key", status=400)
-    if request.method == 'GET':
-        return HttpResponse(status=204)
-    else:
-        if request.user.profile.check_confirmation_and_send_mail():
-            return HttpResponse(status=401, content='E-Mail address is not confirmed')
-        if prefix not in (str(p.id) for p in request.user.prefix_set.all()):
-            logger.debug('Access denied: user={}, prefix={}'.format(request.user.username, prefix))
-            return HttpResponseForbidden()
-        else:
-            return HttpResponse(status=204)
 
-
-@api_view(('POST',))
-@login_required
-def quota(request):
-    if not check_api_key(request):
-        logger.warning('Called with invalid API key')
-        return HttpResponse("Invalid API key", status=400)
-    logger.debug('Quota resource called: data={}'.format(repr(request.data)))
     try:
-        prefix_name, action, size = request.data['prefix'], request.data['action'],\
-                                    request.data['size']
+        user_auth = request.data['auth']
     except KeyError:
-        logger.warning('Could not extract info from request data')
-        return HttpResponse(status=400)
-    prefix = models.Prefix.get_by_name(prefix_name)
-    models.handle_request(action, size, prefix, request.user)
-    return HttpResponse(status=204)
+        return Response(status=400, data={'error': 'No auth given'})
+    try:
+        auth_type, token = user_auth.split()
+        if auth_type != 'Token':
+            raise ValueError()
+    except ValueError:
+        return Response(status=400, data={'error': 'Invalid auth type'})
+
+    try:
+        token_object = Token.objects.get(key=token)
+    except Token.DoesNotExist:
+        return Response(status=404, data={'error': 'Invalid token'})
+    user = token_object.user
+
+    logger.debug('Auth resource called: user={}'.format(user))
+    is_disabled = user.profile.check_confirmation_and_send_mail()
+    return Response({'user_id': user.id, 'active': (not is_disabled)})
+
