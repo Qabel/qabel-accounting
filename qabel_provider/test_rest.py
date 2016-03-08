@@ -102,19 +102,6 @@ def test_get_user(user_client):
         == loads(response.content)
 
 
-def test_get_profile(user_client):
-    response = user_client.get('/api/v0/profile/')
-    assert response.status_code == 200
-    profile = loads(response.content)
-    assert 0 == profile['quota']
-    assert 0 == profile['used_storage']
-
-
-def test_anonymous_profile(api_client):
-    response = api_client.get('/api/v0/profile/')
-    assert response.status_code == 401
-
-
 def test_get_own_user(api_client, user):
     other_user = User.objects.create_user('foobar')
     api_client.force_authenticate(other_user)

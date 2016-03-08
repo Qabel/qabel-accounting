@@ -17,13 +17,3 @@ class UserSerializer(RegisterSerializer):
         model = User
         fields = ('username', 'email')
         read_only = ('username',)
-
-
-class ProfileSerializer(serializers.ModelSerializer):
-    bucket = serializers.CharField(read_only=True)
-
-    class Meta:
-        model = Profile
-        fields = ('quota', 'bucket', 'used_storage')
-
-

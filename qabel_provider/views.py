@@ -13,33 +13,14 @@ from rest_framework.views import APIView
 from rest_framework.authtoken.models import Token
 
 from . import models
-from .serializers import ProfileSerializer
 
 logger = logging.getLogger(__name__)
 
 
 @login_required
-def profile(request):
-    return render(request, 'accounts/profile.html')
-
-
-class ProfileViewSet(mixins.RetrieveModelMixin,
-                     mixins.UpdateModelMixin,
-                     viewsets.GenericViewSet):
-    """
-    API endpoint that allows users to be viewed or edited.
-    """
-    serializer_class = ProfileSerializer
-    permission_classes = (permissions.IsAuthenticated,)
-
-    def get_object(self):
-        return self.request.user.profile
-
-
 @api_view(('GET',))
 def api_root(request, format=None):
     return Response({
-        'profile': reverse('api-profile', request=request, format=format),
         'quota': reverse('api-quota', request=request, format=format),
         'prefix': reverse('api-prefix', request=request, format=format),
         'login': reverse('rest_login', request=request, format=format),
