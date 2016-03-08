@@ -34,6 +34,7 @@ Firefox:
 See the [django documentation](https://docs.djangoproject.com/en/1.8/howto/deployment/)
 The server exports [prometheus](https://www.prometheus.io) metrics at /metrics. If those should not be public, you should
 block this location in the webserver.
+If you have problems with CORS (Cross-Origin Resource Sharing), edit the 'CORS_ORIGIN_WHITELIST' in local_settings.py. For more information see [CORS middleware configuration options](https://github.com/zestedesavoir/django-cors-middleware#configuration).
 
 ## Development
 
