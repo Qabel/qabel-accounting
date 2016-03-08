@@ -120,12 +120,14 @@ def test_auth_resource(external_api_client, user, token):
 
 
 def test_auth_resource_with_disabled_user(external_api_client, user, token):
+    user.profile.is_disabled = True
+    user.profile.save()
     path = '/api/v0/auth/'
     response = external_api_client.post(path, {'auth': 'Token {}'.format(token)})
     assert response.status_code == 200
     data = loads(response.content)
     assert data['user_id'] == user.id
-    assert data['active'] is True
+    assert data['active'] is False
 
 
 def test_auth_resource_invalid_auth_type(external_api_client, token):
