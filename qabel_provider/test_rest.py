@@ -1,10 +1,9 @@
 import json
 import pytest
-from django.conf import settings
-from django.contrib.auth.models import User
 from datetime import timedelta
 from django.utils import timezone
 from django.core import mail
+from django.contrib.auth.models import User
 
 
 def loads(foo):
@@ -103,21 +102,7 @@ def test_get_user(user_client):
         == loads(response.content)
 
 
-def test_get_profile(user_client):
-    response = user_client.get('/api/v0/profile/')
-    assert response.status_code == 200
-    profile = loads(response.content)
-    assert 0 == profile['quota']
-    assert 0 == profile['used_storage']
-
-
-def test_anonymous_profile(api_client):
-    response = api_client.get('/api/v0/profile/')
-    assert response.status_code == 401
-
-
 def test_get_own_user(api_client, user):
-    from django.contrib.auth.models import User
     other_user = User.objects.create_user('foobar')
     api_client.force_authenticate(other_user)
     response = api_client.get('/api/v0/auth/user/')
@@ -125,114 +110,84 @@ def test_get_own_user(api_client, user):
         == loads(response.content)
 
 
-def test_get_list_of_user_prefixes(user_client, prefix):
-    response = user_client.get('/api/v0/prefix/')
+def test_auth_resource(external_api_client, user, token):
+    path = '/api/v0/auth/'
+    response = external_api_client.post(path, {'auth': 'Token {}'.format(token)})
     assert response.status_code == 200
-    prefixes = loads(response.content)['prefixes']
-    assert str(prefix.id) == prefixes[0]
+    data = loads(response.content)
+    assert data['user_id'] == user.id
+    assert data['active'] == (not user.profile.is_disabled)
 
 
-def test_create_multiple_prefixes(user_client, user, prefix):
-    response = user_client.post('/api/v0/prefix/')
-    first_prefix = loads(response.content)['prefix']
-    assert response.status_code == 201
-    assert first_prefix != str(prefix.id)
-    response = user_client.post('/api/v0/prefix/')
-    second_prefix = loads(response.content)['prefix']
-    assert response.status_code == 201
-    assert second_prefix != str(prefix.id)
-    assert first_prefix != second_prefix
-    assert user.prefix_set.count() == 3
-    assert {str(prefix.id), first_prefix, second_prefix} ==\
-           set(loads(user_client.get('/api/v0/prefix/').content)['prefixes'])
+def test_auth_resource_with_disabled_user(external_api_client, user, token):
+    user.profile.is_disabled = True
+    user.profile.save()
+    path = '/api/v0/auth/'
+    response = external_api_client.post(path, {'auth': 'Token {}'.format(token)})
+    assert response.status_code == 200
+    data = loads(response.content)
+    assert data['user_id'] == user.id
+    assert data['active'] is False
 
 
-def test_anonymous_prefix(api_client):
-    response = api_client.get('/api/v0/prefix/')
-    assert response.status_code == 401
+def test_auth_resource_invalid_auth_type(external_api_client, token):
+    path = '/api/v0/auth/'
+    response = external_api_client.post(path, {'auth': 'Foobar {}'.format(token)})
+    assert response.status_code == 400
+    data = loads(response.content)
+    assert data['error']
 
 
-def test_auth_resource(user_api_client, prefix, api_secret):
-    path = '/api/v0/auth/{}/test'.format(str(prefix.id))
-    response = user_api_client.post(path)
-    assert response.status_code == 204
-    response = user_api_client.get(path)
-    assert response.status_code == 204
-
-    response = user_api_client.delete(path)
-    assert response.status_code == 204
+def test_auth_resource_unknown_user(external_api_client):
+    path = '/api/v0/auth/'
+    response = external_api_client.post(path, {'auth': 'Token foobar'})
+    assert response.status_code == 404
+    data = loads(response.content)
+    assert data['error']
 
 
-def test_failed_auth_resource_requests(user_api_client, user, api_secret):
-    path = '/api/v0/auth/invalid/test'
-    response = user_api_client.post(path)
-    assert response.status_code == 403
-    response = user_api_client.get(path)
-    assert response.status_code == 204
-    response = user_api_client.delete(path)
-    assert response.status_code == 403
+def test_auth_resource_no_body(external_api_client):
+    path = '/api/v0/auth/'
+    response = external_api_client.post(path)
+    assert response.status_code == 400
+    data = loads(response.content)
+    assert data['error']
 
 
-def test_failed_auth_resource_after_7_days(user_api_client, prefix, api_secret, user):
+def test_failed_auth_resource_after_7_days(external_api_client, user, token):
     user.profile.needs_confirmation_after = timezone.now() - timedelta(days=7)
     user.profile.save()
     user.profile.refresh_from_db()
-    path = '/api/v0/auth/{}/test'.format(str(prefix.id))
-    response = user_api_client.post(path)
-    assert response.status_code == 401
-    assert response.content == b'E-Mail address is not confirmed'
+    path = '/api/v0/auth/'
+    request_body = {'auth': 'Token {}'.format(token)}
+    response = external_api_client.post(path, request_body)
+    assert response.status_code == 200
+    data = loads(response.content)
+    assert data['active'] is False
     assert len(mail.outbox) == 1
     assert mail.outbox[0].subject == 'Please confirm your e-mail address'
     assert mail.outbox[0].body == 'Please confirm your e-mail address with this link:'
 
     # Check, that no new mail is send within 24 hours
-    response = user_api_client.post(path)
-    assert response.status_code == 401
+    response = external_api_client.post(path, request_body)
+    data = loads(response.content)
+    assert data['active'] is False
+    assert response.status_code == 200
     assert len(mail.outbox) == 1
 
     # Check, that a new mail is send after 24 hours
     user.profile.next_confirmation_mail = timezone.now() - timedelta(minutes=1)
     user.profile.save()
     user.profile.refresh_from_db()
-    response = user_api_client.post(path)
-    assert response.status_code == 401
+    response = external_api_client.post(path, request_body)
+    assert response.status_code == 200
     assert len(mail.outbox) == 2
 
 
-def test_auth_resource_api_key(user_client, prefix, api_secret):
-    path = '/api/v0/auth/{}/test'.format(str(prefix.id))
+def test_auth_resource_api_key(user_client):
+    path = '/api/v0/auth/'
     response = user_client.post(path)
     assert response.status_code == 400, "Should require APISECRET header"
-
-
-def test_quota_tracking_post(user_client, prefix, profile, api_secret):
-    path = '/api/v0/quota/'
-    size = 2492
-
-    response = user_client.post(path, {
-        "prefix": str(prefix),
-        "file_path": "foo/bar/baz.txt",
-        "action": "store",
-        "size": size},
-        HTTP_APISECRET=api_secret)
-    assert response.status_code == 204
-    prefix.refresh_from_db()
-    assert prefix.size == size
-    user = prefix.user
-    profile = user.profile
-    assert profile.used_storage == size
-    profile.refresh_from_db()
-
-
-def test_invalid_api_key(user_client, prefix, profile, api_secret):
-    path = '/api/v0/quota/'
-
-    response = user_client.post(path, {
-        "prefix": str(prefix),
-        "file_path": "foo/bar/baz.txt",
-        "action": "store",
-        "size": 1})
-    assert response.status_code == 400
 
 
 def test_logout(api_client, user):

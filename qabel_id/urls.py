@@ -17,26 +17,17 @@ from django.conf.urls import include, url
 from django.contrib import admin
 from qabel_provider import views
 
-# noinspection PyCallByClass
-profile = views.ProfileViewSet.as_view({
-    'get': 'retrieve',
-})
-
 rest_urls = [
     url(r'^$', views.api_root, name='api-root'),
-    url(r'^profile/', profile, name='api-profile'),
     url(r'^prefix/', views.PrefixList.as_view(), name='api-prefix'),
     url(r'^auth/', include('rest_auth.urls')),
     url(r'^auth/registration/', include('rest_auth.registration.urls')),
-    url(r'^auth/(?P<prefix>[\d\w-]+)/(?P<file_path>[\d\w-]+)',
-        views.auth_resource, name='api-auth'),
-    url(r'^quota/', views.quota, name="api-quota"),
+    url(r'^auth/', views.auth_resource, name='api-auth'),
 ]
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url('^accounts/', include('django.contrib.auth.urls')),
-    url('^accounts/profile', views.profile),
     url(r'^api/v0/', include(rest_urls)),
     url('', include('django_prometheus.urls')),
 ]

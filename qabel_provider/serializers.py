@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Profile, Prefix
+from .models import Profile
 from django.contrib.auth.models import User
 from rest_auth.registration.serializers import RegisterSerializer
 
@@ -17,13 +17,3 @@ class UserSerializer(RegisterSerializer):
         model = User
         fields = ('username', 'email')
         read_only = ('username',)
-
-
-class ProfileSerializer(serializers.ModelSerializer):
-    bucket = serializers.CharField(read_only=True)
-
-    class Meta:
-        model = Profile
-        fields = ('quota', 'bucket', 'used_storage')
-
-
