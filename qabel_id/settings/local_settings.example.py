@@ -5,4 +5,6 @@ API_SECRET = 'Changeme'
 
 STATIC_URL = '/static/'
 
-
+CORS_ORIGIN_WHITELIST = (
+    #'qabel.dev',
+)
