@@ -10,3 +10,4 @@ django-filter==0.11.0
 -e git://github.com/jasinai/django-rest-auth.git@UnignoreMoFiles#egg=django-rest-auth
 django-allauth==0.24.1
 django-prometheus==1.0.4
+django-cors-middleware==1.2.0
