@@ -1,16 +1,14 @@
+from allauth.account.models import EmailAddress
 from django.contrib.auth.models import User
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.conf import settings
-from django.db.models import Sum
-from django.db.transaction import atomic
 from django.core import mail
 from django_prometheus.models import ExportModelOperationsMixin
-import uuid
 import datetime
 from django.utils import timezone
-
+from allauth.account.signals import email_confirmed
 
 def confirmation_days():
     return timezone.now() + datetime.timedelta(days=7)
@@ -65,3 +63,10 @@ def create_profile_for_new_user(sender, created, instance, **kwargs):
         profile = Profile(user=instance)
         profile.save()
 
+
+@receiver(email_confirmed)
+def confirm_email(sender, email=None, **kwargs):
+    address = sender.email_address
+    user = User.objects.get(email=address.email)
+    user.profile.is_confirmed = True
+    user.save()
