@@ -197,11 +197,13 @@ def test_logout(api_client, user):
     assert response.content == b'{"success":"Erfolgreich ausgeloggt."}'
 
 
-def test_login_throttle(api_client, user):
-    for _ in range(5):
-        response = api_client.post('/api/v0/auth/login/',
-                                   {'username': user.username, 'password': 'wrong'})
-        assert response.status_code == 400
+def test_login_throttle(api_client, user, settings):
+    settings.AXES_COOLOFF_TIME = timedelta(seconds=1)
+    settings.AXES_LOGIN_FAILURE_LIMIT = 2
+    response = api_client.post('/api/v0/auth/login/',
+                               {'username': user.username, 'password': 'wrong'})
+    assert response.status_code == 400
     response = api_client.post('/api/v0/auth/login/',
                                {'username': user.username, 'password': 'wrong'})
     assert response.status_code == 429
+    assert loads(response.content)['error'] == 'Too many login attempts'

@@ -3,14 +3,16 @@ import logging
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
-from django.shortcuts import render
 from django.utils.crypto import constant_time_compare
-from rest_framework import viewsets, mixins, permissions
+from rest_auth.views import LoginView
+from rest_framework import permissions
 from rest_framework.decorators import api_view
+from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 from rest_framework.views import APIView
 from rest_framework.authtoken.models import Token
+from axes import decorators as axes_dec
 
 from . import models
 
@@ -87,4 +89,43 @@ def auth_resource(request, format=None):
     logger.debug('Auth resource called: user={}'.format(user))
     is_disabled = user.profile.check_confirmation_and_send_mail()
     return Response({'user_id': user.id, 'active': (not is_disabled)})
+
+
+class ThrottledLoginView(LoginView):
+
+    @staticmethod
+    def lockout_response():
+        return Response(status=429, data={'error': 'Too many login attempts'})
+
+    # noinspection PyAttributeOutsideInit
+    def post(self, request, *args, **kwargs):
+        if axes_dec.is_already_locked(request):
+            return self.lockout_response()
+
+        self.serializer = self.get_serializer(data=self.request.data)
+        try:
+            self.serializer.is_valid(raise_exception=True)
+        except ValidationError:
+            if self.watch_login(request, False):
+                raise
+            else:
+                return self.lockout_response()
+
+        if self.watch_login(request, False):
+            self.login()
+            return self.get_response()
+        else:
+            return self.lockout_response()
+
+    @staticmethod
+    def watch_login(request, successful):
+        axes_dec.AccessLog.objects.create(
+            user_agent=request.META.get('HTTP_USER_AGENT', '<unknown>')[:255],
+            ip_address=axes_dec.get_ip(request),
+            username=request.data['username'],
+            http_accept=request.META.get('HTTP_ACCEPT', '<unknown>'),
+            path_info=request.META.get('PATH_INFO', '<unknown>'),
+            trusted=successful
+        )
+        return axes_dec.check_request(request, not successful)
 
