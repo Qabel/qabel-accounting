@@ -73,8 +73,8 @@ REST_FRAMEWORK = {
 
 # Login security
 
-AXES_COOLOFF_TIME = datetime.timedelta(seconds=10)
-AXES_LOGIN_FAILURE_LIMIT = 3
+AXES_COOLOFF_TIME = datetime.timedelta(minutes=1)
+AXES_LOGIN_FAILURE_LIMIT = 5
 
 
 AUTH_PASSWORD_VALIDATORS = [
