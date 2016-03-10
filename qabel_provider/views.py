@@ -5,13 +5,14 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.utils.crypto import constant_time_compare
 from rest_auth.views import LoginView
-from rest_framework import permissions
 from rest_framework.decorators import api_view
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 from rest_framework.authtoken.models import Token
 from axes import decorators as axes_dec
+from rest_auth.registration.views import RegisterView
+from qabel_provider.serializers import UserSerializer
 
 logger = logging.getLogger(__name__)
 
@@ -114,3 +115,6 @@ class ThrottledLoginView(LoginView):
         )
         return axes_dec.check_request(request, not successful)
 
+
+class PasswordPolicyRegisterView(RegisterView):
+    serializer_class = UserSerializer

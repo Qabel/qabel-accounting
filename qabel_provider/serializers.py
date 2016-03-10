@@ -1,10 +1,17 @@
-from rest_framework import serializers
-from .models import Profile
 from django.contrib.auth.models import User
 from rest_auth.registration.serializers import RegisterSerializer
+from django.contrib.auth.password_validation import validate_password
 
 
 class UserSerializer(RegisterSerializer):
+
+    def validate_password1(self, password):
+        cleaned = super().validate_password1(password)
+        username = self.initial_data['username']
+        user = User(username=username)
+        validate_password(cleaned, user)
+        return cleaned
+
     def save(self, request):
         user = super(UserSerializer, self).save(request)
         profile = user.profile

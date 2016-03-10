@@ -20,7 +20,13 @@ from rest_auth.views import (
     LogoutView, UserDetailsView, PasswordChangeView,
     PasswordResetView, PasswordResetConfirmView
 )
+from rest_auth.registration.views import VerifyEmailView
 from allauth.account.views import ConfirmEmailView, EmailVerificationSentView
+
+rest_auth_register_urls = [
+    url(r'^$', views.PasswordPolicyRegisterView.as_view(), name='rest_register'),
+    url(r'^verify-email/$', VerifyEmailView.as_view(), name='rest_verify_email'),
+]
 
 rest_auth_urls = [
     url(r'^password/reset/$', PasswordResetView.as_view(),
