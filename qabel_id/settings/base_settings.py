@@ -1,4 +1,5 @@
 import os
+import datetime
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -23,6 +24,7 @@ INSTALLED_APPS = (
     'allauth.account',
     'rest_auth.registration',
     'corsheaders',
+    'axes',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -36,6 +38,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'axes.middleware.FailedLoginMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'django_prometheus.middleware.PrometheusAfterMiddleware',
 )
@@ -68,6 +71,29 @@ REST_FRAMEWORK = {
     )
 }
 
+# Login security
+
+AXES_COOLOFF_TIME = datetime.timedelta(minutes=1)
+AXES_LOGIN_FAILURE_LIMIT = 5
+
+
+AUTH_PASSWORD_VALIDATORS = [
+    {
+        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'OPTIONS': {
+            'min_length': 8,
+        }
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+    },
+]
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i19n/
 

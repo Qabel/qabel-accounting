@@ -195,3 +195,24 @@ def test_logout(api_client, user):
     api_client.post('/api/v0/auth/login/', {'username': user.username, 'password': 'password'})
     response = api_client.post('/api/v0/auth/logout/', HTTP_ACCEPT_LANGUAGE='de')
     assert response.content == b'{"success":"Erfolgreich ausgeloggt."}'
+
+
+def test_login_throttle(api_client, db):
+    for _ in range(4):
+        response = api_client.post('/api/v0/auth/login/',
+                                   {'username': 'foo', 'password': 'wrong'})
+        assert response.status_code == 400
+    response = api_client.post('/api/v0/auth/login/',
+                               {'username': 'foo', 'password': 'wrong'})
+    assert response.status_code == 429
+    assert loads(response.content)['error'] == 'Too many login attempts'
+
+
+@pytest.mark.django_db
+def test_register_user_with_bad_password(api_client):
+    response = api_client.post('/api/v0/auth/registration/',
+                               {'username': 'testtest',
+                                'email': 'test@example.com',
+                                'password1': 'testtest',
+                                'password2': 'testtest'})
+    assert response.status_code == 400
