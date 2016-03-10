@@ -195,3 +195,13 @@ def test_logout(api_client, user):
     api_client.post('/api/v0/auth/login/', {'username': user.username, 'password': 'password'})
     response = api_client.post('/api/v0/auth/logout/', HTTP_ACCEPT_LANGUAGE='de')
     assert response.content == b'{"success":"Erfolgreich ausgeloggt."}'
+
+
+def test_login_throttle(api_client, user):
+    for _ in range(5):
+        response = api_client.post('/api/v0/auth/login/',
+                                   {'username': user.username, 'password': 'wrong'})
+        assert response.status_code == 400
+    response = api_client.post('/api/v0/auth/login/',
+                               {'username': user.username, 'password': 'wrong'})
+    assert response.status_code == 429
