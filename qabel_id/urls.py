@@ -19,7 +19,6 @@ from qabel_provider import views
 
 rest_urls = [
     url(r'^$', views.api_root, name='api-root'),
-    url(r'^prefix/', views.PrefixList.as_view(), name='api-prefix'),
     url(r'^auth/', include('rest_auth.urls')),
     url(r'^auth/registration/', include('rest_auth.registration.urls')),
     url(r'^auth/', views.auth_resource, name='api-auth'),

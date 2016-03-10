@@ -3,16 +3,12 @@ import logging
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
-from django.shortcuts import render
 from django.utils.crypto import constant_time_compare
 from rest_framework import viewsets, mixins, permissions
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
-from rest_framework.views import APIView
 from rest_framework.authtoken.models import Token
-
-from . import models
 
 logger = logging.getLogger(__name__)
 
@@ -30,18 +26,6 @@ def api_root(request, format=None):
         'password_reset': reverse('rest_password_reset', request=request, format=format),
         'password_confirm': reverse('rest_password_reset_confirm', request=request, format=format),
     })
-
-
-class PrefixList(APIView):
-    permission_classes = (permissions.IsAuthenticated,)
-
-    def get(self, request, format=None):
-        prefixes = request.user.prefix_set.all()
-        return Response(dict(prefixes=[prefix.id for prefix in prefixes]))
-
-    def post(self, request, format=None):
-        prefix = models.Prefix.objects.create(user=request.user)
-        return Response(dict(prefix=prefix.id), status=201)
 
 
 def check_api_key(request):
