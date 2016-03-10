@@ -206,3 +206,13 @@ def test_login_throttle(api_client, db):
                                {'username': 'foo', 'password': 'wrong'})
     assert response.status_code == 429
     assert loads(response.content)['error'] == 'Too many login attempts'
+
+
+@pytest.mark.django_db
+def test_register_user_with_bad_password(api_client):
+    response = api_client.post('/api/v0/auth/registration/',
+                               {'username': 'testtest',
+                                'email': 'test@example.com',
+                                'password1': 'testtest',
+                                'password2': 'testtest'})
+    assert response.status_code == 400
