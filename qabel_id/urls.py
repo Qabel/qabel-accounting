@@ -27,7 +27,8 @@ rest_urls = [
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
-    url('^accounts/', include('django.contrib.auth.urls')),
+    url(r'^accounts/', include('django.contrib.auth.urls')),
+    url(r'^accounts/login/', 'django.contrib.auth.views.login'),
     url(r'^api/v0/', include(rest_urls)),
     url('', include('django_prometheus.urls')),
 ]
