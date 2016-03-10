@@ -16,6 +16,7 @@ Including another URLconf
 from django.conf.urls import include, url
 from django.contrib import admin
 from qabel_provider import views
+from allauth.account.views import ConfirmEmailView, EmailVerificationSentView
 
 rest_urls = [
     url(r'^$', views.api_root, name='api-root'),
@@ -30,4 +31,8 @@ urlpatterns = [
     url('^accounts/', include('django.contrib.auth.urls')),
     url(r'^api/v0/', include(rest_urls)),
     url('', include('django_prometheus.urls')),
+    url(r'^account-confirm-email/(?P<key>\w+)/$', ConfirmEmailView.as_view(),
+        name='account_confirm_email'),
+    url(r'^account-email-verification-sent/$', EmailVerificationSentView.as_view(),
+        name='account_email_verification_sent'),
 ]
