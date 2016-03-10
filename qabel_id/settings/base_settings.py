@@ -1,4 +1,5 @@
 import os
+import datetime
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -23,6 +24,7 @@ INSTALLED_APPS = (
     'allauth.account',
     'rest_auth.registration',
     'corsheaders',
+    'axes',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -36,6 +38,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'axes.middleware.FailedLoginMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'django_prometheus.middleware.PrometheusAfterMiddleware',
 )
@@ -67,6 +70,10 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',
     )
 }
+
+AXES_COOLOFF_TIME = datetime.timedelta(seconds=10)
+AXES_LOGIN_FAILURE_LIMIT = 3
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i19n/
