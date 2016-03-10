@@ -71,10 +71,29 @@ REST_FRAMEWORK = {
     )
 }
 
+# Login security
+
 AXES_COOLOFF_TIME = datetime.timedelta(seconds=10)
 AXES_LOGIN_FAILURE_LIMIT = 3
 
 
+AUTH_PASSWORD_VALIDATORS = [
+    {
+        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'OPTIONS': {
+            'min_length': 8,
+        }
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+    },
+]
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i19n/
 
