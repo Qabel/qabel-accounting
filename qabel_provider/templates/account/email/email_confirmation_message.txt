@@ -1,7 +1,10 @@
+English version below.
+
 Danke, dass Sie sich für Qabel entschieden haben.
 Bitte klicken Sie auf den nachfolgenden Link, um die Registrierung Ihres Qabel Accounts abzuschließen.
 {{ activate_url }}
 Viel Spaß beim Testen, wir freuen uns auf Ihr Feedback!
+Wenn sie sich nicht bei Qabel angemeldet haben, dann ignorieren sie diese Mail bitte.
 Hier finden Sie weitere Infos über Qabel.
 https://qabel.de/de
 
@@ -10,5 +13,14 @@ Thank you for choosing Qabel.
 Please click on the link below to complete the registration of your Qabel account.
 {{ activate_url }}
 Enjoy testing Qabel! We’re looking forward to your feedback.
+If you did not sign up for Qabel, please ignore this mail.
 For further information regarding Qabel, please visit
 https://qabel.de/en
+
+---
+
+Qabel GmbH
+Goseriede 4 / Tiedthof  .  30159 Hannover
+Registergericht: Amtsgericht Hannover  .  HRB 210757
+USt-IdNr.: DE293570022
+Geschäftsführer: Peter Leppelt, Benjamin Schuetze
