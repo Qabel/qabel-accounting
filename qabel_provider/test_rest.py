@@ -166,8 +166,8 @@ def test_failed_auth_resource_after_7_days(external_api_client, user, token):
     data = loads(response.content)
     assert data['active'] is False
     assert len(mail.outbox) == 1
-    assert mail.outbox[0].subject == 'Please confirm your e-mail address'
-    assert mail.outbox[0].body == 'Please confirm your e-mail address with this link:'
+    assert mail.outbox[0].subject.startswith('[example.com]')
+    assert mail.outbox[0].body.startswith('Danke')
 
     # Check, that no new mail is send within 24 hours
     response = external_api_client.post(path, request_body)
