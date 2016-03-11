@@ -1,4 +1,5 @@
 import pytest
+from allauth.account.models import EmailAddress
 from django.contrib.auth.models import User
 from rest_framework.test import APIClient
 from rest_framework.authtoken.models import Token
@@ -16,6 +17,7 @@ def user(db):
         u.is_staff = False
         u.is_superuser = False
         u.save()
+        EmailAddress.objects.create(user=u, email=u.email, primary=True)
     return u
 
 

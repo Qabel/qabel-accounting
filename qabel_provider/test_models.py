@@ -18,13 +18,12 @@ def test_superuser(admin_user):
     assert admin_user.profile.quota == 0
 
 
-
 def test_profile_is_not_confirmed_but_allowed(profile):
     assert profile.is_allowed()
 
 
 def test_profile_is_confirmed_and_allowed(profile):
-    profile.is_confirmed = True
+    profile.confirm_email()
     profile.save()
     profile.refresh_from_db()
     assert profile.is_allowed()
@@ -36,7 +35,7 @@ def test_profile_is_disabled(profile):
     profile.refresh_from_db()
     assert not profile.is_allowed()
 
-    profile.is_confirmed = True
+    profile.confirm_email()
     profile.save()
     profile.refresh_from_db()
     assert not profile.is_allowed()

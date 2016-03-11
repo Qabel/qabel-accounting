@@ -4,6 +4,7 @@ from datetime import timedelta
 from django.utils import timezone
 from django.core import mail
 from django.contrib.auth.models import User
+from allauth.account.models import EmailConfirmation, EmailAddress
 
 
 def loads(foo):
@@ -165,8 +166,8 @@ def test_failed_auth_resource_after_7_days(external_api_client, user, token):
     data = loads(response.content)
     assert data['active'] is False
     assert len(mail.outbox) == 1
-    assert mail.outbox[0].subject == 'Please confirm your e-mail address'
-    assert mail.outbox[0].body == 'Please confirm your e-mail address with this link:'
+    assert mail.outbox[0].subject.startswith('[example.com]')
+    assert mail.outbox[0].body.startswith('English')
 
     # Check, that no new mail is send within 24 hours
     response = external_api_client.post(path, request_body)
@@ -216,3 +217,25 @@ def test_register_user_with_bad_password(api_client):
                                 'password1': 'testtest',
                                 'password2': 'testtest'})
     assert response.status_code == 400
+
+
+@pytest.mark.django_db
+def test_confirm_email(api_client, token):
+    response = api_client.post('/api/v0/auth/registration/',
+                               {'username': 'testtest',
+                                'email': 'test@example.com',
+                                'password1': 'foobar1234',
+                                'password2': 'foobar1234'})
+    assert response.status_code == 201
+    assert len(mail.outbox) == 1
+    assert mail.outbox[0].subject == '[example.com] Please Confirm Your E-mail Address'
+    user = User.objects.get(username='testtest')
+    email = EmailAddress.objects.get(user=user.id)
+    confirmation = EmailConfirmation.objects.get(email_address=email)
+    assert confirmation.key
+    assert confirmation.key in mail.outbox[0].body
+    response = api_client.get('/account-confirm-email/{}/'.format(confirmation.key))
+    assert response.status_code == 302
+    email.refresh_from_db()
+    assert email.verified
+    assert user.profile.is_confirmed
