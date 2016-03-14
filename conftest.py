@@ -5,6 +5,7 @@ from rest_framework.test import APIClient
 from rest_framework.authtoken.models import Token
 
 USERNAME = 'qabel_user'
+ADMIN = 'qabel_admin'
 
 
 @pytest.fixture
@@ -19,6 +20,21 @@ def user(db):
         u.save()
         EmailAddress.objects.create(user=u, email=u.email, primary=True)
     return u
+
+
+@pytest.fixture
+def admin(db):
+    try:
+        u = User.objects.get(username=ADMIN)
+    except User.DoesNotExist:
+        u = User.objects.create_user(USERNAME, 'qabeladmin@example.com',
+                                     'password')
+        u.is_staff = True
+        u.is_superuser = True
+        u.save()
+        EmailAddress.objects.create(user=u, email=u.email, primary=True)
+    return u
+
 
 
 @pytest.fixture
