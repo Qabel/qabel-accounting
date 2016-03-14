@@ -14,3 +14,4 @@ django-cors-middleware==1.2.0
 django-axes==1.6.0
 django-redis-cache==1.6.5
 hiredis==0.2.0
+setuptools==20.2.2
