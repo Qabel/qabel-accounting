@@ -239,3 +239,8 @@ def test_confirm_email(api_client, token):
     email.refresh_from_db()
     assert email.verified
     assert user.profile.is_confirmed
+
+
+def test_api_root(api_client):
+    response = api_client.get('/api/v0/')
+    assert response.status_code == 200
