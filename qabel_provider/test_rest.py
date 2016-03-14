@@ -239,3 +239,10 @@ def test_confirm_email(api_client, token):
     email.refresh_from_db()
     assert email.verified
     assert user.profile.is_confirmed
+
+
+def test_no_login_throttle(api_client, user):
+    for login_try in range(5):
+        response = api_client.post('/api/v0/auth/login/',
+                                   {'username': user.username, 'password': 'password'})
+        assert response.status_code == 200, "Failed at request {}".format(login_try+0)
