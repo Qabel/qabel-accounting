@@ -3,12 +3,9 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from django.conf import settings
-from django.core import mail
 from django_prometheus.models import ExportModelOperationsMixin
 import datetime
 from django.utils import timezone
-from allauth.account.signals import email_confirmed
 
 def confirmation_days():
     return timezone.now() + datetime.timedelta(days=7)

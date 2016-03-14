@@ -97,7 +97,7 @@ class ThrottledLoginView(LoginView):
             else:
                 return self.lockout_response()
 
-        if self.watch_login(request, False):
+        if self.watch_login(request, True):
             self.login()
             return self.get_response()
         else:
