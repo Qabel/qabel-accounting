@@ -79,6 +79,8 @@ AXES_LOGIN_FAILURE_LIMIT = 5
 ACCOUNT_EMAIL_CONFIRMATION_ANONYMOUS_REDIRECT_URL = 'https://qabel.de'
 ACCOUNT_EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URL = 'https://qabel.de'
 
+ACCOUNT_ADAPTER = 'qabel_provider.adapters.IgnoreInvalidMailsAdapter'
+
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',

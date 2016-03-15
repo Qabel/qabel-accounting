@@ -26,6 +26,20 @@ def test_register_user(api_client):
 
 
 @pytest.mark.django_db
+def test_register_user_with_invalid_mail(api_client, mocker):
+    send_mail = mocker.patch('django.core.mail.backends.locmem.EmailBackend')
+    response = api_client.post('/api/v0/auth/registration/',
+                               {'username': 'test_user',
+                                'email': 'test@ccccccc.de',
+                                'password1': 'test1234',
+                                'password2': 'test1234'})
+    assert response.status_code == 201
+    assert User.objects.all().count() == 1
+    send_mail.assert_called_with(fail_silently=True)
+
+
+
+@pytest.mark.django_db
 def test_register_user_interested_in_qabel_plus(api_client):
     response = api_client.post('/api/v0/auth/registration/',
                                {'username': 'test_user',
@@ -79,6 +93,7 @@ def test_register_user_without_email_should_fail(api_client):
     assert response.status_code == 400
     assert User.objects.all().count() == 0
 
+
 @pytest.mark.django_db
 def test_forgotten_password(api_client, user):
     response2 = api_client.post('/api/v0/auth/login/', {'username': user.username, 'password': 'password'})
@@ -88,6 +103,7 @@ def test_forgotten_password(api_client, user):
     assert response.status_code == 200
     u = User.objects.get(username='qabel_user')
     assert u.password != user.password
+
 
 def test_login(api_client, user):
     response = api_client.post('/api/v0/auth/login/',
@@ -239,6 +255,18 @@ def test_confirm_email(api_client, token):
     email.refresh_from_db()
     assert email.verified
     assert user.profile.is_confirmed
+
+
+def test_confirm_invalid_email(token, mocker, user, external_api_client):
+    send_mail = mocker.patch('django.core.mail.backends.locmem.EmailBackend')
+    user.profile.needs_confirmation_after = timezone.now() - timedelta(days=7)
+    user.profile.save()
+    user.profile.refresh_from_db()
+    path = '/api/v0/auth/'
+    request_body = {'auth': 'Token {}'.format(token)}
+    response = external_api_client.post(path, request_body)
+    assert response.status_code == 200
+    send_mail.assert_called_with(fail_silently=True)
 
 
 def test_api_root(api_client):
