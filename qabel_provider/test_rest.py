@@ -241,8 +241,14 @@ def test_confirm_email(api_client, token):
     assert user.profile.is_confirmed
 
 
+def test_api_root(api_client):
+    response = api_client.get('/api/v0/')
+    assert response.status_code == 200
+
+
 def test_no_login_throttle(api_client, user):
     for login_try in range(5):
         response = api_client.post('/api/v0/auth/login/',
                                    {'username': user.username, 'password': 'password'})
         assert response.status_code == 200, "Failed at request {}".format(login_try+0)
+
