@@ -280,3 +280,19 @@ def test_no_login_throttle(api_client, user):
                                    {'username': user.username, 'password': 'password'})
         assert response.status_code == 200, "Failed at request {}".format(login_try+0)
 
+
+@pytest.mark.django_db
+def test_password_reset(api_client, user):
+    response = api_client.post('/api/v0/auth/password/reset/', {'email': user.email})
+    assert response.status_code == 200
+    assert len(mail.outbox) == 1
+    mail_body = mail.outbox[0].body
+    url = mail_body[mail_body.find('/accounts/reset/'):].split()[0]
+    response = api_client.get(url)
+    assert response.status_code == 200
+    new_password = 'test123456'
+    response = api_client.post(url, {'new_password1': new_password, 'new_password2': new_password})
+    assert response.status_code == 302
+    response = api_client.post('/api/v0/auth/login/',
+                               {'username': user.username, 'password': new_password})
+    assert response.status_code == 200
