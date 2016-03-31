@@ -30,8 +30,8 @@ def test_profile_is_confirmed_and_allowed(profile):
 
 
 def test_profile_is_disabled(profile):
-    profile.is_disabled = True
-    profile.save()
+    profile.user.is_active = False
+    profile.user.save()
     profile.refresh_from_db()
     assert not profile.is_allowed()
 

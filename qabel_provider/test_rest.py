@@ -137,8 +137,8 @@ def test_auth_resource(external_api_client, user, token):
 
 
 def test_auth_resource_with_disabled_user(external_api_client, user, token):
-    user.profile.is_disabled = True
-    user.profile.save()
+    user.is_active = False
+    user.save()
     path = '/api/v0/auth/'
     response = external_api_client.post(path, {'auth': 'Token {}'.format(token)})
     assert response.status_code == 200
@@ -296,3 +296,14 @@ def test_password_reset(api_client, user):
     response = api_client.post('/api/v0/auth/login/',
                                {'username': user.username, 'password': new_password})
     assert response.status_code == 200
+
+
+@pytest.mark.django_db
+def test_enable_disabled_user(api_client, user, token):
+    user.profile.needs_confirmation_after = timezone.now() - timedelta(days=7)
+    user.profile.save()
+    user.profile.refresh_from_db()
+    assert user.profile.check_confirmation_and_send_mail()
+    user.profile.confirm_email()
+
+    assert not user.profile.check_confirmation_and_send_mail()
