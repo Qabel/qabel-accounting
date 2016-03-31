@@ -25,10 +25,6 @@ class Profile(models.Model, ExportModelOperationsMixin('profile')):
     pro_notification_mail = models.BooleanField(default=False)
 
     @property
-    def is_disabled(self):
-        return not self.is_allowed() and self.user.is_active
-
-    @property
     def is_confirmed(self):
         email = EmailAddress.objects.get_primary(self.user)
         return email.verified
