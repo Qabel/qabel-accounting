@@ -3,12 +3,10 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from django.conf import settings
-from django.core import mail
 from django_prometheus.models import ExportModelOperationsMixin
 import datetime
 from django.utils import timezone
-from allauth.account.signals import email_confirmed
+
 
 
 def confirmation_days():
@@ -18,7 +16,6 @@ def confirmation_days():
 class Profile(models.Model, ExportModelOperationsMixin('profile')):
     user = models.OneToOneField(User, primary_key=True, on_delete=models.CASCADE)
     created_at = models.DateTimeField(verbose_name='Creation date and time', auto_now_add=True)
-    is_disabled = models.BooleanField(verbose_name='Profile is disabled', default=False)
     next_confirmation_mail = models.DateTimeField(verbose_name='Date of the next email confirmation', null=True,
                                                   blank=True)
     needs_confirmation_after = models.DateTimeField(default=confirmation_days)
@@ -45,9 +42,8 @@ class Profile(models.Model, ExportModelOperationsMixin('profile')):
         return self.needs_confirmation_after <= timezone.now()
 
     def is_allowed(self) -> bool:
-        if self.is_disabled:
-            return False
-        return self.is_confirmed or not self.confirmation_date_exceeded()
+        return self.user.is_active and \
+               (self.is_confirmed or not self.confirmation_date_exceeded())
 
     def set_next_mail_date(self):
         self.next_confirmation_mail = timezone.now() + datetime.timedelta(hours=24)
@@ -57,7 +53,6 @@ class Profile(models.Model, ExportModelOperationsMixin('profile')):
             if not self.was_email_sent_last_24_hours():
                 self.send_confirmation_mail()
                 self.set_next_mail_date()
-            self.is_disabled = True
             self.save()
             return True
         return False

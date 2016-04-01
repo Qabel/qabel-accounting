@@ -26,6 +26,20 @@ def test_register_user(api_client):
 
 
 @pytest.mark.django_db
+def test_register_user_with_invalid_mail(api_client, mocker):
+    send_mail = mocker.patch('django.core.mail.backends.locmem.EmailBackend')
+    response = api_client.post('/api/v0/auth/registration/',
+                               {'username': 'test_user',
+                                'email': 'test@ccccccc.de',
+                                'password1': 'test1234',
+                                'password2': 'test1234'})
+    assert response.status_code == 201
+    assert User.objects.all().count() == 1
+    send_mail.assert_called_with(fail_silently=True)
+
+
+
+@pytest.mark.django_db
 def test_register_user_interested_in_qabel_plus(api_client):
     response = api_client.post('/api/v0/auth/registration/',
                                {'username': 'test_user',
@@ -79,6 +93,7 @@ def test_register_user_without_email_should_fail(api_client):
     assert response.status_code == 400
     assert User.objects.all().count() == 0
 
+
 @pytest.mark.django_db
 def test_forgotten_password(api_client, user):
     response2 = api_client.post('/api/v0/auth/login/', {'username': user.username, 'password': 'password'})
@@ -88,6 +103,7 @@ def test_forgotten_password(api_client, user):
     assert response.status_code == 200
     u = User.objects.get(username='qabel_user')
     assert u.password != user.password
+
 
 def test_login(api_client, user):
     response = api_client.post('/api/v0/auth/login/',
@@ -117,12 +133,12 @@ def test_auth_resource(external_api_client, user, token):
     assert response.status_code == 200
     data = loads(response.content)
     assert data['user_id'] == user.id
-    assert data['active'] == (not user.profile.is_disabled)
+    assert data['active'] == user.profile.is_allowed()
 
 
 def test_auth_resource_with_disabled_user(external_api_client, user, token):
-    user.profile.is_disabled = True
-    user.profile.save()
+    user.is_active = False
+    user.save()
     path = '/api/v0/auth/'
     response = external_api_client.post(path, {'auth': 'Token {}'.format(token)})
     assert response.status_code == 200
@@ -239,3 +255,55 @@ def test_confirm_email(api_client, token):
     email.refresh_from_db()
     assert email.verified
     assert user.profile.is_confirmed
+
+
+def test_confirm_invalid_email(token, mocker, user, external_api_client):
+    send_mail = mocker.patch('django.core.mail.backends.locmem.EmailBackend')
+    user.profile.needs_confirmation_after = timezone.now() - timedelta(days=7)
+    user.profile.save()
+    user.profile.refresh_from_db()
+    path = '/api/v0/auth/'
+    request_body = {'auth': 'Token {}'.format(token)}
+    response = external_api_client.post(path, request_body)
+    assert response.status_code == 200
+    send_mail.assert_called_with(fail_silently=True)
+
+
+def test_api_root(api_client):
+    response = api_client.get('/api/v0/')
+    assert response.status_code == 200
+
+
+def test_no_login_throttle(api_client, user):
+    for login_try in range(5):
+        response = api_client.post('/api/v0/auth/login/',
+                                   {'username': user.username, 'password': 'password'})
+        assert response.status_code == 200, "Failed at request {}".format(login_try+0)
+
+
+@pytest.mark.django_db
+def test_password_reset(api_client, user):
+    response = api_client.post('/api/v0/auth/password/reset/', {'email': user.email})
+    assert response.status_code == 200
+    assert len(mail.outbox) == 1
+    mail_body = mail.outbox[0].body
+    url = mail_body[mail_body.find('/accounts/reset/'):].split()[0]
+    response = api_client.get(url)
+    assert response.status_code == 200
+    new_password = 'test123456'
+    response = api_client.post(url, {'new_password1': new_password, 'new_password2': new_password})
+    assert response.status_code == 302
+    response = api_client.post('/api/v0/auth/login/',
+                               {'username': user.username, 'password': new_password})
+    assert response.status_code == 200
+
+
+@pytest.mark.django_db
+def test_enable_disabled_user(api_client, user, token):
+    user.profile.needs_confirmation_after = timezone.now() - timedelta(days=7)
+    user.profile.save()
+    user.profile.refresh_from_db()
+    assert user.profile.check_confirmation_and_send_mail()
+    user.profile.confirm_email()
+
+    assert not user.profile.check_confirmation_and_send_mail()

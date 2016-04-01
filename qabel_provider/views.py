@@ -1,7 +1,6 @@
 import logging
 
 from django.conf import settings
-from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.utils.crypto import constant_time_compare
 from rest_auth.views import LoginView
@@ -17,12 +16,12 @@ from qabel_provider.serializers import UserSerializer
 logger = logging.getLogger(__name__)
 
 
-@login_required
 @api_view(('GET',))
 def api_root(request, format=None):
     return Response({
-        'quota': reverse('api-quota', request=request, format=format),
-        'prefix': reverse('api-prefix', request=request, format=format),
+        'register': reverse('rest_register', request=request, format=format),
+        'verify-email': reverse('rest_verify_email', request=request, format=format),
+        'auth': reverse('api-auth', request=request, format=format),
         'login': reverse('rest_login', request=request, format=format),
         'logout': reverse('rest_logout', request=request, format=format),
         'user': reverse('rest_user_details', request=request, format=format),
@@ -97,7 +96,7 @@ class ThrottledLoginView(LoginView):
             else:
                 return self.lockout_response()
 
-        if self.watch_login(request, False):
+        if self.watch_login(request, True):
             self.login()
             return self.get_response()
         else:
