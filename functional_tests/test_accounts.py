@@ -18,7 +18,7 @@ def browse_to_detail(browser, base_url):
     browser.fill_form({'username': 'qabel_user',
                        'password': 'password'})
     browser.find_by_css('.submit-row > input').first.click()
-    browser.find_link_by_text('Benutzer').first.click()
+    browser.find_link_by_href('/admin/auth/user/'.format(base_url)).first.click()
     browser.find_link_by_text('qabel_user').first.click()
 
 
