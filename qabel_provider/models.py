@@ -8,7 +8,6 @@ import datetime
 from django.utils import timezone
 
 
-
 def confirmation_days():
     return timezone.now() + datetime.timedelta(days=7)
 
