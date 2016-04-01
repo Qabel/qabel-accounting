@@ -1,6 +1,36 @@
-# Qabel Accounting Server
+<img align="left" width="0" height="150px" hspace="20"/>
+<a href="https://qabel.de" align="left">
+	<img src="https://files.qabel.de/img/qabel_logo_orange_preview.png" height="150px" align="left"/>
+</a>
+<img align="left" width="0" height="150px" hspace="25"/>
+> The Qabel Accounting Server
 
 [![Build Status](https://travis-ci.org/Qabel/qabel-accounting.svg?branch=master)](https://travis-ci.org/Qabel/qabel-accounting)
+[![version](https://img.shields.io/badge/beta-dev-blue.svg)](https://qabel.de)
+
+This project provides the accounting server for <a href="https://qabel.de"><img alt="Qabel" src="https://files.qabel.de/img/qabel-kl.png" height="18px"/></a> that manages Qabel-Accounts that authorize Qabel Box usage according to the [Qabel Box Protocol](http://qabel.github.io/docs/Qabel-Protocol-Box/). It is a small part of the qabel platform.
+
+<br style="clear: both"/>
+<br style="clear: both"/>
+<p align="center">
+	<a href="#introduction">Introduction</a> |
+	<a href="#installation">Installation</a> |
+	<a href="#requirements">Requirements</a> |
+	<a href="#running_tests">Running the tests</a> |
+	<a href="#running_server">Running the server</a> |
+	<a href="#Production setup">Production setup</a> |
+	<a href="#development">Development</a>
+</p>
+
+# Introduction
+For a comprehensive documentation of the whole Qabel Platform use https://qabel.de as the main source of information. http://qabel.github.io/docs/ may provide additional technical information.
+
+Qabel consists of multiple Projects:
+ * [Qabel Android Client](https://github.com/Qabel/qabel-android)
+ * [Qabel Core](https://github.com/Qabel/qabel-core) is a library that includes the common code between both clients to keep them consistent
+ * [Qabel Drop Server](https://github.com/Qabel/qabel-drop) is the target server for drop messages according to the [Qabel Drop Protocol](http://qabel.github.io/docs/Qabel-Protocol-Drop/)
+ * [Qabel Accounting Server](https://github.com/Qabel/qabel-accounting) manages Qabel-Accounts that authorize Qabel Box usage according to the [Qabel Box Protocol](http://qabel.github.io/docs/Qabel-Protocol-Box/)
+ * [Qabel Block Server](https://github.com/Qabel/qabel-block) serves as the storage backend according to the [Qabel Box Protocol](http://qabel.github.io/docs/Qabel-Protocol-Box/)
 
 ## Requirements
 Python 3.4 or 3.5
@@ -17,7 +47,7 @@ Run the migrations
 
 	./manage.py migrate
 
-## Running tests
+## <a name="running_tests"></a>Running tests
 
 The tests are run by the py.test framework. You can choose which browser you want to use for the functional tests.
 
@@ -28,8 +58,13 @@ Phantomjs: (recommended)
 Firefox:
 
 	py.test --splinter-webdriver firefox
+	
+## <a name="running_server"></a>Running the server
+```bash
+python manage.py runserver
+```
 
-## Production setup
+## <a name="production_setup"></a>Production setup
 
 See the [django documentation](https://docs.djangoproject.com/en/1.8/howto/deployment/)
 The server exports [prometheus](https://www.prometheus.io) metrics at /metrics. If those should not be public, you should
