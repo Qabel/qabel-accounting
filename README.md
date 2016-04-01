@@ -8,7 +8,7 @@
 [![Build Status](https://travis-ci.org/Qabel/qabel-accounting.svg?branch=master)](https://travis-ci.org/Qabel/qabel-accounting)
 [![version](https://img.shields.io/badge/beta-dev-blue.svg)](https://qabel.de)
 
-This project provides the accounting server for <a href="https://qabel.de"><img alt="Qabel" src="https://files.qabel.de/img/qabel-kl.png" height="18px"/></a> that manages Qabel-Accounts that authorize Qabel Box usage according to the [Qabel Box Protocol](http://qabel.github.io/docs/Qabel-Protocol-Box/). It is a small part of the qabel platform.
+This project provides the accounting server for <a href="https://qabel.de"><img alt="Qabel" src="https://files.qabel.de/img/qabel-kl.png" height="18px"/></a> that manages Qabel-Accounts that authorize Qabel Box usage according to the [Qabel Box Protocol](http://qabel.github.io/docs/Qabel-Protocol-Box/).
 
 <br style="clear: both"/>
 <br style="clear: both"/>
@@ -18,7 +18,7 @@ This project provides the accounting server for <a href="https://qabel.de"><img 
 	<a href="#requirements">Requirements</a> |
 	<a href="#running_tests">Running the tests</a> |
 	<a href="#running_server">Running the server</a> |
-	<a href="#Production setup">Production setup</a> |
+	<a href="#production_setup">Production setup</a> |
 	<a href="#development">Development</a>
 </p>
 
