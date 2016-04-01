@@ -13,17 +13,17 @@ def test_login(base_url, user, browser):
     browser.find_by_id('id_submit').click()
 
 
-def browse_to_detail(browser, base_url):
+def browse_to_users(browser, base_url):
     browser.visit('{0}/admin/'.format(base_url))
     browser.fill_form({'username': 'qabel_user',
                        'password': 'password'})
     browser.find_by_css('.submit-row > input').first.click()
     browser.find_link_by_href('/admin/auth/user/'.format(base_url)).first.click()
-    browser.find_link_by_text('qabel_user').first.click()
 
 
 def test_users_detail(base_url, admin, user, browser):
-    browse_to_detail(browser, base_url)
+    browse_to_users(browser, base_url)
+    browser.find_link_by_text('qabel_user').first.click()
     assert browser.is_text_present('Plus notification mail')
     assert browser.is_text_present('Pro notification mail')
     assert not browser.find_by_id('id_profile-0-plus_notification_mail').first.checked
@@ -36,3 +36,10 @@ def test_users_detail(base_url, admin, user, browser):
     assert browser.is_text_present('Pro notification mail')
     assert browser.find_by_id('id_profile-0-plus_notification_mail').checked
     assert browser.find_by_id('id_profile-0-pro_notification_mail').checked
+
+
+def test_user_filters(base_url, admin, user, browser):
+    browse_to_users(browser, base_url)
+    filters = browser.find_by_id('changelist-filter').text
+    assert 'plus notification' in filters
+    assert 'pro notification' in filters

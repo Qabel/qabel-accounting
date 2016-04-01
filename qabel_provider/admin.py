@@ -13,6 +13,9 @@ class UserProfileInline(admin.StackedInline):
 
 class UserAdmin(OriginalUserAdmin):
     inlines = [UserProfileInline]
+    list_filter = OriginalUserAdmin.list_filter + \
+        ('profile__plus_notification_mail', 'profile__pro_notification_mail')
+
 
 try:
     admin.site.unregister(User)
