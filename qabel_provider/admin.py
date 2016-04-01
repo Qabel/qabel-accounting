@@ -8,9 +8,14 @@ class UserProfileInline(admin.StackedInline):
     model = Profile
     can_delete = False
 
+    fields = ('plus_notification_mail', 'pro_notification_mail')
+
 
 class UserAdmin(OriginalUserAdmin):
     inlines = [UserProfileInline]
+    list_filter = OriginalUserAdmin.list_filter + \
+        ('profile__plus_notification_mail', 'profile__pro_notification_mail')
+
 
 try:
     admin.site.unregister(User)

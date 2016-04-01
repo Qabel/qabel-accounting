@@ -14,9 +14,6 @@ def confirmation_days():
 
 class Profile(models.Model, ExportModelOperationsMixin('profile')):
     user = models.OneToOneField(User, primary_key=True, on_delete=models.CASCADE)
-    quota = models.PositiveIntegerField(verbose_name="Storage quota", default=0)
-    used_storage = models.PositiveIntegerField(verbose_name="Used storage", default=0)
-    downloads = models.PositiveIntegerField(verbose_name="Download traffic", default=0)
     created_at = models.DateTimeField(verbose_name='Creation date and time', auto_now_add=True)
     next_confirmation_mail = models.DateTimeField(verbose_name='Date of the next email confirmation', null=True,
                                                   blank=True)
