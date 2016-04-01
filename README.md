@@ -27,6 +27,7 @@ For a comprehensive documentation of the whole Qabel Platform use https://qabel.
 
 Qabel consists of multiple Projects:
  * [Qabel Android Client](https://github.com/Qabel/qabel-android)
+ * [Qabel Desktop Client](https://github.com/Qabel/qabel-desktop)
  * [Qabel Core](https://github.com/Qabel/qabel-core) is a library that includes the common code between both clients to keep them consistent
  * [Qabel Drop Server](https://github.com/Qabel/qabel-drop) is the target server for drop messages according to the [Qabel Drop Protocol](http://qabel.github.io/docs/Qabel-Protocol-Drop/)
  * [Qabel Accounting Server](https://github.com/Qabel/qabel-accounting) manages Qabel-Accounts that authorize Qabel Box usage according to the [Qabel Box Protocol](http://qabel.github.io/docs/Qabel-Protocol-Box/)
