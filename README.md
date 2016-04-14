@@ -72,6 +72,10 @@ The server exports [prometheus](https://www.prometheus.io) metrics at /metrics. 
 block this location in the webserver.
 If you have problems with CORS (Cross-Origin Resource Sharing), edit the 'CORS_ORIGIN_WHITELIST' in local_settings.py. For more information see [CORS middleware configuration options](https://github.com/zestedesavoir/django-cors-middleware#configuration).
 
+Before running any manage.py command in production, make sure to export your settings file:
+
+    export DJANGO_SETTINGS_MODULE=qabel_id.settings.production_settings
+
 ## Development
 
 To use the dummy mail backend, see: [django documentation for email](https://docs.djangoproject.com/en/1.9/topics/email/#dummy-backend)
