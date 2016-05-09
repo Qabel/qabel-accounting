@@ -2,7 +2,8 @@ import pytest
 
 
 @pytest.fixture
-def base_url(live_server):
+def base_url(settings, live_server):
+    settings.DEBUG = True
     return live_server.url
 
 
