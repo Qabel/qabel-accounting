@@ -65,4 +65,3 @@ def create_profile_for_new_user(sender, created, instance, **kwargs):
     if created:
         profile = Profile(user=instance)
         profile.save()
-

@@ -38,7 +38,6 @@ def test_register_user_with_invalid_mail(api_client, mocker):
     send_mail.assert_called_with(fail_silently=True)
 
 
-
 @pytest.mark.django_db
 def test_register_user_interested_in_qabel_plus(api_client):
     response = api_client.post('/api/v0/auth/registration/',
@@ -83,6 +82,7 @@ def test_register_user_interested_in_qabel_plus_and_pro(api_client):
     u = User.objects.get(username='test_user')
     assert u.profile.plus_notification_mail
     assert u.profile.pro_notification_mail
+
 
 @pytest.mark.django_db
 def test_register_user_without_email_should_fail(api_client):

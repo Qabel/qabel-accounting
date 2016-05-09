@@ -1,7 +1,5 @@
 from datetime import timedelta
 from django.utils import timezone
-import pytest
-from qabel_provider import models
 
 SIZE = 2096
 
