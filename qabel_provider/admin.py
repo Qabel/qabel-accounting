@@ -8,7 +8,10 @@ class UserProfileInline(admin.StackedInline):
     model = Profile
     can_delete = False
 
-    fields = ('plus_notification_mail', 'pro_notification_mail')
+    fields = (
+        'plus_notification_mail', 'pro_notification_mail',
+        'block_quota', 'monthly_traffic_quota'
+    )
 
 
 class UserAdmin(OriginalUserAdmin):
