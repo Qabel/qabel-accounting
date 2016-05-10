@@ -134,6 +134,7 @@ def test_auth_resource(external_api_client, user, token):
     data = loads(response.content)
     assert data['user_id'] == user.id
     assert data['active'] == user.profile.is_allowed()
+    assert data['block_quota'] == user.profile.block_quota
 
 
 def test_auth_resource_with_disabled_user(external_api_client, user, token):

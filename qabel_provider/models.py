@@ -21,6 +21,8 @@ class Profile(models.Model, ExportModelOperationsMixin('profile')):
     plus_notification_mail = models.BooleanField(default=False)
     pro_notification_mail = models.BooleanField(default=False)
 
+    block_quota = models.IntegerField(verbose_name='block server quota (in bytes)', default=2 * 1024**3)
+
     @property
     def is_confirmed(self):
         email = EmailAddress.objects.get_primary(self.user)
