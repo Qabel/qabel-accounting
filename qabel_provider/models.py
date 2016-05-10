@@ -22,6 +22,8 @@ class Profile(models.Model, ExportModelOperationsMixin('profile')):
     pro_notification_mail = models.BooleanField(default=False)
 
     block_quota = models.IntegerField(verbose_name='block server quota (in bytes)', default=2 * 1024**3)
+    monthly_traffic_quota = models.IntegerField(verbose_name='block server traffic quota per month (in bytes)',
+                                                default=20 * 1024**3)
 
     @property
     def is_confirmed(self):
