@@ -73,7 +73,12 @@ def auth_resource(request, format=None):
 
     logger.debug('Auth resource called: user={}'.format(user))
     is_disabled = user.profile.check_confirmation_and_send_mail()
-    return Response({'user_id': user.id, 'active': (not is_disabled)})
+    return Response({
+        'user_id': user.id,
+        'active': (not is_disabled),
+        'block_quota': user.profile.block_quota,
+        'monthly_traffic_quota': user.profile.monthly_traffic_quota,
+    })
 
 
 class ThrottledLoginView(LoginView):
