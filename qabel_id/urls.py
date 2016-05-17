@@ -44,7 +44,8 @@ rest_urls = [
     url(r'^$', views.api_root, name='api-root'),
     url(r'^auth/', include(rest_auth_urls)),
     url(r'^auth/registration/', include('rest_auth.registration.urls')),
-    url(r'^auth/', views.auth_resource, name='api-auth'),
+    url(r'^auth/$', views.auth_resource, name='api-auth'),
+    url(r'^auth/info/$', views.info_resource, name='api-info'),
 ]
 
 urlpatterns = [

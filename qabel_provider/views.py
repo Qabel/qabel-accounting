@@ -1,6 +1,7 @@
 import logging
 
 from django.conf import settings
+from django.contrib.auth.models import User
 from django.http import HttpResponse
 from django.utils.crypto import constant_time_compare
 from rest_auth.views import LoginView
@@ -72,6 +73,41 @@ def auth_resource(request, format=None):
     user = token_object.user
 
     logger.debug('Auth resource called: user={}'.format(user))
+    is_disabled = user.profile.check_confirmation_and_send_mail()
+    return Response({
+        'user_id': user.id,
+        'active': (not is_disabled),
+        'block_quota': user.profile.block_quota,
+        'monthly_traffic_quota': user.profile.monthly_traffic_quota,
+    })
+
+
+@api_view(('POST',))
+def info_resource(request, format=None):
+    """
+    Return user information by user ID.
+
+    Provides access to user information for other services like qabel-block.
+
+    :param request: rest request
+    :param format: ignored, because the resource never responds with a body
+    :return: HttpResponseBadRequest|HttpResponse(status=204)|HttpResponse(status=403)
+    """
+    if not check_api_key(request):
+        logger.warning('Called with invalid API key')
+        return HttpResponse('Invalid API key', status=400)
+
+    try:
+        user_id = int(request.data['id'])
+    except (KeyError, ValueError):
+        return Response(status=400, data={'error': 'Malformed user ID'})
+
+    try:
+        user = User.objects.get(id=user_id)
+    except User.DoesNotExist:
+        return Response(status=404, data={'error': 'Invalid user ID'})
+
+    logger.debug('Info resource called: user={}'.format(user))
     is_disabled = user.profile.check_confirmation_and_send_mail()
     return Response({
         'user_id': user.id,

@@ -127,9 +127,31 @@ def test_get_own_user(api_client, user):
         == loads(response.content)
 
 
-def test_auth_resource(external_api_client, user, token):
-    path = '/api/v0/auth/'
-    response = external_api_client.post(path, {'auth': 'Token {}'.format(token)})
+@pytest.fixture(params=['auth', 'info'])
+def call_resource_api(request, external_api_client, user, token):
+    def make_request():
+        return external_api_client.post(path, payload)
+
+    if request.param == 'auth':
+        path = '/api/v0/auth/'
+        payload = {'auth': 'Token {}'.format(token)}
+    else:
+        path = '/api/v0/auth/info/'
+        payload = {'id': user.id}
+
+    return make_request
+
+
+@pytest.fixture(params=[
+    '/api/v0/auth/',
+    '/api/v0/auth/info/',
+])
+def resource_path(request):
+    return request.param
+
+
+def test_auth_resource(user, call_resource_api):
+    response = call_resource_api()
     assert response.status_code == 200
     data = loads(response.content)
     assert data['user_id'] == user.id
@@ -138,11 +160,10 @@ def test_auth_resource(external_api_client, user, token):
     assert data['monthly_traffic_quota'] == user.profile.monthly_traffic_quota
 
 
-def test_auth_resource_with_disabled_user(external_api_client, user, token):
+def test_auth_resource_with_disabled_user(call_resource_api, user):
     user.is_active = False
     user.save()
-    path = '/api/v0/auth/'
-    response = external_api_client.post(path, {'auth': 'Token {}'.format(token)})
+    response = call_resource_api()
     assert response.status_code == 200
     data = loads(response.content)
     assert data['user_id'] == user.id
@@ -165,9 +186,16 @@ def test_auth_resource_unknown_user(external_api_client):
     assert data['error']
 
 
-def test_auth_resource_no_body(external_api_client):
-    path = '/api/v0/auth/'
-    response = external_api_client.post(path)
+def test_info_resource_unknown_user(external_api_client, user):
+    path = '/api/v0/auth/info/'
+    response = external_api_client.post(path, {'id': user.id + 1})
+    assert response.status_code == 404
+    data = loads(response.content)
+    assert data['error']
+
+
+def test_auth_resource_no_body(external_api_client, resource_path):
+    response = external_api_client.post(resource_path)
     assert response.status_code == 400
     data = loads(response.content)
     assert data['error']
@@ -203,9 +231,8 @@ def test_failed_auth_resource_after_7_days(external_api_client, user, token):
     assert len(mail.outbox) == 2
 
 
-def test_auth_resource_api_key(user_client):
-    path = '/api/v0/auth/'
-    response = user_client.post(path)
+def test_resource_api_key(user_client, resource_path):
+    response = user_client.post(resource_path)
     assert response.status_code == 400, "Should require APISECRET header"
 
 

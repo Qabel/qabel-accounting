@@ -36,7 +36,6 @@ def admin(db):
     return u
 
 
-
 @pytest.fixture
 def profile(user):
     return user.profile
@@ -69,4 +68,3 @@ def user_client(api_client, user):
 def external_api_client(user, api_secret):
     client = APIClient(HTTP_APISECRET=api_secret)
     return client
-
