@@ -47,8 +47,6 @@ def auth_resource(request, format=None):
     if the user is authenticated. The block server should set the same
     Authorization header that itself received by the user.
 
-    :param request: rest request
-    :param format: ignored, because the resource never responds with a body
     :return: HttpResponseBadRequest|HttpResponse(status=204)|HttpResponse(status=403)
     """
     if not check_api_key(request):
@@ -89,8 +87,6 @@ def info_resource(request, format=None):
 
     Provides access to user information for other services like qabel-block.
 
-    :param request: rest request
-    :param format: ignored, because the resource never responds with a body
     :return: HttpResponseBadRequest|HttpResponse(status=204)|HttpResponse(status=403)
     """
     if not check_api_key(request):
