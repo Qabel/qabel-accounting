@@ -127,9 +127,24 @@ def test_get_own_user(api_client, user):
         == loads(response.content)
 
 
-def test_auth_resource(external_api_client, user, token):
-    path = '/api/v0/auth/'
-    response = external_api_client.post(path, {'auth': 'Token {}'.format(token)})
+@pytest.fixture(params=['auth', 'info'])
+def call_auth_resource(request, external_api_client, user, token, auth_resource_path):
+    def make_request():
+        if request.param == 'auth':
+            payload = {'auth': 'Token {}'.format(token)}
+        else:
+            payload = {'user_id': user.id}
+        return external_api_client.post(auth_resource_path, payload)
+    return make_request
+
+
+@pytest.fixture
+def auth_resource_path():
+    return '/api/v0/internal/user/'
+
+
+def test_auth_resource(user, call_auth_resource):
+    response = call_auth_resource()
     assert response.status_code == 200
     data = loads(response.content)
     assert data['user_id'] == user.id
@@ -138,48 +153,50 @@ def test_auth_resource(external_api_client, user, token):
     assert data['monthly_traffic_quota'] == user.profile.monthly_traffic_quota
 
 
-def test_auth_resource_with_disabled_user(external_api_client, user, token):
+def test_auth_resource_with_disabled_user(call_auth_resource, user):
     user.is_active = False
     user.save()
-    path = '/api/v0/auth/'
-    response = external_api_client.post(path, {'auth': 'Token {}'.format(token)})
+    response = call_auth_resource()
     assert response.status_code == 200
     data = loads(response.content)
     assert data['user_id'] == user.id
     assert data['active'] is False
 
 
-def test_auth_resource_invalid_auth_type(external_api_client, token):
-    path = '/api/v0/auth/'
-    response = external_api_client.post(path, {'auth': 'Foobar {}'.format(token)})
+def test_auth_resource_invalid_auth_type(external_api_client, token, auth_resource_path):
+    response = external_api_client.post(auth_resource_path, {'auth': 'Foobar {}'.format(token)})
     assert response.status_code == 400
     data = loads(response.content)
     assert data['error']
 
 
-def test_auth_resource_unknown_user(external_api_client):
-    path = '/api/v0/auth/'
-    response = external_api_client.post(path, {'auth': 'Token foobar'})
+def test_auth_resource_unknown_user(external_api_client, auth_resource_path):
+    response = external_api_client.post(auth_resource_path, {'auth': 'Token foobar'})
     assert response.status_code == 404
     data = loads(response.content)
     assert data['error']
 
 
-def test_auth_resource_no_body(external_api_client):
-    path = '/api/v0/auth/'
-    response = external_api_client.post(path)
+def test_info_resource_unknown_user(external_api_client, user, auth_resource_path):
+    response = external_api_client.post(auth_resource_path, {'user_id': user.id + 1})
+    assert response.status_code == 404
+    data = loads(response.content)
+    assert data['error']
+
+
+def test_auth_resource_no_body(external_api_client, auth_resource_path):
+    response = external_api_client.post(auth_resource_path)
     assert response.status_code == 400
     data = loads(response.content)
     assert data['error']
 
 
-def test_failed_auth_resource_after_7_days(external_api_client, user, token):
+def test_failed_auth_resource_after_7_days(external_api_client, user, token, auth_resource_path):
     user.profile.needs_confirmation_after = timezone.now() - timedelta(days=7)
     user.profile.save()
     user.profile.refresh_from_db()
-    path = '/api/v0/auth/'
     request_body = {'auth': 'Token {}'.format(token)}
-    response = external_api_client.post(path, request_body)
+    response = external_api_client.post(auth_resource_path, request_body)
     assert response.status_code == 200
     data = loads(response.content)
     assert data['active'] is False
@@ -188,7 +205,7 @@ def test_failed_auth_resource_after_7_days(external_api_client, user, token):
     assert mail.outbox[0].body.startswith('English')
 
     # Check, that no new mail is send within 24 hours
-    response = external_api_client.post(path, request_body)
+    response = external_api_client.post(auth_resource_path, request_body)
     data = loads(response.content)
     assert data['active'] is False
     assert response.status_code == 200
@@ -198,14 +215,13 @@ def test_failed_auth_resource_after_7_days(external_api_client, user, token):
     user.profile.next_confirmation_mail = timezone.now() - timedelta(minutes=1)
     user.profile.save()
     user.profile.refresh_from_db()
-    response = external_api_client.post(path, request_body)
+    response = external_api_client.post(auth_resource_path, request_body)
     assert response.status_code == 200
     assert len(mail.outbox) == 2
 
 
-def test_auth_resource_api_key(user_client):
-    path = '/api/v0/auth/'
-    response = user_client.post(path)
+def test_resource_api_key(user_client, auth_resource_path):
+    response = user_client.post(auth_resource_path)
     assert response.status_code == 400, "Should require APISECRET header"
 
 
@@ -259,14 +275,13 @@ def test_confirm_email(api_client, token):
     assert user.profile.is_confirmed
 
 
-def test_confirm_invalid_email(token, mocker, user, external_api_client):
+def test_confirm_invalid_email(token, mocker, user, external_api_client, auth_resource_path):
     send_mail = mocker.patch('django.core.mail.backends.locmem.EmailBackend')
     user.profile.needs_confirmation_after = timezone.now() - timedelta(days=7)
     user.profile.save()
     user.profile.refresh_from_db()
-    path = '/api/v0/auth/'
     request_body = {'auth': 'Token {}'.format(token)}
-    response = external_api_client.post(path, request_body)
+    response = external_api_client.post(auth_resource_path, request_body)
     assert response.status_code == 200
     send_mail.assert_called_with(fail_silently=True)
 

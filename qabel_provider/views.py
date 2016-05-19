@@ -1,6 +1,7 @@
 import logging
 
 from django.conf import settings
+from django.contrib.auth.models import User
 from django.http import HttpResponse
 from django.utils.crypto import constant_time_compare
 from rest_auth.views import LoginView
@@ -42,34 +43,47 @@ def auth_resource(request, format=None):
     """
     Handles auth for uploads, downloads and deletes on the storage backend.
 
+    This returns user data by either passing an authentication token
+    presented by the user (*auth*) or by passing an user ID (*user_id*).
+
+    The first case authenticates the user to the client of this API, the second
+    obviously doesn't.
+
     This resource is meant for the block server which can call it to check
     if the user is authenticated. The block server should set the same
     Authorization header that itself received by the user.
 
-    :param request: rest request
-    :param format: ignored, because the resource never responds with a body
-    :return: HttpResponseBadRequest|HttpResponse(status=204)|HttpResponse(status=403)
+    :return: HttpResponseBadRequest|HttpResponse(status=204)|HttpResponse(status=403)|HttpResponse(status=404)
     """
     if not check_api_key(request):
         logger.warning('Called with invalid API key')
         return HttpResponse("Invalid API key", status=400)
 
-    try:
+    if 'auth' in request.data and 'user_id' in request.data:
+        return Response(status=400, data={'error': 'Pass *either* an auth token *or* an user ID'})
+    elif 'auth' in request.data:
         user_auth = request.data['auth']
-    except KeyError:
-        return Response(status=400, data={'error': 'No auth given'})
-    try:
-        auth_type, token = user_auth.split()
-        if auth_type != 'Token':
-            raise ValueError()
-    except ValueError:
-        return Response(status=400, data={'error': 'Invalid auth type'})
-
-    try:
-        token_object = Token.objects.get(key=token)
-    except Token.DoesNotExist:
-        return Response(status=404, data={'error': 'Invalid token'})
-    user = token_object.user
+        try:
+            auth_type, token = user_auth.split()
+            if auth_type != 'Token':
+                raise ValueError()
+        except ValueError:
+            return Response(status=400, data={'error': 'Invalid auth type'})
+        try:
+            user = Token.objects.get(key=token).user
+        except Token.DoesNotExist:
+            return Response(status=404, data={'error': 'Invalid token'})
+    elif 'user_id' in request.data:
+        try:
+            user_id = int(request.data['user_id'])
+        except (KeyError, ValueError):
+            return Response(status=400, data={'error': 'Malformed user ID'})
+        try:
+            user = User.objects.get(id=user_id)
+        except User.DoesNotExist:
+            return Response(status=404, data={'error': 'Invalid user ID'})
+    else:
+        return Response(status=400, data={'error': 'No user identification supplied'})
 
     logger.debug('Auth resource called: user={}'.format(user))
     is_disabled = user.profile.check_confirmation_and_send_mail()
