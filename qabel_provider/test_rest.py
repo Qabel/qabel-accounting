@@ -140,7 +140,7 @@ def call_auth_resource(request, external_api_client, user, token, auth_resource_
 
 @pytest.fixture
 def auth_resource_path():
-    return '/api/v0/auth/'
+    return '/api/v0/internal/user/'
 
 
 def test_auth_resource(user, call_auth_resource):
