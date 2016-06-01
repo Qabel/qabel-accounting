@@ -15,6 +15,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='profile',
             name='monthly_traffic_quota',
-            field=models.IntegerField(default=21474836480, verbose_name='block server traffic quota per month (in bytes)'),
+            field=models.BigIntegerField(default=21474836480, verbose_name='block server traffic quota per month (in bytes)'),
         ),
     ]

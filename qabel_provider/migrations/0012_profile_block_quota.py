@@ -15,6 +15,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='profile',
             name='block_quota',
-            field=models.IntegerField(default=2147483648, verbose_name='block server quota (in bytes)'),
+            field=models.BigIntegerField(default=2147483648, verbose_name='block server quota (in bytes)'),
         ),
     ]
