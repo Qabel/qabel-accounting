@@ -48,9 +48,12 @@ Create a virtualenv for the project
 	pip install -r requirements.txt
 
 (optional) For production setup do
+
 	export DJANGO_SETTINGS_MODULE=qabel_id.settings.production_settings
 	copy qabel_id/settings/local_settings.example.py to local_settings.py and adapt it (see below)
+
 (optional) Adapting settings
+
 	Change SECRET_KEY and keep it save
 	Change API_SECRET and share it with block server
 	Change database settings accordingly to your needs
