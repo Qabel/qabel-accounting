@@ -8,6 +8,18 @@ STATIC_URL = '/static/'
 CORS_ORIGIN_WHITELIST = (
     #'qabel.dev',
 )
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'changeme',
+        'USER': 'changeme',
+        'PASSWORD': 'changeme',
+        'HOST': 'changeme',
+        'PORT': '5432',
+    }
+}
+
 CACHES = {
     'default': {
         'BACKEND': 'redis_cache.RedisCache',
@@ -27,3 +39,13 @@ CACHES = {
         },
     },
 }
+
+#Email Settings
+
+#EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+#EMAIL_USE_TLS = 'True'
+#EMAIL_HOST = ''
+#EMAIL_PORT = ''
+#EMAIL_HOST_USER = '' 
+#EMAIL_HOST_PASSWORD = ''
+#DEFAULT_FROM_EMAIL = ''

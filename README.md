@@ -34,15 +34,27 @@ Qabel consists of multiple Projects:
  * [Qabel Block Server](https://github.com/Qabel/qabel-block) serves as the storage backend according to the [Qabel Box Protocol](http://qabel.github.io/docs/Qabel-Protocol-Box/)
 
 ## Requirements
-Python 3.4 or 3.5
+* Python 3.5 (+virtualenv)
+* Redis
+* PostgreSQL (for production setup only)
+* Mail server (for production setup only)
 
 ## Installation
 
 Create a virtualenv for the project
 
-	virtualenv -p python3.4 ../venv
+	virtualenv -p python3.5 ../venv
 	source ../venv/bin/activate
 	pip install -r requirements.txt
+
+(optional) For production setup do
+	export DJANGO_SETTINGS_MODULE=qabel_id.settings.production_settings
+	copy qabel_id/settings/local_settings.example.py to local_settings.py and adapt it (see below)
+(optional) Adapting settings
+	Change SECRET_KEY and keep it save
+	Change API_SECRET and share it with block server
+	Change database settings accordingly to your needs
+	Change email settings accordingly to your needs
 
 Run the migrations
 
@@ -76,11 +88,16 @@ Before running any manage.py command in production, make sure to export your set
 
     export DJANGO_SETTINGS_MODULE=qabel_id.settings.production_settings
 
+Run in production
+* We recommend uwsgi emperor. See uwsgi emperor documentation: http://uwsgi-docs.readthedocs.io/en/latest/Emperor.html
+* Adapt examples/uswgi-accounting.ini.example and copy it to your uwsgi emperor vassals folder.
+* (Optional) use a webserver of your choice as a proxy (we recommend nginx) if you use a uwsgi UNIX socket.
+
 ## Development
 
 To use the dummy mail backend, see: [django documentation for email](https://docs.djangoproject.com/en/1.9/topics/email/#dummy-backend)
 
-Insert this line in qabel_id/settings.py :
+Insert this line in qabel_id/settings/default_settings.py :
 
     EMAIL_BACKEND = 'django.core.mail.backends.dummy.EmailBackend'
 
