@@ -88,6 +88,11 @@ Before running any manage.py command in production, make sure to export your set
 
     export DJANGO_SETTINGS_MODULE=qabel_id.settings.production_settings
 
+Run in production
+* We recommend uwsgi emperor. See uwsgi emperor documentation: http://uwsgi-docs.readthedocs.io/en/latest/Emperor.html
+* Adapt examples/uswgi-accounting.ini.example and copy it to your uwsgi emperor vassals folder.
+* (Optional) use a webserver of your choice as a proxy (we recommend nginx) if you use a uwsgi UNIX socket.
+
 ## Development
 
 To use the dummy mail backend, see: [django documentation for email](https://docs.djangoproject.com/en/1.9/topics/email/#dummy-backend)
