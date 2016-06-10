@@ -1,0 +1,14 @@
+[uwsgi]
+module = qabel_id.wsgi:application
+env=DJANGO_SETTINGS_MODULE=qabel_id.settings.production_settings
+socket = /tmp/qabel-accounting-uwsgi.sock
+chmod-socket = 666
+vacuum = true
+processes = 4
+master = true
+die-on-term = true
+plugins = python3
+home = /home/ubuntu/qabel/accounting/venv
+chdir = /home/ubuntu/qabel/accounting/qabel-accounting
+enable-threads = true
+lazy = true
