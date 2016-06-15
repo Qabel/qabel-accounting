@@ -106,3 +106,7 @@ Insert this line in qabel_id/settings/default_settings.py :
 
 In your django settings you have to set an API_SECRET that should be known only by the
 qabel-block server.
+
+# Contributing
+
+Please refer to https://github.com/Qabel/qabel-core/blob/master/CONTRIBUTING.md

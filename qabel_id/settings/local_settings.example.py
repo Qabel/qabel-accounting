@@ -9,16 +9,16 @@ CORS_ORIGIN_WHITELIST = (
     #'qabel.dev',
 )
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'changeme',
-        'USER': 'changeme',
-        'PASSWORD': 'changeme',
-        'HOST': 'changeme',
-        'PORT': '5432',
-    }
-}
+#DATABASES = {
+#    'default': {
+#        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#        'NAME': 'changeme',
+#        'USER': 'changeme',
+#        'PASSWORD': 'changeme',
+#        'HOST': 'changeme',
+#        'PORT': '5432',
+#    }
+#}
 
 CACHES = {
     'default': {
