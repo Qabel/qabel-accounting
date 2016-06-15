@@ -1,0 +1,95 @@
+<project name="qabel-accounting" basedir="." default="build">
+    <property environment="env"/>
+    <property name="dblog" value="/tmp/postgresql.5433.log"/>
+    <property name="dbdir" value="/tmp/postgresqldata.5433"/>
+    <condition property="dbdir.exists"><available file="${dbdir}" type="dir"/></condition>
+    <condition property="dblog.exists"><available file="${dblog}" type="file"/></condition>
+    <condition property="clean-db.required"><or><available file="${dbdir}" type="dir"/><available file="${dblog}" type="file"/></or></condition>
+
+    <target name="build" depends="install">
+        <antcall target="test"/>
+    </target>
+
+    <target name="clean" depends="clean-db,clean-virtualenv"/>
+
+    <target name="clean-db" if="clean-db.required" depends="clean-dbdir,clean-dblog"/>
+    <target name="clean-dbdir" if="${dbdir.exists}">
+        <delete dir="${dbdir}"/>
+    </target>
+    <target name="clean-dblog" if="${dblog.exists}">
+        <delete file="${dblog}"/>
+    </target>
+
+    <property name="virtualenv" value="${basedir}/venv"/>
+    <property name="vbin" value="${virtualenv}/bin"/>
+    <condition property="virtualenv.exists"><available file="${virtualenv}" type="dir"/></condition>
+    <target name="clean-virtualenv" if="virtualenv.exists">
+        <exec executable="rm" dir="${basedir}">
+            <arg value="-r"/>
+            <arg value="${virtualenv}"/>
+        </exec>
+        <property name="virtualenv.exists" value="false"/>
+    </target>
+    <target name="create-virtualenv">
+        <exec executable="virtualenv">
+            <arg value="${virtualenv}"/>
+            <arg value="--python=python3.5"/>
+            <arg value="--no-site-packages"/>
+        </exec>
+    </target>
+    <target name="virtualenv" depends="create-virtualenv">
+        <exec executable="${vbin}/pip">
+            <arg value="install"/>
+            <arg value="--upgrade"/>
+            <arg value="pip"/>
+            <arg value="setuptools"/>
+            <arg value="wheel"/>
+        </exec>
+    </target>
+    <target name="install" depends="virtualenv,install-phantom">
+        <exec executable="${vbin}/pip">
+            <arg value="install"/>
+            <arg value="-U"/>
+            <arg value="-r"/>
+            <arg value="requirements.txt"/>
+        </exec>
+    </target>
+    
+    <available file="npm" filepath="${env.PATH}" property="npm.exists"/>
+    <available file="phantomjs" filepath="${env.PATH}" property="phantomjs.exists"/>
+    <target name="install-phantom-npm" unless="phantomjs.exists">
+        <echo message="installing phantom via npm"/>
+        <exec executable="npm" resultproperty="npm.exitcode" failonerror="false">
+            <arg value="install"/>
+            <arg value="-l"/>
+            <arg value="phantomjs"/>
+        </exec>
+        <condition property="phantomjs.installed" value="true" else="false"><equals arg1="${npm.exitcode}" arg2="0" forcestring="true"/></condition>
+        <symlink link="${vbin}/phantomjs" resource="${basedir}/node_modules/phantomjs/bin/phantomjs" overwrite="true"/>
+        <echo message="result: ${phantomjs.installed}"/>
+    </target>
+    <target name="install-phantom" unless="phantomjs.exists" depends="install-phantom-npm">
+        <fail message="missing phantomjs, please install it in path or install npm">
+            <condition>
+                <not>
+                    <or>
+                        <equals arg1="${phantomjs.exists}" arg2="true"/>
+                        <equals arg1="${phantomjs.installed}" arg2="true"/>
+                    </or>
+                </not>
+            </condition>
+        </fail>
+    </target>
+    
+    <target name="test" depends="install,clean-db">
+        <exec executable="${vbin}/py.test" dir="${basedir}">
+            <env key="PATH" path="${env.PATH}:${vbin}"/>
+            <arg value="--junitxml=${basedir}/junit.xml"/>
+            <arg value="-v"/>
+            <arg value="--exitfirst"/>
+            <arg value="--ff"/>
+            <arg value="--splinter-webdriver"/>
+            <arg value="phantomjs"/>
+        </exec>
+    </target>
+</project>
