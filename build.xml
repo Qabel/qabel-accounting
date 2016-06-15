@@ -24,21 +24,21 @@
     <property name="vbin" value="${virtualenv}/bin"/>
     <condition property="virtualenv.exists"><available file="${virtualenv}" type="dir"/></condition>
     <target name="clean-virtualenv" if="virtualenv.exists">
-        <exec executable="rm" dir="${basedir}">
+        <exec executable="rm" dir="${basedir}" failonerror="true">
             <arg value="-r"/>
             <arg value="${virtualenv}"/>
         </exec>
         <property name="virtualenv.exists" value="false"/>
     </target>
     <target name="create-virtualenv">
-        <exec executable="virtualenv">
+        <exec executable="virtualenv" failonerror="true">
             <arg value="${virtualenv}"/>
             <arg value="--python=python3.5"/>
             <arg value="--no-site-packages"/>
         </exec>
     </target>
     <target name="virtualenv" depends="create-virtualenv">
-        <exec executable="${vbin}/pip">
+        <exec executable="${vbin}/pip" failonerror="true">
             <arg value="install"/>
             <arg value="--upgrade"/>
             <arg value="pip"/>
@@ -47,7 +47,7 @@
         </exec>
     </target>
     <target name="install" depends="virtualenv,install-phantom">
-        <exec executable="${vbin}/pip">
+        <exec executable="${vbin}/pip" failonerror="true">
             <arg value="install"/>
             <arg value="-U"/>
             <arg value="-r"/>
@@ -82,7 +82,7 @@
     </target>
     
     <target name="test" depends="install,clean-db">
-        <exec executable="${vbin}/py.test" dir="${basedir}">
+        <exec executable="${vbin}/py.test" dir="${basedir}" failonerror="true">
             <env key="PATH" path="${env.PATH}:${vbin}"/>
             <arg value="--junitxml=${basedir}/junit.xml"/>
             <arg value="-v"/>
