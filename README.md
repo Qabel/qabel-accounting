@@ -65,16 +65,10 @@ Run the migrations
 
 ## <a name="running_tests"></a>Running tests
 
-The tests are run by the py.test framework. You can choose which browser you want to use for the functional tests.
+The tests are run by the py.test framework.
 
-Phantomjs: (recommended)
+	py.test
 
-	py.test --splinter-webdriver phantomjs
-
-Firefox:
-
-	py.test --splinter-webdriver firefox
-	
 ## <a name="running_server"></a>Running the server
 ```bash
 python manage.py runserver
