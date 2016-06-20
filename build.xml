@@ -88,8 +88,6 @@
             <arg value="-v"/>
             <arg value="--exitfirst"/>
             <arg value="--ff"/>
-            <arg value="--splinter-webdriver"/>
-            <arg value="phantomjs"/>
         </exec>
     </target>
 </project>
