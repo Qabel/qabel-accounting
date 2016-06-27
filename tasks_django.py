@@ -29,6 +29,10 @@ class UwsgiConfiguration(BaseUwsgiConfiguration):
         self.basename = self.path.with_suffix('').name
         self.settings_path = self.tmp_path / 'settings.py'
 
+        # By default automagic, but allow override
+        if 'STATIC_ROOT' not in self.config:
+            self.config.config['STATIC_ROOT'] = str((self.path.parent / 'static').absolute())
+
         # generated stuff first, so we can override it later manually, if ever necessary
         self.sections.append(self.automagic())
         self.sections.append(self.uwsgi_config())
@@ -37,6 +41,7 @@ class UwsgiConfiguration(BaseUwsgiConfiguration):
 
     def emplace(self):
         super().emplace()
+        manage_command(self.tree, self, 'collectstatic --noinput')
 
     def settings_module(self):
         return self.settings_path.with_suffix('').name
@@ -61,6 +66,10 @@ class UwsgiConfiguration(BaseUwsgiConfiguration):
             'touch-chain-reload': '{uwsgi_ini}',
             'lazy-apps': True,
         }
+        if 'STATIC_ROOT' in self.config:
+            # Serve static files by default via uWSGI, but it could also be done by the reverse proxy
+            # (or rsync the directory to your favourite CDN)
+            config['static-map'] = '/static=' + self.config.STATIC_ROOT
         return 'automatically inferred configuration', config
 
     def make_settings(self):
