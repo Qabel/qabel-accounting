@@ -1,0 +1,5 @@
+name: accounting
+class: tasks_django.Django
+wsgi_app: qabel_id.wsgi:application
+settings_prelude:
+    from qabel_id.settings.default_settings import *
