@@ -1,0 +1,10 @@
+qabel:
+    accounting:
+        DATABASES:
+            default:
+                ENGINE: django.db.backends.postgresql
+                NAME: qabel-accounting
+                USER: qabel-accounting
+        uwsgi:
+            processes: 2
+            http-socket: :9696
