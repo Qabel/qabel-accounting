@@ -16,8 +16,7 @@ def manage_command(tree, config, args, hide='out'):
         'DJANGO_SETTINGS_MODULE': config.settings_module(),
         'PYTHONPATH': str(config.settings_pythonpath()),
     }
-    with cd(str(tree)):
-        return run('_venv/bin/python -Wi manage.py ' + args, env=environment, hide=hide)
+    return run('{python} -Wi {manage} '.format(python=tree / '_venv/bin/python', manage=tree / 'manage.py') + args, env=environment, hide=hide)
 
 
 class UwsgiConfiguration(BaseUwsgiConfiguration):
