@@ -114,6 +114,7 @@ class BaseUwsgiConfiguration:
             'uwsgi_ini': self.path.absolute(),
             'virtualenv': (self.path.parent / 'virtualenv').absolute(),
             'tree': (self.path.parent / 'tree').absolute(),
+            'basedir': Path.cwd().absolute(),
         }
 
         self.make_links()

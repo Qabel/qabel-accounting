@@ -62,6 +62,8 @@ class UwsgiConfiguration(BaseUwsgiConfiguration):
             # Where the app packages (e.g. qabel_provider, qabel_id) live
             'pythonpath': '{tree}',
 
+            'chdir': '{basedir}',
+
             'virtualenv': '{virtualenv}',
             'touch-chain-reload': '{uwsgi_ini}',
             'lazy-apps': True,
