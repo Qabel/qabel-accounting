@@ -51,7 +51,7 @@ class UwsgiConfiguration(BaseUwsgiConfiguration):
     def automagic(self):
         """Return automatically inferred|inferrable configuration."""
         config = {
-            'plugin': 'python',
+            'plugin': 'python3',
             'module': self.project.project_config['wsgi_app'],
 
             # Path to the settings module generated (e.g. deployed/current.py)
