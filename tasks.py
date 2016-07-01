@@ -61,23 +61,27 @@ def deploy(ctx, commit='HEAD', into='current', _from='current'):
         print(datetime.datetime.now(), tree, file=history)
 
 
+def try_load(path, configurable):
+    """Try to load configuration file at *path* and merge it into *configurable*."""
+    if not path.exists():
+        return False
+    loader = getattr(Config, '_load_' + path.suffix.lstrip('.'))
+    configurable.configure(loader(None, str(path)) or {})
+    return True
+
+
 def load_local_configuration(configurable):
     """.configure() *configurable* with local configuration."""
-    def try_load(path):
-        if not path.exists():
-            return
-        loader = getattr(Config, '_load_' + suffix.lstrip('.'))
-        configurable.configure(loader(None, str(path)) or {})
-        print('Picked up extra configuration from', path)
-
     # This is a bit ugly and should be something upstream invoke should be able to do by itself.
     for path in ['/etc/qabel', '~/.qabel', Path(__file__).with_name('qabel')]:
         path = Path(path).expanduser()
         for suffix in ['.yaml', '.py', '.json']:
-            try_load(path.with_suffix(suffix))
-
+            path_with_suffix = path.with_suffix(suffix)
+            if try_load(path_with_suffix, configurable):
+                print('Picked up extra configuration from', path)
 
 namespace = project.make_namespace()
 namespace.add_task(checkout)
 namespace.add_task(deploy)
+assert try_load(Path(__file__).with_name('defaults.yaml'), namespace)
 load_local_configuration(namespace)

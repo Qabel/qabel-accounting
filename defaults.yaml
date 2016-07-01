@@ -1,5 +1,11 @@
 qabel:
     accounting:
+        DEBUG: False
+        ALLOWED_HOSTS:
+          - '*'
+        API_SECRET: Changeme
+        DEFAULT_FROM_EMAIL: noreply@qabel.de
+        SECRET_KEY: '=tmcici-p92_^_jih9ud11#+wb7*i21firlrtcqh$p+d7o*49@'
         DATABASES:
             default:
                 ENGINE: django.db.backends.postgresql
