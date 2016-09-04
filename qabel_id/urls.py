@@ -45,6 +45,9 @@ rest_urls = [
     url(r'^auth/', include(rest_auth_urls)),
     url(r'^auth/registration/', include('rest_auth.registration.urls')),
     url(r'^internal/user/$', views.auth_resource, name='api-auth'),
+
+    url(r'^plan/subscription/$', views.plan_subscription),
+    url(r'^plan/add-interval/$', views.plan_add_interval),
 ]
 
 urlpatterns = [

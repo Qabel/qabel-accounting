@@ -1,18 +1,22 @@
 import logging
 
+from axes import decorators as axes_dec
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.db import transaction
 from django.http import HttpResponse
 from django.utils.crypto import constant_time_compare
+from rest_auth.registration.views import RegisterView
 from rest_auth.views import LoginView
+from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
-from rest_framework.authtoken.models import Token
-from axes import decorators as axes_dec
-from rest_auth.registration.views import RegisterView
-from qabel_provider.serializers import UserSerializer
+
+from .serializers import UserSerializer, PlanSubscriptionSerializer, PlanIntervalSerializer
+from .models import ProfilePlanLog
+from .utils import get_request_origin
 
 logger = logging.getLogger(__name__)
 
@@ -34,8 +38,8 @@ def api_root(request, format=None):
 
 def check_api_key(request):
     api_key = request.META.get('HTTP_APISECRET', None)
-    return constant_time_compare(
-            api_key, settings.API_SECRET)
+    # XXX: a simple constant time comparison can still leak the length of the APISECRET
+    return constant_time_compare(api_key, settings.API_SECRET)
 
 
 @api_view(('POST',))
@@ -90,9 +94,77 @@ def auth_resource(request, format=None):
     return Response({
         'user_id': user.id,
         'active': (not is_disabled),
-        'block_quota': user.profile.block_quota,
-        'monthly_traffic_quota': user.profile.monthly_traffic_quota,
+        'block_quota': user.profile.plan.block_quota,
+        'monthly_traffic_quota': user.profile.plan.monthly_traffic_quota,
     })
+
+
+@api_view(('POST',))
+def plan_subscription(request, format=None):
+    """
+    Set subscription for an user account.
+
+    Payload layout::
+
+        {
+            'user_email': STR,
+            'plan': STR (id-of-plan),
+        }
+
+    API authentication required.
+    """
+    if not check_api_key(request):
+        logger.warning('Called with invalid API key')
+        return HttpResponse('Invalid API key', status=400)
+
+    serializer = PlanSubscriptionSerializer(data=request.data)
+    serializer.is_valid(True)
+    profile, plan = serializer.save()
+
+    audit_log = ProfilePlanLog(profile=profile,
+                               action='set-plan', plan=plan,
+                               origin=get_request_origin(request))
+
+    with transaction.atomic():
+        profile.subscribed_plan = plan
+        profile.save()
+        audit_log.save()
+
+    return Response()
+
+
+@api_view(('POST',))
+def plan_add_interval(request, format=None):
+    """
+    Add plan interval to an user account.
+
+    Payload layout::
+
+        {
+            'user_email': STR,
+            'plan': STR (id-of-plan),
+            'duration': STR ([DD] [HH:[MM:]]ss[.uuuuuu]),
+        }
+
+    For details on *duration*, see http://www.django-rest-framework.org/api-guide/fields/#durationfield
+    """
+    if not check_api_key(request):
+        logger.warning('Called with invalid API key')
+        return HttpResponse('Invalid API key', status=400)
+
+    serializer = PlanIntervalSerializer(data=request.data)
+    serializer.is_valid(True)
+    plan_interval = serializer.save()
+
+    audit_log = ProfilePlanLog(profile=plan_interval.profile,
+                               action='add-interval', interval=plan_interval, plan=plan_interval.plan,
+                               origin=get_request_origin(request))
+
+    with transaction.atomic():
+        plan_interval.save()
+        audit_log.save()
+
+    return Response()
 
 
 class ThrottledLoginView(LoginView):
