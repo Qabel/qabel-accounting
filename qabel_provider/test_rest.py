@@ -225,7 +225,7 @@ def test_failed_auth_resource_after_7_days(external_api_client, user, token, aut
 
 def test_resource_api_key(user_client, auth_resource_path):
     response = user_client.post(auth_resource_path)
-    assert response.status_code == 400, "Should require APISECRET header"
+    assert response.status_code == 403, "Should require APISECRET header"
 
 
 def test_logout(api_client, user):

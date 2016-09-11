@@ -1,11 +1,12 @@
+import functools
+import hashlib
+import hmac
 import logging
 
 from axes import decorators as axes_dec
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import transaction
-from django.http import HttpResponse
-from django.utils.crypto import constant_time_compare
 from rest_auth.registration.views import RegisterView
 from rest_auth.views import LoginView
 from rest_framework.authtoken.models import Token
@@ -36,10 +37,21 @@ def api_root(request, format=None):
     })
 
 
+@functools.lru_cache()
+def hashed_api_secret():
+    return hashlib.sha512(settings.API_SECRET.encode()).digest()
+
+
 def check_api_key(request):
-    api_key = request.META.get('HTTP_APISECRET', None)
-    # XXX: a simple constant time comparison can still leak the length of the APISECRET
-    return constant_time_compare(api_key, settings.API_SECRET)
+    api_key = request.META.get('HTTP_APISECRET', '')
+    # Avoid leaking length of the APISECRET via comparison timing.
+    hashed_key = hashlib.sha512(api_key.encode()).digest()
+    return hmac.compare_digest(hashed_key, hashed_api_secret())
+
+
+def api_key_error():
+    logger.warning('Called with invalid API key')
+    return Response(status=403, data={'error': 'Invalid API key'})
 
 
 @api_view(('POST',))
@@ -60,8 +72,7 @@ def auth_resource(request, format=None):
     :return: HttpResponseBadRequest|HttpResponse(status=204)|HttpResponse(status=403)|HttpResponse(status=404)
     """
     if not check_api_key(request):
-        logger.warning('Called with invalid API key')
-        return HttpResponse("Invalid API key", status=400)
+        return api_key_error()
 
     if 'auth' in request.data and 'user_id' in request.data:
         return Response(status=400, data={'error': 'Pass *either* an auth token *or* an user ID'})
@@ -114,8 +125,7 @@ def plan_subscription(request, format=None):
     API authentication required.
     """
     if not check_api_key(request):
-        logger.warning('Called with invalid API key')
-        return HttpResponse('Invalid API key', status=400)
+        return api_key_error()
 
     serializer = PlanSubscriptionSerializer(data=request.data)
     serializer.is_valid(True)
@@ -149,8 +159,7 @@ def plan_add_interval(request, format=None):
     For details on *duration*, see http://www.django-rest-framework.org/api-guide/fields/#durationfield
     """
     if not check_api_key(request):
-        logger.warning('Called with invalid API key')
-        return HttpResponse('Invalid API key', status=400)
+        return api_key_error()
 
     serializer = PlanIntervalSerializer(data=request.data)
     serializer.is_valid(True)
