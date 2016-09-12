@@ -123,7 +123,8 @@ class PlanInterval(models.Model, ExportModelOperationsMixin('planinterval')):
 
     def start(self):
         """Start using this (pristine) interval."""
-        assert self.state == 'pristine'
+        if self.state != 'pristine':
+            raise ValueError('Cannot start using a %s interval' % self.state)
         self.state = 'in_use'
         self.started_at = datetime.datetime.now()
         self.save()
