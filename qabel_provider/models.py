@@ -127,10 +127,11 @@ class PlanInterval(models.Model, ExportModelOperationsMixin('planinterval')):
             raise ValueError('Cannot start using a %s interval' % self.state)
         self.state = 'in_use'
         self.started_at = datetime.datetime.now()
-        self.save()
         audit_log = ProfilePlanLog(profile=self.profile,
                                    action='start-interval', plan=self.plan, interval=self)
-        audit_log.save()
+        with transaction.atomic():
+            self.save()
+            audit_log.save()
 
     @classmethod
     def get_or_start_interval(model, profile):
