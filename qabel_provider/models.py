@@ -1,4 +1,5 @@
 import datetime
+import logging
 
 from allauth.account.models import EmailAddress
 from django.contrib.auth.models import User
@@ -8,6 +9,8 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils import timezone
 from django_prometheus.models import ExportModelOperationsMixin
+
+logger = logging.getLogger(__name__)
 
 
 def confirmation_days():
@@ -116,6 +119,11 @@ class PlanInterval(models.Model, ExportModelOperationsMixin('planinterval')):
 
         Update state if expired.
         """
+        if self.state == 'pristine':
+            raise ValueError('Cannot check expiry on pristine interval.')
+        elif self.state == 'expired':
+            logger.warning('PlanInterval.check_expiry on expired interval.')
+            return
         if timezone.now() > (self.started_at + self.duration):
             self.state = 'expired'
             audit_log = ProfilePlanLog(profile=self.profile,
