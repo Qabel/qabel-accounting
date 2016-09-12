@@ -22,6 +22,7 @@ from rest_auth.views import (
 )
 from rest_auth.registration.views import VerifyEmailView
 from allauth.account.views import ConfirmEmailView, EmailVerificationSentView
+import nested_admin.urls
 
 rest_auth_register_urls = [
     url(r'^$', views.PasswordPolicyRegisterView.as_view(), name='rest_register'),
@@ -52,6 +53,7 @@ rest_urls = [
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^nested_admin/', include(nested_admin.urls)),
     url(r'^accounts/', include('django.contrib.auth.urls')),
     url(r'^accounts/login/', 'django.contrib.auth.views.login'),
     url(r'^api/v0/', include(rest_urls)),

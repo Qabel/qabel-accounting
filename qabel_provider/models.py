@@ -15,7 +15,8 @@ def confirmation_days():
 
 
 class Plan(models.Model, ExportModelOperationsMixin('plan')):
-    id = models.SlugField(verbose_name='internal name', help_text='Do not change.', primary_key=True)
+    id = models.SlugField(verbose_name='internal name', primary_key=True,
+                          help_text='Do not change. This is the ID used by other services to refer to this plan.')
     name = models.CharField(max_length=100)
 
     block_quota = models.BigIntegerField(verbose_name='block server quota (in bytes)', default=2 * 1024**3)
@@ -158,6 +159,9 @@ class PlanInterval(models.Model, ExportModelOperationsMixin('planinterval')):
         usable_interval.start()
         return usable_interval
 
+    def __str__(self):
+        return ''
+
     class Meta:
         index_together = [
             ['profile', 'state'],
@@ -182,6 +186,9 @@ class ProfilePlanLog(models.Model, ExportModelOperationsMixin('profileplanlog'))
 
     # A JsonField may be a slightly better choice here.
     origin = models.CharField(max_length=200, verbose_name='Request origin')
+
+    def __str__(self):
+        return ''
 
     class Meta:
         index_together = [

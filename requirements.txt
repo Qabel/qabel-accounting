@@ -18,3 +18,4 @@ pytest-flake8>=0.5
 psycopg2==2.6.1
 invoke==0.13.0
 pprintpp==0.2.3
+django-nested-admin==3.0.8

@@ -46,7 +46,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Plan',
             fields=[
-                ('id', models.SlugField(help_text='Do not change.', primary_key=True, serialize=False, verbose_name='internal name')),
+                ('id', models.SlugField(help_text='Do not change. This is the ID used by other services to refer to this plan.', primary_key=True, serialize=False, verbose_name='internal name')),
                 ('name', models.CharField(max_length=100)),
                 ('block_quota', models.BigIntegerField(default=2147483648, verbose_name='block server quota (in bytes)')),
                 ('monthly_traffic_quota', models.BigIntegerField(default=21474836480, verbose_name='block server traffic quota per month (in bytes)')),
@@ -98,7 +98,7 @@ class Migration(migrations.Migration):
                 ('profile', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='qabel_provider.Profile')),
             ],
             options={
-                'ordering': ['id'],
+                'ordering': ['-id'],
             },
             bases=(models.Model,),
         ),
@@ -119,6 +119,13 @@ class Migration(migrations.Migration):
                 ('plan', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='qabel_provider.Plan')),
                 ('profile', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='qabel_provider.Profile')),
             ],
+            options={
+                'ordering': ['-timestamp'],
+            },
             bases=(models.Model,),
+        ),
+        migrations.AlterIndexTogether(
+            name='profileplanlog',
+            index_together={('timestamp',), ('profile',)},
         ),
     ]

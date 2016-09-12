@@ -25,6 +25,7 @@ INSTALLED_APPS = (
     'rest_auth.registration',
     'corsheaders',
     'axes',
+    'nested_admin',
 )
 
 MIDDLEWARE_CLASSES = (
