@@ -507,7 +507,7 @@ def test_plan_interval_multiple(external_api_client, user,
 
 
 @pytest.mark.django_db
-def test_plan_interval_expiry(external_api_client, plan_interval_path, best_plan, user, mocker, require_audit_log, require_interval_state):
+def test_plan_interval_expiry(external_api_client, plan_interval_path, best_plan, user, monkeypatch, require_audit_log, require_interval_state):
     response = external_api_client.post(plan_interval_path, {
         'user_email': user.email,
         'plan': best_plan.id,
@@ -528,8 +528,7 @@ def test_plan_interval_expiry(external_api_client, plan_interval_path, best_plan
     require_interval_state('in_use')
 
     some_bit_in_the_future = timezone.now() + timedelta(minutes=1)
-    timezone.now = mocker.Mock(spec=timezone.now)
-    timezone.now.return_value = some_bit_in_the_future
+    monkeypatch.setattr(timezone, 'now', lambda: some_bit_in_the_future)
 
     assert profile.plan.id == 'free'
     require_audit_log(num_entries=1)
