@@ -114,10 +114,11 @@ class PlanInterval(models.Model, ExportModelOperationsMixin('planinterval')):
         """
         if timezone.now() > (self.started_at + self.duration):
             self.state = 'expired'
-            self.save()
             audit_log = ProfilePlanLog(profile=self.profile,
                                        action='expired-interval', plan=self.plan, interval=self)
-            audit_log.save()
+            with transaction.atomic():
+                self.save()
+                audit_log.save()
             return
         return self
 
