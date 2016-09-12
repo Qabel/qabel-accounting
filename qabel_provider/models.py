@@ -44,10 +44,14 @@ class Profile(models.Model, ExportModelOperationsMixin('profile')):
 
     @property
     def plan(self):
-        interval = PlanInterval.get_or_start_interval(self)
+        interval = PlanInterval.peek_interval(self)
         if interval:
             return interval.plan
         return self.subscribed_plan
+
+    def use_plan(self):
+        """Process active use of plan properties."""
+        PlanInterval.get_or_start_interval(self)
 
     @property
     def is_confirmed(self):
@@ -135,6 +139,15 @@ class PlanInterval(models.Model, ExportModelOperationsMixin('planinterval')):
             audit_log.save()
 
     @classmethod
+    def peek_interval(model, profile):
+        """Return a plan interval for *profile* that is in use or would be used next."""
+        with transaction.atomic():
+            interval = model._get_interval(profile)  # The state update via check_expiry is ok
+            if not interval:
+                interval = model._get_pristine_interval(profile)
+            return interval
+
+    @classmethod
     def get_or_start_interval(model, profile):
         """Return/activate a plan interval for *profile*, or None."""
         with transaction.atomic():
@@ -154,9 +167,13 @@ class PlanInterval(models.Model, ExportModelOperationsMixin('planinterval')):
             return interval.check_expiry()
 
     @classmethod
+    def _get_pristine_interval(model, profile):
+        return model.objects.filter(profile=profile, state='pristine').first()
+
+    @classmethod
     def _start_interval(model, profile):
         """Begin new plan interval for *profile*, or None if no intervals are available (anymore)."""
-        usable_interval = model.objects.filter(profile=profile, state='pristine').first()
+        usable_interval = model._get_pristine_interval(profile)
         if not usable_interval:
             return
         usable_interval.start()

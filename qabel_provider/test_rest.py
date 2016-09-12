@@ -359,13 +359,26 @@ def require_audit_log(user):
     def num_log_entries():
         return ProfilePlanLog.objects.filter(profile=user.profile).count()
 
-    def do_assert():
+    def do_assert(num_entries=None):
         nonlocal before
         after = num_log_entries()
-        assert after > before, 'no audit log entry was created'
+        if num_entries is None:
+            assert after > before, 'no audit log entry was created'
+        else:
+            assert after == before + num_entries
         before = after
 
     before = num_log_entries()
+    return do_assert
+
+
+@pytest.fixture
+def require_interval_state(user):
+    def do_assert(*states):
+        intervals = PlanInterval.objects.filter(profile=user.profile)
+        assert intervals.count() == len(states)
+        for interval, required_state in zip(intervals, states):
+            assert interval.state == required_state
     return do_assert
 
 
@@ -447,14 +460,24 @@ def test_plan_interval(external_api_client, plan_interval_path, best_plan, user,
     })
     assert response.status_code == 200, response.json()
     require_audit_log()
+
     profile = user.profile
     assert profile.plan.id == best_plan.id
-    require_audit_log()
     assert profile.subscribed_plan.id == 'free'  # unchanged
+    # Merely taking a peek doesn't make the plan interval used
+    require_interval_state('pristine')
+    require_audit_log(num_entries=0)
+
+    # Have to signal active use of the plan
+    profile.use_plan()
+    require_interval_state('in_use')
+    require_audit_log(num_entries=1)
 
 
 @pytest.mark.django_db
-def test_plan_interval_multiple(external_api_client, plan_interval_path, best_plan, better_plan, user, require_audit_log):
+def test_plan_interval_multiple(external_api_client, user,
+                                plan_interval_path, best_plan, better_plan,
+                                require_audit_log, require_interval_state):
     response = external_api_client.post(plan_interval_path, {
         'user_email': user.email,
         'plan': best_plan.id,
@@ -472,12 +495,19 @@ def test_plan_interval_multiple(external_api_client, plan_interval_path, best_pl
     require_audit_log()
 
     profile = user.profile
+    require_interval_state('pristine', 'pristine')
     assert profile.plan.id == better_plan.id  # most recently added interval wins
-    require_audit_log()
+    require_interval_state('pristine', 'pristine')
+    require_audit_log(num_entries=0)
+
+    profile.use_plan()
+    require_interval_state('in_use', 'pristine')
+    require_audit_log(num_entries=1)
+    assert profile.plan.id == better_plan.id
 
 
 @pytest.mark.django_db
-def test_plan_interval_expiry(external_api_client, plan_interval_path, best_plan, user, mocker, require_audit_log):
+def test_plan_interval_expiry(external_api_client, plan_interval_path, best_plan, user, mocker, require_audit_log, require_interval_state):
     response = external_api_client.post(plan_interval_path, {
         'user_email': user.email,
         'plan': best_plan.id,
@@ -488,17 +518,19 @@ def test_plan_interval_expiry(external_api_client, plan_interval_path, best_plan
 
     profile = user.profile
 
-    intervals = PlanInterval.objects.filter(profile=profile)
-    # Schrödinger's plan
-    assert intervals.get().state == 'pristine'
+    require_interval_state('pristine')
     assert profile.plan.id == best_plan.id
-    require_audit_log()
-    assert intervals.get().state == 'in_use'
+    require_audit_log(num_entries=0)
+    require_interval_state('pristine')
+
+    profile.use_plan()
+    require_audit_log(num_entries=1)
+    require_interval_state('in_use')
 
     some_bit_in_the_future = timezone.now() + timedelta(minutes=1)
     timezone.now = mocker.Mock(spec=timezone.now)
     timezone.now.return_value = some_bit_in_the_future
 
     assert profile.plan.id == 'free'
-    require_audit_log()
-    assert intervals.get().state == 'expired'
+    require_audit_log(num_entries=1)
+    require_interval_state('expired')

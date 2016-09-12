@@ -102,11 +102,13 @@ def auth_resource(request, format=None):
 
     logger.debug('Auth resource called: user={}'.format(user))
     is_disabled = user.profile.check_confirmation_and_send_mail()
+    profile = user.profile
+    profile.use_plan()
     return Response({
         'user_id': user.id,
         'active': (not is_disabled),
-        'block_quota': user.profile.plan.block_quota,
-        'monthly_traffic_quota': user.profile.plan.monthly_traffic_quota,
+        'block_quota': profile.plan.block_quota,
+        'monthly_traffic_quota': profile.plan.monthly_traffic_quota,
     })
 
 
