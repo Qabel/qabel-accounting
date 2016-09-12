@@ -48,9 +48,6 @@ class PlanSubscriptionSerializer(serializers.Serializer):
             plan=validated_data['plan']
         )
 
-    # def update(self, instance, validated_data):
-    #     return instance
-
     def _get_profile(self, validated_data):
         return models.Profile.objects.get(user__email=validated_data['user_email'])
 
@@ -64,6 +61,3 @@ class PlanIntervalSerializer(PlanSubscriptionSerializer):
             plan=validated_data['plan'],
             duration=validated_data['duration'],
         )
-
-    # def update(self, instance, validated_data):
-    #     return instance
