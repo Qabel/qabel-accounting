@@ -13,6 +13,21 @@ def loads(foo):
     return json.loads(foo.decode('utf-8'))
 
 
+@pytest.fixture
+def auth_resource_path():
+    return '/api/v0/internal/user/'
+
+
+@pytest.fixture
+def plan_subscription_path():
+    return '/api/v0/plan/subscription/'
+
+
+@pytest.fixture
+def plan_interval_path():
+    return '/api/v0/plan/add-interval/'
+
+
 @pytest.mark.django_db
 def test_register_user(api_client):
     response = api_client.post('/api/v0/auth/registration/',
@@ -140,11 +155,6 @@ def call_auth_resource(request, external_api_client, user, token, auth_resource_
     return make_request
 
 
-@pytest.fixture
-def auth_resource_path():
-    return '/api/v0/internal/user/'
-
-
 def test_auth_resource(user, call_auth_resource):
     response = call_auth_resource()
     assert response.status_code == 200
@@ -222,10 +232,25 @@ def test_failed_auth_resource_after_7_days(external_api_client, user, token, aut
     assert response.status_code == 200
     assert len(mail.outbox) == 2
 
+protected_apis = pytest.mark.parametrize('path', (
+    auth_resource_path(),
+    plan_subscription_path(),
+    plan_interval_path(),
+))
 
-def test_resource_api_key(user_client, auth_resource_path):
-    response = user_client.post(auth_resource_path)
+
+@protected_apis
+def test_protected_api_wrong_secret(client, path):
+    response = client.post(path, HTTP_APISECRET='Bullshiet! Ich kann sie nicht hören!')
+    assert response.status_code == 403, 'Accepted wrong APISECRET'
+    assert response.json()['error'] == 'Invalid API key'
+
+
+@protected_apis
+def test_protected_api(client, path):
+    response = client.post(path)
     assert response.status_code == 403, "Should require APISECRET header"
+    assert response.json()['error'] == 'Invalid API key'
 
 
 def test_logout(api_client, user):
@@ -345,11 +370,6 @@ def require_audit_log(user):
 
 
 @pytest.fixture
-def plan_subscription_path():
-    return '/api/v0/plan/subscription/'
-
-
-@pytest.fixture
 def best_plan():
     new_great_plan = Plan(id='best_plan', name='best plan', block_quota=1, monthly_traffic_quota=2)
     new_great_plan.save()
@@ -416,11 +436,6 @@ def test_plan_subscription_plan_not_found(external_api_client, plan_subscription
     assert 'does not exist' in json['plan'][0]
     user.profile.refresh_from_db()
     assert user.profile.plan.id == 'free'
-
-
-@pytest.fixture
-def plan_interval_path():
-    return '/api/v0/plan/add-interval/'
 
 
 @pytest.mark.django_db
