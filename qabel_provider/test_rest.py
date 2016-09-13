@@ -6,9 +6,26 @@ from django.core import mail
 from django.contrib.auth.models import User
 from allauth.account.models import EmailConfirmation, EmailAddress
 
+from .models import Plan, PlanInterval, ProfilePlanLog
+
 
 def loads(foo):
     return json.loads(foo.decode('utf-8'))
+
+
+@pytest.fixture
+def auth_resource_path():
+    return '/api/v0/internal/user/'
+
+
+@pytest.fixture
+def plan_subscription_path():
+    return '/api/v0/plan/subscription/'
+
+
+@pytest.fixture
+def plan_interval_path():
+    return '/api/v0/plan/add-interval/'
 
 
 @pytest.mark.django_db
@@ -138,19 +155,15 @@ def call_auth_resource(request, external_api_client, user, token, auth_resource_
     return make_request
 
 
-@pytest.fixture
-def auth_resource_path():
-    return '/api/v0/internal/user/'
-
-
 def test_auth_resource(user, call_auth_resource):
     response = call_auth_resource()
     assert response.status_code == 200
     data = loads(response.content)
     assert data['user_id'] == user.id
     assert data['active'] == user.profile.is_allowed()
-    assert data['block_quota'] == user.profile.block_quota
-    assert data['monthly_traffic_quota'] == user.profile.monthly_traffic_quota
+    plan = user.profile.plan
+    assert data['block_quota'] == plan.block_quota
+    assert data['monthly_traffic_quota'] == plan.monthly_traffic_quota
 
 
 def test_auth_resource_with_disabled_user(call_auth_resource, user):
@@ -219,10 +232,25 @@ def test_failed_auth_resource_after_7_days(external_api_client, user, token, aut
     assert response.status_code == 200
     assert len(mail.outbox) == 2
 
+protected_apis = pytest.mark.parametrize('path', (
+    auth_resource_path(),
+    plan_subscription_path(),
+    plan_interval_path(),
+))
 
-def test_resource_api_key(user_client, auth_resource_path):
-    response = user_client.post(auth_resource_path)
-    assert response.status_code == 400, "Should require APISECRET header"
+
+@protected_apis
+def test_protected_api_wrong_secret(client, path):
+    response = client.post(path, HTTP_APISECRET='Bullshiet! Ich kann sie nicht hören!')
+    assert response.status_code == 403, 'Accepted wrong APISECRET'
+    assert response.json()['error'] == 'Invalid API key'
+
+
+@protected_apis
+def test_protected_api(client, path):
+    response = client.post(path)
+    assert response.status_code == 403, "Should require APISECRET header"
+    assert response.json()['error'] == 'Invalid API key'
 
 
 def test_logout(api_client, user):
@@ -295,7 +323,7 @@ def test_no_login_throttle(api_client, user):
     for login_try in range(5):
         response = api_client.post('/api/v0/auth/login/',
                                    {'username': user.username, 'password': 'password'})
-        assert response.status_code == 200, "Failed at request {}".format(login_try+0)
+        assert response.status_code == 200, "Failed at request {}".format(login_try + 0)
 
 
 @pytest.mark.django_db
@@ -324,3 +352,184 @@ def test_enable_disabled_user(api_client, user, token):
     user.profile.confirm_email()
 
     assert not user.profile.check_confirmation_and_send_mail()
+
+
+@pytest.fixture
+def require_audit_log(user):
+    def num_log_entries():
+        return ProfilePlanLog.objects.filter(profile=user.profile).count()
+
+    def do_assert(num_entries=None):
+        nonlocal before
+        after = num_log_entries()
+        if num_entries is None:
+            assert after > before, 'no audit log entry was created'
+        else:
+            assert after == before + num_entries
+        before = after
+
+    before = num_log_entries()
+    return do_assert
+
+
+@pytest.fixture
+def require_interval_state(user):
+    def do_assert(*states):
+        intervals = PlanInterval.objects.filter(profile=user.profile)
+        assert intervals.count() == len(states)
+        for interval, required_state in zip(intervals, states):
+            assert interval.state == required_state
+    return do_assert
+
+
+@pytest.fixture
+def best_plan():
+    new_great_plan = Plan(id='best_plan', name='best plan', block_quota=1, monthly_traffic_quota=2)
+    new_great_plan.save()
+    return new_great_plan
+
+
+@pytest.fixture
+def better_plan():
+    new_great_plan = Plan(id='better_plan', name='even better plan', block_quota=2, monthly_traffic_quota=4)
+    new_great_plan.save()
+    return new_great_plan
+
+
+@pytest.mark.django_db
+def test_plan_subscription(external_api_client, plan_subscription_path, best_plan, user, require_audit_log):
+    assert user.profile.plan.id == 'free'
+    assert user.email == 'qabeluser@example.com'
+    assert best_plan.id == 'best_plan'
+    response = external_api_client.post(plan_subscription_path, {
+        'user_email': user.email,
+        'plan': best_plan.id,
+    })
+    assert response.status_code == 200, response.json()
+    require_audit_log()
+    user.profile.refresh_from_db()
+    assert user.profile.plan.id == best_plan.id
+
+
+@pytest.mark.django_db
+def test_plan_subscription_plan_missing(external_api_client, plan_subscription_path, user):
+    assert user.profile.plan.id == 'free'
+    assert user.email == 'qabeluser@example.com'
+    response = external_api_client.post(plan_subscription_path, {
+        'user_email': user.email,
+    })
+    assert response.status_code == 400, response.json()
+    assert 'plan' in response.json()
+    user.profile.refresh_from_db()
+    assert user.profile.plan.id == 'free'
+
+
+@pytest.mark.django_db
+def test_plan_subscription_user_not_found(external_api_client, plan_subscription_path):
+    response = external_api_client.post(plan_subscription_path, {
+        'user_email': 'noqabeluser@example.com',
+        'plan': 'free',
+    })
+    assert response.status_code == 400, response.json()
+    assert 'user_email' in response.json()
+
+
+@pytest.mark.django_db
+def test_plan_subscription_plan_not_found(external_api_client, plan_subscription_path, user):
+    assert user.profile.plan.id == 'free'
+    assert user.email == 'qabeluser@example.com'
+    response = external_api_client.post(plan_subscription_path, {
+        'user_email': user.email,
+        'plan': 'no-such-plan',
+    })
+    json = response.json()
+    assert response.status_code == 400, json
+    assert 'plan' in json
+    assert len(json['plan']) == 1
+    assert 'does not exist' in json['plan'][0]
+    user.profile.refresh_from_db()
+    assert user.profile.plan.id == 'free'
+
+
+@pytest.mark.django_db
+def test_plan_interval(external_api_client, plan_interval_path, best_plan, user, require_audit_log):
+    response = external_api_client.post(plan_interval_path, {
+        'user_email': user.email,
+        'plan': best_plan.id,
+        'duration': '30 00'  # [DD] [HH:[MM:]]ss[.uuuuuu], ie. 30 days, 0 seconds
+    })
+    assert response.status_code == 200, response.json()
+    require_audit_log()
+
+    profile = user.profile
+    assert profile.plan.id == best_plan.id
+    assert profile.subscribed_plan.id == 'free'  # unchanged
+    # Merely taking a peek doesn't make the plan interval used
+    require_interval_state('pristine')
+    require_audit_log(num_entries=0)
+
+    # Have to signal active use of the plan
+    profile.use_plan()
+    require_interval_state('in_use')
+    require_audit_log(num_entries=1)
+
+
+@pytest.mark.django_db
+def test_plan_interval_multiple(external_api_client, user,
+                                plan_interval_path, best_plan, better_plan,
+                                require_audit_log, require_interval_state):
+    response = external_api_client.post(plan_interval_path, {
+        'user_email': user.email,
+        'plan': best_plan.id,
+        'duration': '1'
+    })
+    assert response.status_code == 200, response.json()
+    require_audit_log()
+
+    response = external_api_client.post(plan_interval_path, {
+        'user_email': user.email,
+        'plan': better_plan.id,
+        'duration': '1'
+    })
+    assert response.status_code == 200, response.json()
+    require_audit_log()
+
+    profile = user.profile
+    require_interval_state('pristine', 'pristine')
+    assert profile.plan.id == better_plan.id  # most recently added interval wins
+    require_interval_state('pristine', 'pristine')
+    require_audit_log(num_entries=0)
+
+    profile.use_plan()
+    require_interval_state('in_use', 'pristine')
+    require_audit_log(num_entries=1)
+    assert profile.plan.id == better_plan.id
+
+
+@pytest.mark.django_db
+def test_plan_interval_expiry(external_api_client, plan_interval_path, best_plan, user, monkeypatch, require_audit_log, require_interval_state):
+    response = external_api_client.post(plan_interval_path, {
+        'user_email': user.email,
+        'plan': best_plan.id,
+        'duration': '1'
+    })
+    assert response.status_code == 200, response.json()
+    require_audit_log()
+
+    profile = user.profile
+
+    require_interval_state('pristine')
+    assert profile.plan.id == best_plan.id
+    require_audit_log(num_entries=0)
+    require_interval_state('pristine')
+
+    profile.use_plan()
+    require_audit_log(num_entries=1)
+    require_interval_state('in_use')
+
+    some_bit_in_the_future = timezone.now() + timedelta(minutes=1)
+    monkeypatch.setattr(timezone, 'now', lambda: some_bit_in_the_future)
+
+    assert profile.plan.id == 'free'
+    require_audit_log(num_entries=1)
+    require_interval_state('expired')
