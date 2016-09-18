@@ -11,12 +11,12 @@ from tasks_base import trees, deployed
 from tasks_base import Project, BaseUwsgiConfiguration, get_tree_commit, commit_is_ancestor
 
 
-def manage_command(tree, config, args, hide='out'):
+def manage_command(tree, config, args, hide='out', pty=False):
     environment = {
         'DJANGO_SETTINGS_MODULE': config.settings_module(),
         'PYTHONPATH': str(config.settings_pythonpath()),
     }
-    return run('{python} -Wi {manage} '.format(python=tree / '_venv/bin/python', manage=tree / 'manage.py') + args, env=environment, hide=hide)
+    return run('{python} -Wi {manage} '.format(python=tree / '_venv/bin/python', manage=tree / 'manage.py') + args, env=environment, hide=hide, pty=pty)
 
 
 class UwsgiConfiguration(BaseUwsgiConfiguration):
@@ -187,6 +187,6 @@ class Django(Project):
             configuration_path = deployed / which / 'uwsgi.ini'
             tree = trees / UwsgiConfiguration.get_commit_from_config(configuration_path)
             config = self.uwsgi_configuration(ctx, tree, configuration_path)
-            manage_command(tree, config, command, hide=None)
+            manage_command(tree, config, command, hide=None, pty=True)
 
         return (manage,)
