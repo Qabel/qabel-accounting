@@ -310,6 +310,30 @@ def test_register_on_behalf_email(api_client, register_on_behalf_base):
     assert response.status_code == 200, response.json()
 
 
+def register_on_behalf_broken(external_api_client, register_on_behalf_path):
+    email = 'foo@example.net'
+    response = external_api_client.post(register_on_behalf_path, {
+        'email': email,
+        'newsletter': True,
+        'language': 'Deutsch-mit-Umlauten',
+    })
+    assert response.status_code == 400, response.json()
+    assert not User.objects.filter(email=email)
+    assert not mail.outbox
+
+
+def register_on_behalf_invalid_mail(external_api_client, register_on_behalf_path):
+    email = 'not_a_valid_mail_address'
+    response = external_api_client.post(register_on_behalf_path, {
+        'email': email,
+        'username': 'asdf',
+        'newsletter': True,
+        'language': 'Deutsch-mit-Umlauten',
+    })
+    assert response.status_code == 400, response.json()
+    assert not User.objects.filter(email=email)
+    assert not mail.outbox
+
 protected_apis = pytest.mark.parametrize('path', (
     auth_resource_path(),
     register_on_behalf_path(),
