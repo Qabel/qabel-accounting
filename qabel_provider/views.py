@@ -1,21 +1,25 @@
 import functools
 import hashlib
 import hmac
+import os
 import logging
 
+from allauth.account.models import EmailAddress
 from axes import decorators as axes_dec
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import transaction
 from rest_auth.registration.views import RegisterView
 from rest_auth.views import LoginView
+from rest_auth.app_settings import PasswordResetSerializer
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 
-from .serializers import UserSerializer, PlanSubscriptionSerializer, PlanIntervalSerializer
+
+from .serializers import UserSerializer, PlanSubscriptionSerializer, PlanIntervalSerializer, RegisterOnBehalfSerializer
 from .models import ProfilePlanLog
 from .utils import get_request_origin
 
@@ -110,6 +114,38 @@ def auth_resource(request, format=None):
         'block_quota': profile.plan.block_quota,
         'monthly_traffic_quota': profile.plan.monthly_traffic_quota,
     })
+
+
+@api_view(('POST',))
+def register_on_behalf(request, format=None):
+    if not check_api_key(request):
+        return api_key_error()
+
+    serializer = RegisterOnBehalfSerializer(data=request.data)
+    serializer.is_valid(True)
+    userdata = serializer.save()
+
+    with transaction.atomic():
+        if User.objects.filter(email=userdata.email).count():
+            return Response({'status': 'Account exists'})
+
+        # We set a very long, random password because PasswordResetForm requires a usable password
+        # (to avoid having disabled-by-staff users re-enable their accounts via a passwort reset).
+        password = os.urandom(64).hex()
+        user = User.objects.create_user(userdata.username, email=userdata.email, password=password)
+        EmailAddress.objects.create(user=user, email=userdata.email,
+                                    primary=True, verified=True)
+        user.profile.created_on_behalf = True
+        user.profile.save()
+
+        password_reset = PasswordResetSerializer(
+            data={'email': userdata.email},
+            context={'request': request},
+        )
+        password_reset.is_valid(True)
+        password_reset.save()
+
+    return Response({'status': 'Account created'})
 
 
 @api_view(('POST',))

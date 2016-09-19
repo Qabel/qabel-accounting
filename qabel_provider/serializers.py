@@ -5,6 +5,9 @@ from django.contrib.auth.password_validation import validate_password
 from rest_auth.registration.serializers import RegisterSerializer
 from rest_framework import serializers
 
+from allauth.account import app_settings as allauth_settings
+from allauth.utils import get_username_max_length
+
 from . import models
 
 
@@ -29,6 +32,21 @@ class UserSerializer(RegisterSerializer):
         model = User
         fields = ('username', 'email')
         read_only = ('username',)
+
+
+class RegisterOnBehalfSerializer(serializers.Serializer):
+    RegisterOnBehalf = namedtuple('RegisterOnBehalf', 'email,username,newsletter,language')
+
+    email = serializers.EmailField()
+    username = serializers.CharField(
+        max_length=get_username_max_length(),
+        min_length=allauth_settings.USERNAME_MIN_LENGTH,
+    )
+    newsletter = serializers.BooleanField()
+    language = serializers.CharField()
+
+    def create(self, validated_data):
+        return self.RegisterOnBehalf(**validated_data)
 
 
 class PlanSubscriptionSerializer(serializers.Serializer):
