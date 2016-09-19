@@ -33,6 +33,7 @@ class Plan(models.Model, ExportModelOperationsMixin('plan')):
 class Profile(models.Model, ExportModelOperationsMixin('profile')):
     user = models.OneToOneField(User, primary_key=True, on_delete=models.CASCADE)
     created_at = models.DateTimeField(verbose_name='Creation date and time', auto_now_add=True)
+    created_on_behalf = models.BooleanField(default=False)
     next_confirmation_mail = models.DateTimeField(verbose_name='Date of the next email confirmation', null=True,
                                                   blank=True)
     needs_confirmation_after = models.DateTimeField(default=confirmation_days)
@@ -73,6 +74,8 @@ class Profile(models.Model, ExportModelOperationsMixin('profile')):
             return False
 
     def confirmation_date_exceeded(self) -> bool:
+        if self.created_on_behalf:
+            return False
         return self.needs_confirmation_after <= timezone.now()
 
     def is_allowed(self) -> bool:

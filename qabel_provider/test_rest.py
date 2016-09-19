@@ -19,6 +19,11 @@ def auth_resource_path():
 
 
 @pytest.fixture
+def register_on_behalf_path():
+    return '/api/v0/internal/user/register/'
+
+
+@pytest.fixture
 def plan_subscription_path():
     return '/api/v0/plan/subscription/'
 
@@ -232,8 +237,82 @@ def test_failed_auth_resource_after_7_days(external_api_client, user, token, aut
     assert response.status_code == 200
     assert len(mail.outbox) == 2
 
+
+@pytest.fixture
+def register_on_behalf_base(external_api_client, register_on_behalf_path, auth_resource_path):
+    def subtest():
+        email = 'manfred@example.net'
+        username = 'Manfred Mustermann'
+        response = external_api_client.post(register_on_behalf_path, {
+            'email': email,
+            'username': username,
+            'newsletter': True,
+            'language': 'Deutsch-mit-Umlauten',  # 'language' is not normalized, at least not now.
+        })
+        data = response.json()
+        assert response.status_code == 200, data
+        assert data['status'] == 'Account created'
+        user = User.objects.get(email='manfred@example.net')
+        profile = user.profile
+        assert user.is_active
+        assert user.username == 'Manfred Mustermann'
+        assert profile.is_allowed()
+        assert profile.created_on_behalf
+
+        # Check that the user is active in the auth resource
+        response = external_api_client.post(auth_resource_path, {'user_id': user.id})
+        data = response.json()
+        assert response.status_code == 200, data
+        assert data['active']
+
+        return email, username
+    return subtest
+
+
+@pytest.mark.django_db
+def test_register_on_behalf(register_on_behalf_base):
+    register_on_behalf_base()
+
+
+@pytest.mark.django_db
+def test_register_on_behalf_exists(external_api_client, register_on_behalf_path, register_on_behalf_base):
+    register_on_behalf_base()
+
+    response = external_api_client.post(register_on_behalf_path, {
+        'email': 'manfred@example.net',
+        'username': '32434223',
+        'newsletter': True,
+        'language': 'Deutscher-mit-Umlauten',
+    })
+    assert response.status_code == 200, response.json()
+    assert response.json()['status'] == 'Account exists'
+
+
+@pytest.mark.django_db
+def test_register_on_behalf_email(api_client, register_on_behalf_base):
+    email, username = register_on_behalf_base()
+
+    sent_mail = mail.outbox.pop()
+    assert not mail.outbox
+    assert email in sent_mail.to
+    mail_body = sent_mail.body
+    # Find the password reset URL in the body: "words url-prefix/accounts/reset/?stuff other words"
+    url = mail_body[mail_body.find('/accounts/reset/'):].split(maxsplit=1)[0]
+
+    new_password = 'testpassword'
+    response = api_client.post(url, {'new_password1': new_password, 'new_password2': new_password})
+    assert response.status_code == 302, response.json()  # redirect after POST
+
+    response = api_client.post('/api/v0/auth/login/', {
+        'username': username,
+        'password': new_password,
+    })
+    assert response.status_code == 200, response.json()
+
+
 protected_apis = pytest.mark.parametrize('path', (
     auth_resource_path(),
+    register_on_behalf_path(),
     plan_subscription_path(),
     plan_interval_path(),
 ))
