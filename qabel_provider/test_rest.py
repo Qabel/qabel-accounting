@@ -289,6 +289,18 @@ def test_register_on_behalf_exists(external_api_client, register_on_behalf_path,
 
 
 @pytest.mark.django_db
+def test_register_on_behalf_exists_external(external_api_client, register_on_behalf_path, user):
+    response = external_api_client.post(register_on_behalf_path, {
+        'email': user.email,
+        'username': '32434223',
+        'newsletter': True,
+        'language': 'Deutscher-mit-Umlauten',
+    })
+    assert response.status_code == 200, response.json()
+    assert response.json()['status'] == 'Account exists'
+
+
+@pytest.mark.django_db
 def test_register_on_behalf_email(api_client, register_on_behalf_base):
     email, username = register_on_behalf_base()
 
