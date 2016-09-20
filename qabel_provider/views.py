@@ -3,6 +3,7 @@ import hashlib
 import hmac
 import os
 import logging
+import uuid
 
 from allauth.account.models import EmailAddress
 from axes import decorators as axes_dec
@@ -18,6 +19,7 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 
+from log_request_id import local as request_local
 
 from .serializers import UserSerializer, PlanSubscriptionSerializer, PlanIntervalSerializer, RegisterOnBehalfSerializer
 from .models import ProfilePlanLog
@@ -63,6 +65,8 @@ def require_api_key(view):
     def view_wrapper(request, format=None):
         if not check_api_key(request):
             return api_key_error()
+        # Request authorized by API key, so imbue our logs with X-Request-ID
+        request_local.request_id = request.META.get('HTTP_X_REQUEST_ID', uuid.uuid4())
         return view(request, format)
     return view_wrapper
 
