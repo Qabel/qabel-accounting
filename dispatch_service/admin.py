@@ -5,4 +5,4 @@ from .models import Redirect
 
 @admin.register(Redirect)
 class RedirectAdmin(admin.ModelAdmin):
-    pass
+    list_display = ('redirect_from', 'to', 'type')
