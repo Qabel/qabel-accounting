@@ -13,8 +13,12 @@ Including another URLconf
     1. Add an import:  from blog import urls as blog_urls
     2. Add a URL to urlpatterns:  url(r'^blog/', include(blog_urls))
 """
+from functools import partial
+
+from django.conf import settings
 from django.conf.urls import include, url
 from django.contrib import admin
+from django.shortcuts import redirect
 from qabel_provider import views
 from rest_auth.views import (
     LogoutView, UserDetailsView, PasswordChangeView,
@@ -52,7 +56,12 @@ rest_urls = [
     url(r'^plan/add-interval/$', views.plan_add_interval),
 ]
 
+landing_urls = [
+    url(r'^qabel-now/$', partial(redirect, settings.LANDING_QABEL_NOW)),
+]
+
 urlpatterns = [
+    url(r'^landing/', include(landing_urls)),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^nested_admin/', include(nested_admin.urls)),
     url(r'^accounts/', include('django.contrib.auth.urls')),

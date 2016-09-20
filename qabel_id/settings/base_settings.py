@@ -125,3 +125,5 @@ ACCOUNT_EMAIL_REQUIRED = True
 
 # Allows, that the email address can be confirmed with a GET request
 ACCOUNT_CONFIRM_EMAIL_ON_GET = True
+
+LANDING_QABEL_NOW = 'https://qabel.de/de/registrierung'
