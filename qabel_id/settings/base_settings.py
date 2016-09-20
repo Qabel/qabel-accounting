@@ -26,6 +26,7 @@ INSTALLED_APPS = (
     'corsheaders',
     'axes',
     'nested_admin',
+    'dispatch_service',
 )
 
 MIDDLEWARE_CLASSES = (
