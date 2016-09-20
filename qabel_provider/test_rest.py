@@ -349,35 +349,44 @@ def test_register_on_behalf_invalid_mail(external_api_client, register_on_behalf
     assert not mail.outbox
 
 
+@pytest.fixture
+def patched_uuid(monkeypatch):
+    id = uuid.uuid4()
+    monkeypatch.setattr(uuid, 'uuid4', lambda: id)
+    return id.hex
+
+
 def test_request_id_external(capfd, external_api_client, auth_resource_path, user):
     response = external_api_client.post(auth_resource_path, {'user_id': user.id}, HTTP_X_REQUEST_ID='mein-foo-request')
     assert response.status_code == 200
     assert '[mein-foo-request]' in capfd.readouterr()[1]
 
 
-def test_request_id_external_wrong_secret(capfd, client, auth_resource_path, monkeypatch):
+def test_request_id_external_wrong_secret(capfd, client, auth_resource_path, patched_uuid):
     response = client.post(auth_resource_path, HTTP_X_REQUEST_ID='mein-foo-request', HTTP_APISECRET='wrong')
     assert response.status_code == 403, response.json()
     # Did not use X-Request-ID in request with wrong APISECRET
-    assert '[totally-random]' not in capfd.readouterr()[1]
+    stderr = capfd.readouterr()[1]
+    assert '[mein-foo-request]' not in stderr
+    assert patched_uuid in stderr
 
 
-def test_request_id_external_none(capfd, external_api_client, auth_resource_path, monkeypatch, user):
-    monkeypatch.setattr(uuid, 'uuid4', lambda: 'totally-random')
+def test_request_id_external_none(capfd, external_api_client, auth_resource_path, patched_uuid, user):
     response = external_api_client.post(auth_resource_path, {'user_id': user.id})
     assert response.status_code == 200
-    assert '[totally-random]' in capfd.readouterr()[1]
+    assert patched_uuid in capfd.readouterr()[1]
 
 
 @pytest.mark.django_db
-def test_request_id_untrusted(capfd, api_client, monkeypatch):
-    monkeypatch.setattr(uuid, 'uuid4', lambda: 'totally-random')
+def test_request_id_untrusted(capfd, api_client, patched_uuid):
     response = api_client.post('/api/v0/auth/login/',
                                {'username': 'foo', 'password': 'wrong'},
                                HTTP_X_REQUEST_ID='mein-foo-request')
     assert response.status_code == 400, response.json()
     # Did not use X-Request-ID in untrusted (non-APISECRET) request.
-    assert '[totally-random]' in capfd.readouterr()[1]
+    stderr = capfd.readouterr()[1]
+    assert '[mein-foo-request]' not in stderr
+    assert patched_uuid in stderr
 
 
 protected_apis = pytest.mark.parametrize('path', (

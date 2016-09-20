@@ -3,7 +3,6 @@ import hashlib
 import hmac
 import os
 import logging
-import uuid
 
 from allauth.account.models import EmailAddress
 from axes import decorators as axes_dec
@@ -66,7 +65,10 @@ def require_api_key(view):
         if not check_api_key(request):
             return api_key_error()
         # Request authorized by API key, so imbue our logs with X-Request-ID
-        request_local.request_id = request.META.get('HTTP_X_REQUEST_ID', uuid.uuid4())
+        request_id = request.META.get('HTTP_X_REQUEST_ID')
+        if request_id:
+            request_local.request_id = request_id
+            request.id = request_id
         return view(request, format)
     return view_wrapper
 
