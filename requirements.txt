@@ -19,3 +19,4 @@ psycopg2==2.6.1
 invoke==0.13.0
 pprintpp==0.2.3
 django-nested-admin==3.0.8
+pytz==2016.6.1
