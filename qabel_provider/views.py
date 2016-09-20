@@ -58,7 +58,17 @@ def api_key_error():
     return Response(status=403, data={'error': 'Invalid API key'})
 
 
+def require_api_key(view):
+    @functools.wraps(view)
+    def view_wrapper(request, format=None):
+        if not check_api_key(request):
+            return api_key_error()
+        return view(request, format)
+    return view_wrapper
+
+
 @api_view(('POST',))
+@require_api_key
 def auth_resource(request, format=None):
     """
     Handles auth for uploads, downloads and deletes on the storage backend.
@@ -75,9 +85,6 @@ def auth_resource(request, format=None):
 
     :return: HttpResponseBadRequest|HttpResponse(status=204)|HttpResponse(status=403)|HttpResponse(status=404)
     """
-    if not check_api_key(request):
-        return api_key_error()
-
     if 'auth' in request.data and 'user_id' in request.data:
         return Response(status=400, data={'error': 'Pass *either* an auth token *or* an user ID'})
     elif 'auth' in request.data:
@@ -117,10 +124,8 @@ def auth_resource(request, format=None):
 
 
 @api_view(('POST',))
+@require_api_key
 def register_on_behalf(request, format=None):
-    if not check_api_key(request):
-        return api_key_error()
-
     serializer = RegisterOnBehalfSerializer(data=request.data)
     serializer.is_valid(True)
     userdata = serializer.save()
@@ -149,6 +154,7 @@ def register_on_behalf(request, format=None):
 
 
 @api_view(('POST',))
+@require_api_key
 def plan_subscription(request, format=None):
     """
     Set subscription for an user account.
@@ -162,9 +168,6 @@ def plan_subscription(request, format=None):
 
     API authentication required.
     """
-    if not check_api_key(request):
-        return api_key_error()
-
     serializer = PlanSubscriptionSerializer(data=request.data)
     serializer.is_valid(True)
     profile, plan = serializer.save()
@@ -182,6 +185,7 @@ def plan_subscription(request, format=None):
 
 
 @api_view(('POST',))
+@require_api_key
 def plan_add_interval(request, format=None):
     """
     Add plan interval to an user account.
@@ -196,9 +200,6 @@ def plan_add_interval(request, format=None):
 
     For details on *duration*, see http://www.django-rest-framework.org/api-guide/fields/#durationfield
     """
-    if not check_api_key(request):
-        return api_key_error()
-
     serializer = PlanIntervalSerializer(data=request.data)
     serializer.is_valid(True)
     plan_interval = serializer.save()
