@@ -39,6 +39,11 @@ def test_redirect_not_found(client, db):
     assert response.status_code == status.HTTP_404_NOT_FOUND
 
 
+def test_redirect_no_link_given(client, db):
+    response = client.get('/dispatch/')
+    assert response.status_code == status.HTTP_404_NOT_FOUND
+
+
 def test_redirect_with_slash(client, with_slash):
     response = client.get('/dispatch/with/slash/')
     assert response.status_code == status.HTTP_302_FOUND
