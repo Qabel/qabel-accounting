@@ -1,4 +1,6 @@
 import json
+import uuid
+
 import pytest
 from datetime import timedelta
 from django.utils import timezone
@@ -322,7 +324,7 @@ def test_register_on_behalf_email(api_client, register_on_behalf_base):
     assert response.status_code == 200, response.json()
 
 
-def register_on_behalf_broken(external_api_client, register_on_behalf_path):
+def test_register_on_behalf_broken(external_api_client, register_on_behalf_path):
     email = 'foo@example.net'
     response = external_api_client.post(register_on_behalf_path, {
         'email': email,
@@ -334,7 +336,7 @@ def register_on_behalf_broken(external_api_client, register_on_behalf_path):
     assert not mail.outbox
 
 
-def register_on_behalf_invalid_mail(external_api_client, register_on_behalf_path):
+def test_register_on_behalf_invalid_mail(external_api_client, register_on_behalf_path):
     email = 'not_a_valid_mail_address'
     response = external_api_client.post(register_on_behalf_path, {
         'email': email,
@@ -345,6 +347,47 @@ def register_on_behalf_invalid_mail(external_api_client, register_on_behalf_path
     assert response.status_code == 400, response.json()
     assert not User.objects.filter(email=email)
     assert not mail.outbox
+
+
+@pytest.fixture
+def patched_uuid(monkeypatch):
+    id = uuid.uuid4()
+    monkeypatch.setattr(uuid, 'uuid4', lambda: id)
+    return id.hex
+
+
+def test_request_id_external(capfd, external_api_client, auth_resource_path, user):
+    response = external_api_client.post(auth_resource_path, {'user_id': user.id}, HTTP_X_REQUEST_ID='mein-foo-request')
+    assert response.status_code == 200
+    assert '[mein-foo-request]' in capfd.readouterr()[1]
+
+
+def test_request_id_external_wrong_secret(capfd, client, auth_resource_path, patched_uuid):
+    response = client.post(auth_resource_path, HTTP_X_REQUEST_ID='mein-foo-request', HTTP_APISECRET='wrong')
+    assert response.status_code == 403, response.json()
+    # Did not use X-Request-ID in request with wrong APISECRET
+    stderr = capfd.readouterr()[1]
+    assert '[mein-foo-request]' not in stderr
+    assert patched_uuid in stderr
+
+
+def test_request_id_external_none(capfd, external_api_client, auth_resource_path, patched_uuid, user):
+    response = external_api_client.post(auth_resource_path, {'user_id': user.id})
+    assert response.status_code == 200
+    assert patched_uuid in capfd.readouterr()[1]
+
+
+@pytest.mark.django_db
+def test_request_id_untrusted(capfd, api_client, patched_uuid):
+    response = api_client.post('/api/v0/auth/login/',
+                               {'username': 'foo', 'password': 'wrong'},
+                               HTTP_X_REQUEST_ID='mein-foo-request')
+    assert response.status_code == 400, response.json()
+    # Did not use X-Request-ID in untrusted (non-APISECRET) request.
+    stderr = capfd.readouterr()[1]
+    assert '[mein-foo-request]' not in stderr
+    assert patched_uuid in stderr
+
 
 protected_apis = pytest.mark.parametrize('path', (
     auth_resource_path(),

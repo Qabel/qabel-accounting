@@ -11,6 +11,34 @@ qabel:
                 ENGINE: django.db.backends.postgresql
                 NAME: qabel-accounting
                 USER: qabel-accounting
+
+        # Basic logging configuration.
+        # Note the 'request_id' filter, which is also mentioned in the handler, and the
+        # %(request_id)s bit in the standard formatter.
+        # That request id glues all log output from any single request togehter - you really wanna have it!
+        LOGGING:
+            disable_existing_loggers: false
+            version: 1
+            filters:
+                request_id:
+                    (): log_request_id.filters.RequestIDFilter
+            formatters:
+                standard:
+                    format: "%(levelname)-8s [%(asctime)s] [%(request_id)s] %(name)s: %(message)s"
+            handlers:
+                console:
+                    class: logging.StreamHandler
+                    filters:
+                        - request_id
+                    formatter: standard
+                    level: DEBUG
+            loggers:
+                '':
+                    handlers:
+                        - console
+                    level: DEBUG
+                    propagate: false
+
         uwsgi:
             processes: 2
             http-socket: :9696
