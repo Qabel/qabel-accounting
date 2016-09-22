@@ -55,7 +55,6 @@ class PlanAdmin(admin.ModelAdmin):
     fields = (
         'id', 'block_quota', 'monthly_traffic_quota',
     )
-    readonly_fields = ('id',)
 
 try:
     admin.site.unregister(User)
