@@ -53,7 +53,7 @@ class PlanAdmin(admin.ModelAdmin):
     model = Plan
 
     fields = (
-        'id', 'block_quota', 'monthly_traffic_quota',
+        'id', 'name', 'block_quota', 'monthly_traffic_quota',
     )
 
 try:
