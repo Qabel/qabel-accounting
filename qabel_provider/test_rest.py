@@ -244,7 +244,7 @@ def test_failed_auth_resource_after_7_days(external_api_client, user, token, aut
 def register_on_behalf_base(external_api_client, register_on_behalf_path, auth_resource_path):
     def subtest():
         email = 'manfred@example.net'
-        username = 'Manfred Mustermann'
+        username = 'manfred'
         response = external_api_client.post(register_on_behalf_path, {
             'email': email,
             'username': username,
@@ -257,7 +257,7 @@ def register_on_behalf_base(external_api_client, register_on_behalf_path, auth_r
         user = User.objects.get(email='manfred@example.net')
         profile = user.profile
         assert user.is_active
-        assert user.username == 'Manfred Mustermann'
+        assert user.username == username
         assert profile.is_allowed()
         assert profile.created_on_behalf
 
@@ -278,6 +278,7 @@ def test_register_on_behalf(register_on_behalf_base):
 
 @pytest.mark.django_db
 def test_register_on_behalf_exists(external_api_client, register_on_behalf_path, register_on_behalf_base):
+    # Compat: "username" is ignored
     register_on_behalf_base()
 
     response = external_api_client.post(register_on_behalf_path, {
@@ -303,6 +304,23 @@ def test_register_on_behalf_exists_external(external_api_client, register_on_beh
 
 
 @pytest.mark.django_db
+def test_register_on_behalf_dup(external_api_client, register_on_behalf_path, register_on_behalf_base):
+    # Compat: "username" is ignored
+    register_on_behalf_base()
+
+    response = external_api_client.post(register_on_behalf_path, {
+        'email': 'manfred@example.com',
+        'username': '32434223',
+        'newsletter': True,
+        'language': 'Deutscher-mit-Umlauten',
+    })
+    assert response.status_code == 200, response.json()
+    assert response.json()['status'] == 'Account created'
+    user = User.objects.get(email='manfred@example.com')
+    assert user.username == 'manfred1'
+
+
+@pytest.mark.django_db
 def test_register_on_behalf_email(api_client, register_on_behalf_base):
     email, username = register_on_behalf_base()
 
@@ -324,16 +342,17 @@ def test_register_on_behalf_email(api_client, register_on_behalf_base):
     assert response.status_code == 200, response.json()
 
 
-def test_register_on_behalf_broken(external_api_client, register_on_behalf_path):
+def test_register_on_behalf_no_username(external_api_client, register_on_behalf_path):
     email = 'foo@example.net'
     response = external_api_client.post(register_on_behalf_path, {
         'email': email,
         'newsletter': True,
         'language': 'Deutsch-mit-Umlauten',
     })
-    assert response.status_code == 400, response.json()
-    assert not User.objects.filter(email=email)
-    assert not mail.outbox
+    assert response.status_code == 200, response.json()
+    assert response.json()['status'] == 'Account created'
+    assert User.objects.filter(email=email)
+    assert mail.outbox
 
 
 def test_register_on_behalf_invalid_mail(external_api_client, register_on_behalf_path):

@@ -5,6 +5,7 @@ import os
 import logging
 
 from allauth.account.models import EmailAddress
+from allauth.utils import get_username_max_length
 from axes import decorators as axes_dec
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -129,6 +130,22 @@ def auth_resource(request, format=None):
     })
 
 
+def gen_username(email):
+    mailbox, domain = email.rsplit('@', maxsplit=1)
+    username = mailbox
+    n = 1
+    while User.objects.filter(username=username).count():
+        username = '%s%d' % (mailbox, n)
+        n += 1
+
+    max_length = get_username_max_length()
+    if max_length and len(username) > max_length:
+        # I give up.
+        return os.urandom(max_length // 2).hex()
+
+    return username
+
+
 @api_view(('POST',))
 @require_api_key
 def register_on_behalf(request, format=None):
@@ -140,10 +157,16 @@ def register_on_behalf(request, format=None):
         if User.objects.filter(email=userdata.email).count():
             return Response({'status': 'Account exists'})
 
+        username = gen_username(userdata.email)
+
         # We set a very long, random password because PasswordResetForm requires a usable password
         # (to avoid having disabled-by-staff users re-enable their accounts via a passwort reset).
         password = os.urandom(64).hex()
-        user = User.objects.create_user(userdata.username, email=userdata.email, password=password)
+        user = User.objects.create_user(username,
+                                        email=userdata.email,
+                                        password=password,
+                                        first_name=userdata.first_name,
+                                        last_name=userdata.last_name)
         EmailAddress.objects.create(user=user, email=userdata.email,
                                     primary=True, verified=True)
         user.profile.created_on_behalf = True
