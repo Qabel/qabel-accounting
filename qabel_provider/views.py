@@ -8,11 +8,11 @@ from allauth.account.models import EmailAddress
 from allauth.utils import get_username_max_length
 from axes import decorators as axes_dec
 from django.conf import settings
+from django.contrib.auth.forms import PasswordResetForm
 from django.contrib.auth.models import User
 from django.db import transaction
 from rest_auth.registration.views import RegisterView
 from rest_auth.views import LoginView
-from rest_auth.app_settings import PasswordResetSerializer
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view
 from rest_framework.exceptions import ValidationError
@@ -172,12 +172,20 @@ def register_on_behalf(request, format=None):
         user.profile.created_on_behalf = True
         user.profile.save()
 
-        password_reset = PasswordResetSerializer(
-            data={'email': userdata.email},
-            context={'request': request},
+        password_form = PasswordResetForm(data={'email': userdata.email})
+        if not password_form.is_valid():
+            # Should not be possible to hit, unless drf3 and django use different email validators w/ different accepting sets
+            logger.error('register_on_behalf failed, password reset form with validated email is invalid?! '
+                         'Errors are: %r', password_form.errors)
+            return Response({'status': 'Registration failed.'}, status=500)
+
+        password_form.save(
+            request=request,
+            use_https=request.is_secure(),
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            subject_template_name='registration/account_created_subject.txt',
+            email_template_name='registration/account_created_email.txt',
         )
-        password_reset.is_valid(True)
-        password_reset.save()
 
     return Response({'status': 'Account created'})
 
