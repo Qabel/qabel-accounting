@@ -1,0 +1,209 @@
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+#
+# mabe <beermann@qabel.de>, 2016.
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2016-09-23 20:10+0200\n"
+"PO-Revision-Date: 2016-09-23 20:11+0100\n"
+"Last-Translator: mabe <beermann@qabel.de>\n"
+"Language-Team: English <kde-i18n-doc@kde.org>\n"
+"Language: en_GB\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Lokalize 2.0\n"
+
+#: admin.py:10
+msgid "Accounting"
+msgstr ""
+
+#: admin.py:11 admin.py:12
+msgid "Qabel Account Management"
+msgstr ""
+
+#: templates/accounts/change_profile.html:20
+msgid "Save changes"
+msgstr "Änderungen speichern"
+
+#: templates/accounts/profile.html:3
+msgid "My account"
+msgstr "Mein Account"
+
+#: templates/accounts/profile.html:6
+#, python-format
+msgid "Welcome, %(username)s"
+msgstr "Willkommen, %(username)s"
+
+#: templates/accounts/profile.html:10
+msgid "Account created"
+msgstr "Account erstellt"
+
+#: templates/accounts/profile.html:16
+msgid "Your username"
+msgstr "Ihr Benutzername"
+
+#: templates/accounts/profile.html:18 templates/accounts/profile.html.py:24
+#: templates/accounts/profile.html:31
+msgid "Change"
+msgstr "Ändern"
+
+#: templates/accounts/profile.html:22
+msgid "Your password"
+msgstr "Ihr Passwort"
+
+#: templates/accounts/profile.html:25
+#, python-format
+msgid ""
+"(We don't store your password in plain-text, we use %(reassuring_string)s "
+"instead)"
+msgstr ""
+"(Wir speichern Ihr Passwort nicht im Klartext, sondern mittels "
+"%(reassuring_string)s)"
+
+#: templates/accounts/profile.html:29
+msgid "Primary email address"
+msgstr "Primäre E-Mail-Addresse"
+
+#: templates/accounts/profile.html:33
+msgid "This address hasn't been confirmed yet."
+msgstr "Diese E-Mail-Addresse wurde noch nicht bestätigt."
+
+#: templates/accounts/profile.html:38
+msgid "Current plan"
+msgstr "Tarif"
+
+#: templates/accounts/profile.html:44
+msgid "Qabel Box Storage"
+msgstr "Qabel Box Speicherplatz"
+
+#: templates/accounts/profile.html:52
+#, python-format
+msgid "%(used)s used out of %(quota)s"
+msgstr "%(used)s von %(quota)s genutzt"
+
+#: templates/registration/logged_out.html:9
+msgid "Log in again"
+msgstr "Erneut einloggen"
+
+#: templates/registration/login.html:4 templates/registration/login.html:30
+#: templates/registration/login.html:38
+msgid "Login"
+msgstr "Login"
+
+#: templates/registration/login.html:13
+msgid ""
+"\n"
+"        Your account doesn't have access to this page. To proceed,\n"
+"        please login with an account that has access.\n"
+"        "
+msgstr ""
+
+#: templates/registration/login.html:26
+msgid ""
+"\n"
+"            Please login to see this page.\n"
+"            "
+msgstr ""
+
+#: templates/registration/login.html:45
+msgid "Lost your password?"
+msgstr "Passwort vergessen?"
+
+#: templates/registration/password_change_done.html:9
+msgid "Your password was changed."
+msgstr "Ihr Passwort wurde erfolgreich geändert."
+
+#: templates/registration/password_change_done.html:11
+msgid "Back to your user profile »"
+msgstr "Zurück zu Ihrem Account »"
+
+#: templates/registration/password_change_form.html:13
+msgid ""
+"Please enter your old password, for security's sake, and then enter your new "
+"password twice so we can verify you typed it in correctly."
+msgstr ""
+" Bitte geben Sie aus Sicherheitsgründen erst Ihr altes Passwort und darunter "
+"dann zweimal (um sicherzustellen, dass Sie es korrekt eingegeben haben) das "
+"neue Passwort ein. "
+
+#: templates/registration/password_change_form.html:20
+#: templates/registration/password_reset_confirm.html:21
+msgid "Change my password"
+msgstr "Mein Passwort ändern"
+
+#: templates/registration/password_reset_complete.html:9
+msgid "Your password has been set.  You may go ahead and log in now."
+msgstr ""
+"Ihr Passwort wurde übernommen. Sie können sich jetzt mit Ihrem neuen "
+"Passwort anmelden."
+
+#: templates/registration/password_reset_complete.html:11
+msgid "Log in"
+msgstr "Login"
+
+#: templates/registration/password_reset_confirm.html:14
+msgid ""
+"Please enter your new password twice so we can verify you typed it in "
+"correctly."
+msgstr ""
+
+#: templates/registration/password_reset_confirm.html:26
+msgid ""
+"The password reset link was invalid, possibly because it has already been "
+"used.  Please request a new password reset."
+msgstr ""
+
+#: templates/registration/password_reset_done.html:9
+msgid ""
+"We've emailed you instructions for setting your password, if an account "
+"exists with the email you entered. You should receive them shortly."
+msgstr ""
+
+#: templates/registration/password_reset_done.html:11
+msgid ""
+"If you don't receive an email, please make sure you've entered the address "
+"you registered with, and check your spam folder."
+msgstr ""
+
+#: templates/registration/password_reset_email.html:2
+#, python-format
+msgid ""
+"You're receiving this email because you requested a password reset for your "
+"user account at %(site_name)s."
+msgstr ""
+
+#: templates/registration/password_reset_email.html:4
+msgid "Please go to the following page and choose a new password:"
+msgstr ""
+
+#: templates/registration/password_reset_email.html:8
+msgid "Your username, in case you've forgotten:"
+msgstr ""
+
+#: templates/registration/password_reset_email.html:10
+msgid "Thanks for using our site!"
+msgstr ""
+
+#: templates/registration/password_reset_email.html:12
+#, python-format
+msgid "The %(site_name)s team"
+msgstr ""
+
+#: templates/registration/password_reset_form.html:13
+msgid ""
+"Forgotten your password? Enter your email address below, and we'll email "
+"instructions for setting a new one."
+msgstr ""
+
+#: templates/registration/password_reset_form.html:20
+msgid "Reset my password"
+msgstr "Passwort zurücksetzen"
+
+#: views.py:333
+msgid "Change profile"
+msgstr "Account bearbeiten"
+

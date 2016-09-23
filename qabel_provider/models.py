@@ -58,12 +58,15 @@ class Profile(models.Model, ExportModelOperationsMixin('profile')):
         PlanInterval.get_or_start_interval(self)
 
     @property
+    def primary_email(self):
+        return EmailAddress.objects.get_primary(self.user)
+
+    @property
     def is_confirmed(self):
-        email = EmailAddress.objects.get_primary(self.user)
-        return email.verified
+        return self.primary_email.verified
 
     def confirm_email(self):
-        email = EmailAddress.objects.get_primary(self.user)
+        email = self.primary_email
         email.verified = True
         email.save()
 
@@ -94,7 +97,7 @@ class Profile(models.Model, ExportModelOperationsMixin('profile')):
         return False
 
     def send_confirmation_mail(self):
-        EmailAddress.objects.get_primary(self.user).send_confirmation(signup=False)
+        self.primary_email.send_confirmation(signup=False)
 
 
 class PlanInterval(models.Model, ExportModelOperationsMixin('planinterval')):

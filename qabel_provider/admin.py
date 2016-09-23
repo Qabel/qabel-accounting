@@ -1,10 +1,15 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as OriginalUserAdmin
 from django.contrib.auth.models import User
+from django.utils.translation import ugettext_lazy as _
 
 import nested_admin
 
 from .models import Profile, Plan, PlanInterval, ProfilePlanLog
+
+admin.site.site_title = _('Accounting')
+admin.site.site_header = _('Qabel Account Management')
+admin.site.index_title = _('Qabel Account Management')
 
 
 class PlanIntervalInline(nested_admin.NestedTabularInline):

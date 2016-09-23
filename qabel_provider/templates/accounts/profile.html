@@ -1,9 +1,62 @@
-{% extends "base.html" %}
+{% extends "accounting.html" %}
+{% load i18n %}
+{% block title %}{% trans "My account" %}{{ block.super }}{% endblock %}
 
 {% block content %}
+<h1>{% blocktrans with username=user_greeting %}Welcome, {{ username }}{% endblocktrans %}</h1>
 
-<span id="id_quota">
-    Storage quota: {{ user.profile.quota }}
-</span>
+<div class="form-horizontal">
+  <div class="form-group">
+    <div class="col-sm-3">{% trans "Account created" %}</div>
+    <div class="col-sm-9">
+      {{ profile.created_at }}
+    </div>
+  </div>
+  <div class="form-group">
+    <div class="col-sm-3">{% trans "Last login" %}</div>
+    <div class="col-sm-9">
+      {{ user.last_login }}
+    </div>
+  </div>
+  <div class="form-group">
+    <div class="col-sm-3">{% trans "Your username" %}</div>
+    <div class="col-sm-9">
+      {{ user }} (<a href="{% url 'change-user-profile' %}">{% trans "Change" %}</a>)
+    </div>
+  </div>
+  <div class="form-group">
+    <div class="col-sm-3">{% trans "Your password" %}</div>
+    <div class="col-sm-9">
+        <a href="{% url 'password_change' %}">{% trans "Change" %}</a><br>
+    </div>
+  </div>
+  <div class="form-group">
+    <div class="col-sm-3">{% trans "Primary email address" %}</div>
+    <div class="col-sm-9">
+        {{ profile.primary_email.email }} (<a href="{% url 'change-user-profile' %}">{% trans "Change" %}</a>)<br>
+        {% if not profile.primary_email.verified %}
+            {% trans "This address hasn't been confirmed yet." %}
+        {% endif %}
+    </div>
+  </div>
+  <div class="form-group">
+    <div class="col-sm-3">{% trans "Current plan" %}</div>
+    <div class="col-sm-9">
+      {{ profile.plan }} (<a href="{% url 'dispatch' 'plans' %}">{% trans 'Available plans' %}</a>)
+    </div>
+  </div>
+  <div class="form-group">
+    <div class="col-sm-3">{% trans "Qabel Box Storage" %}</div>
+    <div class="col-sm-9">
+        <div class="progress" style="width: 50%">
+            <div class="progress-bar" role="progressbar" aria-valuenow="{{ block_percentage }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ block_percentage }}%;">
+                {{ block_percentage }}%
+            </div>
+        </div>
+
+        {% blocktrans with used=block_used|filesizeformat quota=block_quota|filesizeformat %}{{ used }} used out of {{ quota }}{% endblocktrans %}
+    </div>
+  </div>
+</div>
 
 {% endblock %}
