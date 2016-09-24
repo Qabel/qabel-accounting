@@ -328,6 +328,7 @@ def test_register_on_behalf_email(api_client, register_on_behalf_base):
     assert not mail.outbox
     assert email in sent_mail.to
     mail_body = sent_mail.body
+    assert (' %s\n' % username) in mail_body
     # Find the password reset URL in the body: "words url-prefix/accounts/reset/?stuff other words"
     url = mail_body[mail_body.find('/accounts/reset/'):].split(maxsplit=1)[0]
 
