@@ -185,6 +185,7 @@ def register_on_behalf(request, format=None):
             from_email=settings.DEFAULT_FROM_EMAIL,
             subject_template_name='registration/account_created_subject.txt',
             email_template_name='registration/account_created_email.txt',
+            html_email_template_name='registration/account_created_email.html'
         )
 
     return Response({'status': 'Account created'})
