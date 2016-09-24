@@ -5,7 +5,6 @@ import os
 import logging
 
 from allauth.account.models import EmailAddress
-from allauth.utils import get_username_max_length
 from axes import decorators as axes_dec
 from django.conf import settings
 from django.contrib.auth.forms import PasswordResetForm
@@ -23,7 +22,7 @@ from log_request_id import local as request_local
 
 from .serializers import UserSerializer, PlanSubscriptionSerializer, PlanIntervalSerializer, RegisterOnBehalfSerializer
 from .models import ProfilePlanLog
-from .utils import get_request_origin
+from .utils import get_request_origin, gen_username
 
 logger = logging.getLogger(__name__)
 
@@ -128,22 +127,6 @@ def auth_resource(request, format=None):
         'block_quota': profile.plan.block_quota,
         'monthly_traffic_quota': profile.plan.monthly_traffic_quota,
     })
-
-
-def gen_username(email):
-    mailbox, domain = email.rsplit('@', maxsplit=1)
-    username = mailbox
-    n = 1
-    while User.objects.filter(username=username).count():
-        username = '%s%d' % (mailbox, n)
-        n += 1
-
-    max_length = get_username_max_length()
-    if max_length and len(username) > max_length:
-        # I give up.
-        return os.urandom(max_length // 2).hex()
-
-    return username
 
 
 @api_view(('POST',))

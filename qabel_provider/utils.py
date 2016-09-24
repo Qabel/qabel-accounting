@@ -1,5 +1,9 @@
+import os
 
 from django.utils.text import Truncator
+from django.contrib.auth.models import User
+
+from allauth.utils import get_username_max_length
 
 
 def elide(string, length):
@@ -26,3 +30,19 @@ def get_request_origin(request, max_length=None):
 
     origin = ', '.join(origin)
     return elide(origin, max_length)
+
+
+def gen_username(email):
+    mailbox, domain = email.rsplit('@', maxsplit=1)
+    username = mailbox
+    n = 1
+    while User.objects.filter(username=username).count():
+        username = '%s%d' % (mailbox, n)
+        n += 1
+
+    max_length = get_username_max_length()
+    if max_length and len(username) > max_length:
+        # I give up.
+        return os.urandom(max_length // 2).hex()
+
+    return username
