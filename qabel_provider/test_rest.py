@@ -224,7 +224,7 @@ def test_failed_auth_resource_after_7_days(external_api_client, user, token, aut
     assert data['active'] is False
     assert len(mail.outbox) == 1
     assert mail.outbox[0].subject.startswith('[example.com]')
-    assert mail.outbox[0].body.startswith('English')
+    assert 'English version below.' in mail.outbox[0].body
 
     # Check, that no new mail is send within 24 hours
     response = external_api_client.post(auth_resource_path, request_body)
@@ -642,7 +642,6 @@ def test_plan_subscription_plan_not_found(external_api_client, plan_subscription
     assert response.status_code == 400, json
     assert 'plan' in json
     assert len(json['plan']) == 1
-    assert 'does not exist' in json['plan'][0]
     user.profile.refresh_from_db()
     assert user.profile.plan.id == 'free'
 
