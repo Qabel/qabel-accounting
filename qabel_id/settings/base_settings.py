@@ -85,8 +85,8 @@ REST_FRAMEWORK = {
 AXES_COOLOFF_TIME = datetime.timedelta(minutes=1)
 AXES_LOGIN_FAILURE_LIMIT = 5
 
-ACCOUNT_EMAIL_CONFIRMATION_ANONYMOUS_REDIRECT_URL = 'https://qabel.de'
-ACCOUNT_EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URL = 'https://qabel.de'
+ACCOUNT_EMAIL_CONFIRMATION_ANONYMOUS_REDIRECT_URL = reverse_lazy('account_email_confirmed')
+ACCOUNT_EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URL = reverse_lazy('account_email_confirmed')
 
 ACCOUNT_ADAPTER = 'qabel_provider.adapters.IgnoreInvalidMailsAdapter'
 

@@ -390,3 +390,7 @@ def user_login(request, **kwargs):
     if request.user.is_authenticated():
         return redirect(user_profile)  # Could introspect "next" etc here
     return login(request, **kwargs)
+
+
+def user_mail_confirmed(request):
+    return render(request, 'accounts/confirmed.html')

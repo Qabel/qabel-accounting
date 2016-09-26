@@ -94,6 +94,7 @@ urlpatterns = [
         name='account_confirm_email'),
     url(r'^account-email-verification-sent/$', EmailVerificationSentView.as_view(),
         name='account_email_verification_sent'),
+    url(r'^accounts/confirmed/', views.user_mail_confirmed, name='account_email_confirmed'),
     url(r'^', include(theme_urls)),
 ]
 
