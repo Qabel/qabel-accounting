@@ -181,3 +181,5 @@ MENU = (
 # No trailing slash please
 BLOCK_URL = 'https://block.qabel.org'
 OUTGOING_REQUEST_ID_HEADER = 'X-Request-ID'
+
+FACET_USER_PROFILE = False

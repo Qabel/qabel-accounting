@@ -13,6 +13,7 @@ Including another URLconf
     1. Add an import:  from blog import urls as blog_urls
     2. Add a URL to urlpatterns:  url(r'^blog/', include(blog_urls))
 """
+from django.conf import settings
 from django.conf.urls import include, url
 from django.contrib import admin
 from django.contrib.auth import urls as auth_urls
@@ -65,6 +66,11 @@ profile_urls = [
     url(r'^account/history$', views.user_history),
     url(r'^change/profile$', views.change_user_profile, name='change-user-profile'),
 ]
+
+if not settings.FACET_USER_PROFILE:
+    # knock knock
+    profile_urls.clear()
+
 
 dispatch_urls = [
     url(r'(?P<redirect_from>.*)/$', dispatch, name='dispatch'),
