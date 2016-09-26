@@ -1,8 +1,10 @@
 import json
 import uuid
+from datetime import timedelta
+from smtplib import SMTPRecipientsRefused
 
 import pytest
-from datetime import timedelta
+
 from django.utils import timezone
 from django.core import mail
 from django.contrib.auth.models import User
@@ -367,6 +369,22 @@ def test_register_on_behalf_invalid_mail(external_api_client, register_on_behalf
     assert response.status_code == 400, response.json()
     assert not User.objects.filter(email=email)
     assert not mail.outbox
+
+
+def test_register_on_behalf_smtp_error(external_api_client, register_on_behalf_path, monkeypatch):
+    def erroring_send(self):
+        raise SMTPRecipientsRefused(['foo@bar'])
+    monkeypatch.setattr(mail.EmailMultiAlternatives, 'send', erroring_send)
+    response = external_api_client.post(register_on_behalf_path, {
+        'email': 'foo@example.com',
+        'username': 'asdf',
+        'newsletter': True,
+        'language': 'Deutsch-mit-Umlauten',
+    })
+    assert response.status_code == 400, response.json()
+    status = response.json()['status']
+    assert 'SMTP error' in status
+    assert not User.objects.filter(username='foo')
 
 
 @pytest.fixture

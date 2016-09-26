@@ -3,6 +3,7 @@ import hashlib
 import hmac
 import os
 import logging
+from smtplib import SMTPException
 
 from allauth.account.models import EmailAddress
 from axes import decorators as axes_dec
@@ -136,40 +137,46 @@ def register_on_behalf(request, format=None):
     serializer.is_valid(True)
     userdata = serializer.save()
 
-    with transaction.atomic():
-        if User.objects.filter(email=userdata.email).count():
-            return Response({'status': 'Account exists'})
+    try:
+        with transaction.atomic():
+            if User.objects.filter(email=userdata.email).count():
+                return Response({'status': 'Account exists'})
 
-        username = gen_username(userdata.email)
+            username = gen_username(userdata.email)
 
-        # We set a very long, random password because PasswordResetForm requires a usable password
-        # (to avoid having disabled-by-staff users re-enable their accounts via a passwort reset).
-        password = os.urandom(64).hex()
-        user = User.objects.create_user(username,
-                                        email=userdata.email,
-                                        password=password,
-                                        first_name=userdata.first_name,
-                                        last_name=userdata.last_name)
-        EmailAddress.objects.create(user=user, email=userdata.email,
-                                    primary=True, verified=True)
-        user.profile.created_on_behalf = True
-        user.profile.save()
+            # We set a very long, random password because PasswordResetForm requires a usable password
+            # (to avoid having disabled-by-staff users re-enable their accounts via a passwort reset).
+            password = os.urandom(64).hex()
+            user = User.objects.create_user(username,
+                                            email=userdata.email,
+                                            password=password,
+                                            first_name=userdata.first_name,
+                                            last_name=userdata.last_name)
+            EmailAddress.objects.create(user=user, email=userdata.email,
+                                        primary=True, verified=True)
+            user.profile.created_on_behalf = True
+            user.profile.save()
 
-        password_form = PasswordResetForm(data={'email': userdata.email})
-        if not password_form.is_valid():
-            # Should not be possible to hit, unless drf3 and django use different email validators w/ different accepting sets
-            logger.error('register_on_behalf failed, password reset form with validated email is invalid?! '
-                         'Errors are: %r', password_form.errors)
-            return Response({'status': 'Registration failed.'}, status=500)
+            password_form = PasswordResetForm(data={'email': userdata.email})
+            if not password_form.is_valid():
+                # Should not be possible to hit, unless drf3 and django use different email validators w/ different accepting sets
+                logger.error('register_on_behalf failed, password reset form with validated email is invalid?! '
+                             'Errors are: %r', password_form.errors)
+                return Response({'status': 'Registration failed.'}, status=500)
 
-        password_form.save(
-            request=request,
-            use_https=request.is_secure(),
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            subject_template_name='registration/account_created_subject.txt',
-            email_template_name='registration/account_created_email.txt',
-            html_email_template_name='registration/account_created_email.html'
-        )
+            password_form.save(
+                request=request,
+                use_https=request.is_secure(),
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                subject_template_name='registration/account_created_subject.txt',
+                email_template_name='registration/account_created_email.txt',
+                html_email_template_name='registration/account_created_email.html'
+            )
+    except SMTPException as smtp_exception:
+        # zodb has a much, much nicer design here. You can just call doom() inside a transaction, trying to commit it
+        # will fail (with an exception). Leaving the scope does not. Intuitive, correct, avoids huge exception handlers.
+        logger.exception('register_on_behalf failed while sending mail')
+        return Response({'status': 'Registration failed. SMTP error: %s' % smtp_exception}, status=400)
 
     return Response({'status': 'Account created'})
 
