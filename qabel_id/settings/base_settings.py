@@ -135,11 +135,6 @@ LOGGING = {
             'level': 'DEBUG',
             'propagate': False,
         },
-        'axes': {
-            'handlers': ['console'],
-            'level': 'DEBUG',
-            'propagate': False,
-        },
     }
 }
 
