@@ -7,11 +7,11 @@ import logging
 from allauth.account.models import EmailAddress
 from axes import decorators as axes_dec
 from django.conf import settings
+from django.contrib.auth.forms import PasswordResetForm
 from django.contrib.auth.models import User
 from django.db import transaction
 from rest_auth.registration.views import RegisterView
 from rest_auth.views import LoginView
-from rest_auth.app_settings import PasswordResetSerializer
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view
 from rest_framework.exceptions import ValidationError
@@ -22,7 +22,7 @@ from log_request_id import local as request_local
 
 from .serializers import UserSerializer, PlanSubscriptionSerializer, PlanIntervalSerializer, RegisterOnBehalfSerializer
 from .models import ProfilePlanLog
-from .utils import get_request_origin
+from .utils import get_request_origin, gen_username
 
 logger = logging.getLogger(__name__)
 
@@ -140,21 +140,36 @@ def register_on_behalf(request, format=None):
         if User.objects.filter(email=userdata.email).count():
             return Response({'status': 'Account exists'})
 
+        username = gen_username(userdata.email)
+
         # We set a very long, random password because PasswordResetForm requires a usable password
         # (to avoid having disabled-by-staff users re-enable their accounts via a passwort reset).
         password = os.urandom(64).hex()
-        user = User.objects.create_user(userdata.username, email=userdata.email, password=password)
+        user = User.objects.create_user(username,
+                                        email=userdata.email,
+                                        password=password,
+                                        first_name=userdata.first_name,
+                                        last_name=userdata.last_name)
         EmailAddress.objects.create(user=user, email=userdata.email,
                                     primary=True, verified=True)
         user.profile.created_on_behalf = True
         user.profile.save()
 
-        password_reset = PasswordResetSerializer(
-            data={'email': userdata.email},
-            context={'request': request},
+        password_form = PasswordResetForm(data={'email': userdata.email})
+        if not password_form.is_valid():
+            # Should not be possible to hit, unless drf3 and django use different email validators w/ different accepting sets
+            logger.error('register_on_behalf failed, password reset form with validated email is invalid?! '
+                         'Errors are: %r', password_form.errors)
+            return Response({'status': 'Registration failed.'}, status=500)
+
+        password_form.save(
+            request=request,
+            use_https=request.is_secure(),
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            subject_template_name='registration/account_created_subject.txt',
+            email_template_name='registration/account_created_email.txt',
+            html_email_template_name='registration/account_created_email.html'
         )
-        password_reset.is_valid(True)
-        password_reset.save()
 
     return Response({'status': 'Account created'})
 

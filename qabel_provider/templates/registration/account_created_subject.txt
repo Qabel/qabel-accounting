@@ -1,0 +1,1 @@
+Your new account at {{ site_name }}

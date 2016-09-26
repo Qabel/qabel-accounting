@@ -1,0 +1,34 @@
+{% autoescape off %}English version below.
+
+Danke, dass Sie sich für Qabel entschieden haben.
+Bitte klicken Sie auf den nachfolgenden Link, um die Registrierung Ihres Qabel Accounts abzuschließen.
+{{ protocol }}://{{ domain }}{% url 'password_reset_confirm' uidb64=uid token=token %}
+
+Ihr Qabel Benutzername ist {{ user.get_username }}
+
+Viel Spaß beim Testen, wir freuen uns auf Ihr Feedback!
+
+Wenn sie sich nicht bei Qabel angemeldet haben, dann ignorieren sie diese Mail bitte, oder schreiben Sie uns einen Hinweis an abuse@qabel.de
+Hier finden Sie weitere Infos über Qabel.
+https://qabel.de/de
+
+
+Thank you for choosing Qabel.
+Please click on the link below to complete the registration of your Qabel account.
+{{ protocol }}://{{ domain }}{% url 'password_reset_confirm' uidb64=uid token=token %}
+
+Your Qabel username is {{ user.get_username}}
+
+Enjoy testing Qabel! We’re looking forward to your feedback.
+If you did not sign up for Qabel, please ignore this mail, or make us aware of this by sending a mail to abuse@qabel.de
+For further information regarding Qabel, please visit
+https://qabel.de/en
+
+--
+
+Qabel GmbH
+Goseriede 4 / Tiedthof  .  30159 Hannover
+Registergericht: Amtsgericht Hannover  .  HRB 210757
+USt-IdNr.: DE293570022
+Geschäftsführer: Peter Leppelt, Benjamin Schuetze
+{% endautoescape %}
