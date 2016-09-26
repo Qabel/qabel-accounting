@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-09-23 20:10+0200\n"
-"PO-Revision-Date: 2016-09-23 20:11+0100\n"
+"POT-Creation-Date: 2016-09-26 18:52+0200\n"
+"PO-Revision-Date: 2016-09-26 18:53+0100\n"
 "Last-Translator: mabe <beermann@qabel.de>\n"
 "Language-Team: English <kde-i18n-doc@kde.org>\n"
 "Language: en_GB\n"
@@ -29,6 +29,35 @@ msgstr ""
 msgid "Save changes"
 msgstr "Änderungen speichern"
 
+#: templates/accounts/confirmed.html:3
+#, fuzzy
+#| msgid "This address hasn't been confirmed yet."
+msgid "Email address confirmed"
+msgstr "Diese E-Mail-Addresse wurde noch nicht bestätigt."
+
+#: templates/accounts/confirmed.html:6
+msgid "Your email address has been confirmed. Your account is now active."
+msgstr ""
+"Ihre E-Mail-Addresse wurde erfolgreich bestätigt. Ihr Account ist nun aktiv."
+
+#: templates/accounts/history.html:3 templates/accounts/history.html.py:6
+#, fuzzy
+#| msgid "Account created"
+msgid "Account history"
+msgstr "Account erstellt"
+
+#: templates/accounts/history.html:12
+msgid "Date"
+msgstr ""
+
+#: templates/accounts/history.html:13
+msgid "Event"
+msgstr ""
+
+#: templates/accounts/history.html:19 templates/accounts/profile.html.py:10
+msgid "Account created"
+msgstr "Account erstellt"
+
 #: templates/accounts/profile.html:3
 msgid "My account"
 msgstr "Mein Account"
@@ -38,49 +67,46 @@ msgstr "Mein Account"
 msgid "Welcome, %(username)s"
 msgstr "Willkommen, %(username)s"
 
-#: templates/accounts/profile.html:10
-msgid "Account created"
-msgstr "Account erstellt"
-
 #: templates/accounts/profile.html:16
+#, fuzzy
+#| msgid "Login"
+msgid "Last login"
+msgstr "Login"
+
+#: templates/accounts/profile.html:22
 msgid "Your username"
 msgstr "Ihr Benutzername"
 
-#: templates/accounts/profile.html:18 templates/accounts/profile.html.py:24
-#: templates/accounts/profile.html:31
+#: templates/accounts/profile.html:24 templates/accounts/profile.html.py:30
+#: templates/accounts/profile.html:36
 msgid "Change"
 msgstr "Ändern"
 
-#: templates/accounts/profile.html:22
+#: templates/accounts/profile.html:28
 msgid "Your password"
 msgstr "Ihr Passwort"
 
-#: templates/accounts/profile.html:25
-#, python-format
-msgid ""
-"(We don't store your password in plain-text, we use %(reassuring_string)s "
-"instead)"
-msgstr ""
-"(Wir speichern Ihr Passwort nicht im Klartext, sondern mittels "
-"%(reassuring_string)s)"
-
-#: templates/accounts/profile.html:29
+#: templates/accounts/profile.html:34
 msgid "Primary email address"
 msgstr "Primäre E-Mail-Addresse"
 
-#: templates/accounts/profile.html:33
+#: templates/accounts/profile.html:38
 msgid "This address hasn't been confirmed yet."
 msgstr "Diese E-Mail-Addresse wurde noch nicht bestätigt."
 
-#: templates/accounts/profile.html:38
+#: templates/accounts/profile.html:43
 msgid "Current plan"
 msgstr "Tarif"
 
-#: templates/accounts/profile.html:44
+#: templates/accounts/profile.html:45
+msgid "Available plans"
+msgstr ""
+
+#: templates/accounts/profile.html:49
 msgid "Qabel Box Storage"
 msgstr "Qabel Box Speicherplatz"
 
-#: templates/accounts/profile.html:52
+#: templates/accounts/profile.html:57
 #, python-format
 msgid "%(used)s used out of %(quota)s"
 msgstr "%(used)s von %(quota)s genutzt"
@@ -203,7 +229,29 @@ msgstr ""
 msgid "Reset my password"
 msgstr "Passwort zurücksetzen"
 
-#: views.py:333
+#: views.py:341
 msgid "Change profile"
 msgstr "Account bearbeiten"
 
+#: views.py:345
+msgid "Started using prepaid plan {.plan}"
+msgstr ""
+
+#: views.py:346
+msgid "Prepaid plan {.plan} expired"
+msgstr ""
+
+#: views.py:347
+msgid "Prepaid plan {.plan} of duration {.interval.duration} added"
+msgstr ""
+
+#: views.py:348
+msgid "Subscribed to {.plan}"
+msgstr ""
+
+#~ msgid ""
+#~ "(We don't store your password in plain-text, we use %(reassuring_string)s "
+#~ "instead)"
+#~ msgstr ""
+#~ "(Wir speichern Ihr Passwort nicht im Klartext, sondern mittels "
+#~ "%(reassuring_string)s)"

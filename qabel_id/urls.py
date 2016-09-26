@@ -69,6 +69,7 @@ profile_urls = [
 
 if not settings.FACET_USER_PROFILE:
     # knock knock
+    settings.MENU = []
     profile_urls.clear()
 
 
