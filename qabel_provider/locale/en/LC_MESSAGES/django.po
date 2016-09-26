@@ -1,21 +1,21 @@
-# SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
-#, fuzzy
+# mabe <beermann@qabel.de>, 2016.
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-09-23 20:10+0200\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"POT-Creation-Date: 2016-09-26 23:27+0200\n"
+"PO-Revision-Date: 2016-09-26 23:35+0100\n"
+"Last-Translator: mabe <beermann@qabel.de>\n"
+"Language-Team: English <kde-i18n-doc@kde.org>\n"
+"Language: en_GB\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Lokalize 2.0\n"
 
 #: admin.py:10
 msgid "Accounting"
@@ -25,8 +25,90 @@ msgstr ""
 msgid "Qabel Account Management"
 msgstr ""
 
+#: templates/account/email/email_confirmation_message.html:4
+msgid "HTML title"
+msgstr "Your Qabel Account"
+
+#: templates/account/email/email_confirmation_message.html:6
+msgid "title"
+msgstr "Your Qabel Account"
+
+#: templates/account/email/email_confirmation_message.html:10
+#: templates/account/email/email_confirmation_message.html:32
+#: templates/account/email/email_confirmation_message.txt:9
+#: templates/account/email/email_confirmation_message.txt:25
+msgid "thx for choosing Qabel"
+msgstr "Thank you for choosing Qabel."
+
+#: templates/account/email/email_confirmation_message.html:17
+#: templates/account/email/email_confirmation_message.html:41
+#: templates/account/email/email_confirmation_message.txt:13
+#: templates/account/email/email_confirmation_message.txt:29
+msgid "click on following link"
+msgstr "Please click on the link below to complete the registration."
+
+#: templates/account/email/email_confirmation_message.html:21
+#: templates/account/email/email_confirmation_message.html:45
+msgid "activation link text"
+msgstr "Activation"
+
+#: templates/account/email/email_confirmation_message.html:24
+#: templates/account/email/email_confirmation_message.html:48
+#: templates/account/email/email_confirmation_message.txt:17
+#: templates/account/email/email_confirmation_message.txt:33
+msgid "have fun testing"
+msgstr "Enjoy testing Qabel! We're looking forward to your feedback."
+
+#: templates/account/email/email_confirmation_message.html:26
+#: templates/account/email/email_confirmation_message.html:50
+msgctxt "HTML"
+msgid "abuse paragraph"
+msgstr ""
+"If you did not sign up for Qabel, please ignore this mail, or make us aware of"
+"this by sending a mail to <a href=\"mailto:abuse@qabel.de\">abuse@qabel.de</a"
+">."
+
+#: templates/account/email/email_confirmation_message.txt:5
+msgid "title, lined with dashes"
+msgstr ""
+"------------------"
+"Your Qabel Account"
+"------------------"
+
+#: templates/account/email/email_confirmation_message.txt:19
+#: templates/account/email/email_confirmation_message.txt:35
+msgctxt "plaintext"
+msgid "abuse paragraph"
+msgstr ""
+"If you did not sign up for Qabel, please ignore this mail, or"
+"make us aware of this by sending a mail to abuse@qabel.de"
+
 #: templates/accounts/change_profile.html:20
 msgid "Save changes"
+msgstr ""
+
+#: templates/accounts/confirmed.html:3
+msgid "Email address confirmed"
+msgstr ""
+
+#: templates/accounts/confirmed.html:6
+msgid "Your email address has been confirmed. Your account is now active."
+msgstr ""
+
+#: templates/accounts/history.html:3 templates/accounts/history.html.py:6
+msgid "Account history"
+msgstr ""
+
+#: templates/accounts/history.html:12
+msgid "Date"
+msgstr ""
+
+#: templates/accounts/history.html:13
+msgid "Event"
+msgstr ""
+
+#: templates/accounts/history.html:19 templates/accounts/profile.html.py:10
+msgid "Account created"
 msgstr ""
 
 #: templates/accounts/profile.html:3
@@ -38,47 +120,44 @@ msgstr ""
 msgid "Welcome, %(username)s"
 msgstr ""
 
-#: templates/accounts/profile.html:10
-msgid "Account created"
-msgstr ""
-
 #: templates/accounts/profile.html:16
-msgid "Your username"
-msgstr ""
-
-#: templates/accounts/profile.html:18 templates/accounts/profile.html.py:24
-#: templates/accounts/profile.html:31
-msgid "Change"
+msgid "Last login"
 msgstr ""
 
 #: templates/accounts/profile.html:22
+msgid "Your username"
+msgstr ""
+
+#: templates/accounts/profile.html:24 templates/accounts/profile.html.py:30
+#: templates/accounts/profile.html:36
+msgid "Change"
+msgstr ""
+
+#: templates/accounts/profile.html:28
 msgid "Your password"
 msgstr ""
 
-#: templates/accounts/profile.html:25
-#, python-format
-msgid ""
-"(We don't store your password in plain-text, we use %(reassuring_string)s "
-"instead)"
-msgstr ""
-
-#: templates/accounts/profile.html:29
+#: templates/accounts/profile.html:34
 msgid "Primary email address"
 msgstr ""
 
-#: templates/accounts/profile.html:33
+#: templates/accounts/profile.html:38
 msgid "This address hasn't been confirmed yet."
 msgstr ""
 
-#: templates/accounts/profile.html:38
+#: templates/accounts/profile.html:43
 msgid "Current plan"
 msgstr ""
 
-#: templates/accounts/profile.html:44
+#: templates/accounts/profile.html:45
+msgid "Available plans"
+msgstr ""
+
+#: templates/accounts/profile.html:49
 msgid "Qabel Box Storage"
 msgstr ""
 
-#: templates/accounts/profile.html:52
+#: templates/accounts/profile.html:57
 #, python-format
 msgid "%(used)s used out of %(quota)s"
 msgstr ""
@@ -196,6 +275,23 @@ msgstr ""
 msgid "Reset my password"
 msgstr ""
 
-#: views.py:333
+#: views.py:356
 msgid "Change profile"
 msgstr ""
+
+#: views.py:360
+msgid "Started using prepaid plan {.plan}"
+msgstr ""
+
+#: views.py:361
+msgid "Prepaid plan {.plan} expired"
+msgstr ""
+
+#: views.py:362
+msgid "Prepaid plan {.plan} of duration {.interval.duration} added"
+msgstr ""
+
+#: views.py:363
+msgid "Subscribed to {.plan}"
+msgstr ""
+
