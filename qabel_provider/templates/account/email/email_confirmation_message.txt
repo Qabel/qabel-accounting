@@ -1,8 +1,9 @@
 {% extends "mail_base.txt" %}
 {% load i18n %}
+{% autoescape off %}
 
 {% block maintitle %}
-{% trans "title, lined with dashes" %}
+{% trans "registered mail title, lined with dashes" %}
 {% endblock %}
 
 {% block nativeheading %}
@@ -35,3 +36,4 @@
 {% trans "abuse paragraph" context "plaintext" %}
 {% endblock %}
 {% endlanguage %}
+{% endautoescape %}

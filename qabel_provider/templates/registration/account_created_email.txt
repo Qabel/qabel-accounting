@@ -1,34 +1,43 @@
-{% autoescape off %}English version below.
+{% extends "mail_base.txt" %}
+{% load i18n %}
+{% autoescape off %}
 
-Danke, dass Sie sich für Qabel entschieden haben.
-Bitte klicken Sie auf den nachfolgenden Link, um die Registrierung Ihres Qabel Accounts abzuschließen.
+{% block maintitle %}
+{% trans "account created mail title, lined with dashes" %}
+{% endblock %}
+
+{% block nativeheading %}
+{% trans "thx for choosing Qabel" %}
+{% endblock %}
+
+{% block nativecontent %}
+{% trans "click on following link" %}
+
+{% blocktrans with username=user.get_username %}username is {{ username }}{% endblocktrans %}
+
 {{ protocol }}://{{ domain }}{% url 'password_reset_confirm' uidb64=uid token=token %}
 
-Ihr Qabel Benutzername ist {{ user.get_username }}
+{% trans "have fun testing" %}
 
-Viel Spaß beim Testen, wir freuen uns auf Ihr Feedback!
-
-Wenn sie sich nicht bei Qabel angemeldet haben, dann ignorieren sie diese Mail bitte, oder schreiben Sie uns einen Hinweis an abuse@qabel.de
-Hier finden Sie weitere Infos über Qabel.
-https://qabel.de/de
+{% trans "abuse paragraph" context "plaintext" %}
+{% endblock %}
 
 
-Thank you for choosing Qabel.
-Please click on the link below to complete the registration of your Qabel account.
+{% language "en" %}
+{% block englishheading %}
+{% trans "thx for choosing Qabel" %}
+{% endblock %}
+
+{% block englishcontent %}
+{% trans "click on following link" %}
+
+{% blocktrans with username=user.get_username %}username is {{ username }}{% endblocktrans %}
+
 {{ protocol }}://{{ domain }}{% url 'password_reset_confirm' uidb64=uid token=token %}
 
-Your Qabel username is {{ user.get_username}}
+{% trans "have fun testing" %}
 
-Enjoy testing Qabel! We’re looking forward to your feedback.
-If you did not sign up for Qabel, please ignore this mail, or make us aware of this by sending a mail to abuse@qabel.de
-For further information regarding Qabel, please visit
-https://qabel.de/en
-
---
-
-Qabel GmbH
-Goseriede 4 / Tiedthof  .  30159 Hannover
-Registergericht: Amtsgericht Hannover  .  HRB 210757
-USt-IdNr.: DE293570022
-Geschäftsführer: Peter Leppelt, Benjamin Schuetze
+{% trans "abuse paragraph" context "plaintext" %}
+{% endblock %}
+{% endlanguage %}
 {% endautoescape %}

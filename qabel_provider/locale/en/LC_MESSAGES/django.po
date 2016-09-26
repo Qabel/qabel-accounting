@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-09-26 23:27+0200\n"
-"PO-Revision-Date: 2016-09-26 23:35+0100\n"
+"POT-Creation-Date: 2016-09-26 23:55+0200\n"
+"PO-Revision-Date: 2016-09-26 23:58+0100\n"
 "Last-Translator: mabe <beermann@qabel.de>\n"
 "Language-Team: English <kde-i18n-doc@kde.org>\n"
 "Language: en_GB\n"
@@ -26,62 +26,78 @@ msgid "Qabel Account Management"
 msgstr ""
 
 #: templates/account/email/email_confirmation_message.html:4
-msgid "HTML title"
-msgstr "Your Qabel Account"
-
 #: templates/account/email/email_confirmation_message.html:6
-msgid "title"
+msgid "registered mail title"
 msgstr "Your Qabel Account"
 
 #: templates/account/email/email_confirmation_message.html:10
 #: templates/account/email/email_confirmation_message.html:32
-#: templates/account/email/email_confirmation_message.txt:9
-#: templates/account/email/email_confirmation_message.txt:25
+#: templates/account/email/email_confirmation_message.txt:10
+#: templates/account/email/email_confirmation_message.txt:26
+#: templates/registration/account_created_email.html:10
+#: templates/registration/account_created_email.html:34
+#: templates/registration/account_created_email.txt:10
+#: templates/registration/account_created_email.txt:28
 msgid "thx for choosing Qabel"
 msgstr "Thank you for choosing Qabel."
 
 #: templates/account/email/email_confirmation_message.html:17
 #: templates/account/email/email_confirmation_message.html:41
-#: templates/account/email/email_confirmation_message.txt:13
-#: templates/account/email/email_confirmation_message.txt:29
+#: templates/account/email/email_confirmation_message.txt:14
+#: templates/account/email/email_confirmation_message.txt:30
+#: templates/registration/account_created_email.html:17
+#: templates/registration/account_created_email.html:43
+#: templates/registration/account_created_email.txt:14
+#: templates/registration/account_created_email.txt:32
 msgid "click on following link"
 msgstr "Please click on the link below to complete the registration."
 
 #: templates/account/email/email_confirmation_message.html:21
 #: templates/account/email/email_confirmation_message.html:45
+#: templates/registration/account_created_email.html:23
+#: templates/registration/account_created_email.html:49
 msgid "activation link text"
 msgstr "Activation"
 
 #: templates/account/email/email_confirmation_message.html:24
 #: templates/account/email/email_confirmation_message.html:48
-#: templates/account/email/email_confirmation_message.txt:17
-#: templates/account/email/email_confirmation_message.txt:33
+#: templates/account/email/email_confirmation_message.txt:18
+#: templates/account/email/email_confirmation_message.txt:34
+#: templates/registration/account_created_email.html:26
+#: templates/registration/account_created_email.html:52
+#: templates/registration/account_created_email.txt:20
+#: templates/registration/account_created_email.txt:38
 msgid "have fun testing"
 msgstr "Enjoy testing Qabel! We're looking forward to your feedback."
 
 #: templates/account/email/email_confirmation_message.html:26
 #: templates/account/email/email_confirmation_message.html:50
+#: templates/registration/account_created_email.html:28
+#: templates/registration/account_created_email.html:54
 msgctxt "HTML"
 msgid "abuse paragraph"
 msgstr ""
-"If you did not sign up for Qabel, please ignore this mail, or make us aware of"
-"this by sending a mail to <a href=\"mailto:abuse@qabel.de\">abuse@qabel.de</a"
-">."
+"If you did not sign up for Qabel, please ignore this mail, or make us aware "
+"ofthis by sending a mail to <a href=\"mailto:abuse@qabel.de\">abuse@qabel."
+"de</a>."
 
-#: templates/account/email/email_confirmation_message.txt:5
-msgid "title, lined with dashes"
+#: templates/account/email/email_confirmation_message.txt:6
+#| msgid "title, lined with dashes"
+msgid "registered mail title, lined with dashes"
 msgstr ""
-"------------------"
-"Your Qabel Account"
+"------------------ "
+"Your Qabel Account "
 "------------------"
 
-#: templates/account/email/email_confirmation_message.txt:19
-#: templates/account/email/email_confirmation_message.txt:35
+#: templates/account/email/email_confirmation_message.txt:20
+#: templates/account/email/email_confirmation_message.txt:36
+#: templates/registration/account_created_email.txt:22
+#: templates/registration/account_created_email.txt:40
 msgctxt "plaintext"
 msgid "abuse paragraph"
 msgstr ""
-"If you did not sign up for Qabel, please ignore this mail, or"
-"make us aware of this by sending a mail to abuse@qabel.de"
+"If you did not sign up for Qabel, please ignore this mail, ormake us aware "
+"of this by sending a mail to abuse@qabel.de"
 
 #: templates/accounts/change_profile.html:20
 msgid "Save changes"
@@ -161,6 +177,32 @@ msgstr ""
 #, python-format
 msgid "%(used)s used out of %(quota)s"
 msgstr ""
+
+#: templates/registration/account_created_email.html:4
+#: templates/registration/account_created_email.html:6
+msgid "account created mail title"
+msgstr "Your Qabel Account"
+
+#: templates/registration/account_created_email.html:19
+#: templates/registration/account_created_email.html:45
+#: templates/registration/account_created_email.txt:16
+#: templates/registration/account_created_email.txt:34
+#, python-format
+msgid "username is %(username)s"
+msgstr "Your Qabel username is %(username)s"
+
+#: templates/registration/account_created_email.txt:6
+#| msgid "title, lined with dashes"
+msgid "account created mail title, lined with dashes"
+msgstr ""
+"------------------ "
+"Your Qabel Account "
+"------------------"
+
+#: templates/registration/account_created_subject.txt:1
+#, python-format
+msgid "new account at %(site_name)s"
+msgstr "Your new account at %(site_name)s"
 
 #: templates/registration/logged_out.html:9
 msgid "Log in again"
@@ -295,3 +337,8 @@ msgstr ""
 msgid "Subscribed to {.plan}"
 msgstr ""
 
+#~ msgid "HTML title"
+#~ msgstr "Your Qabel Account"
+
+#~ msgid "title"
+#~ msgstr "Your Qabel Account"
