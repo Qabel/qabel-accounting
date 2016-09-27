@@ -496,7 +496,7 @@ def test_confirm_email(api_client, token, write_mail):
     assert response.status_code == 201
     assert len(mail.outbox) == 1
     write_mail('confirm')
-    assert mail.outbox[0].subject == '[example.com] Please Confirm Your E-mail Address'
+    assert mail.outbox[0].subject.startswith('[example.com]')
     user = User.objects.get(username='testtest')
     email = EmailAddress.objects.get(user=user.id)
     confirmation = EmailConfirmation.objects.get(email_address=email)
