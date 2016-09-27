@@ -72,3 +72,4 @@ activate.sh
 _venv
 
 *~
+test-output/

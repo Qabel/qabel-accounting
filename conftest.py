@@ -1,4 +1,7 @@
+from pathlib import Path
+
 import pytest
+
 from allauth.account.models import EmailAddress
 from django.contrib.auth.models import User
 from rest_framework.test import APIClient
@@ -6,6 +9,13 @@ from rest_framework.authtoken.models import Token
 
 USERNAME = 'qabel_user'
 ADMIN = 'qabel_admin'
+
+
+@pytest.fixture()
+def tests_output_path():
+    output_path = Path(__file__).absolute().parent / 'test-output'
+    output_path.mkdir(exist_ok=True)
+    return output_path
 
 
 @pytest.fixture
