@@ -18,19 +18,15 @@
 {{ protocol }}://{{ domain }}{% url 'password_reset_confirm' uidb64=uid token=token %}
 
 {% trans "have fun testing" %}
-
-{% trans "abuse paragraph" context "plaintext" %}
 {% endblock %}
 
 
-{% block englishheading %}
-{% language "en" %}
+{% block englishheading %}{% language "en" %}
 {% trans "thx for choosing Qabel" %}
 {% endlanguage %}
 {% endblock %}
 
-{% block englishcontent %}
-{% language "en" %}
+{% block englishcontent %}{% language "en" %}
 {% trans "click on following link" %}
 
 {% blocktrans with username=user.get_username %}username is {{ username }}{% endblocktrans %}
@@ -38,8 +34,6 @@
 {{ protocol }}://{{ domain }}{% url 'password_reset_confirm' uidb64=uid token=token %}
 
 {% trans "have fun testing" %}
-
-{% trans "abuse paragraph" context "plaintext" %}
 {% endlanguage %}
 {% endblock %}
 {% endautoescape %}

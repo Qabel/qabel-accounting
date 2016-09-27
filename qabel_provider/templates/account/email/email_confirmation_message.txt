@@ -16,26 +16,18 @@
 {{ activate_url }}
 
 {% trans "have fun testing" %}
-
-{% trans "abuse paragraph" context "plaintext" %}
 {% endblock %}
 
 
-{% block englishheading %}
-{% language "en" %}
+{% block englishheading %}{% language "en" %}
 {% trans "thx for choosing Qabel" %}
-{% endlanguage %}
-{% endblock %}
+{% endlanguage %}{% endblock %}
 
-{% block englishcontent %}
-{% language "en" %}
+{% block englishcontent %}{% language "en" %}
 {% trans "click on following link" %}
 
 {{ activate_url }}
 
 {% trans "have fun testing" %}
-
-{% trans "abuse paragraph" context "plaintext" %}
-{% endlanguage %}
-{% endblock %}
+{% endlanguage %}{% endblock %}
 {% endautoescape %}
