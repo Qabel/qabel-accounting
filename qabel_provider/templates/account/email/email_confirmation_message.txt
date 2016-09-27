@@ -21,12 +21,14 @@
 {% endblock %}
 
 
-{% language "en" %}
 {% block englishheading %}
+{% language "en" %}
 {% trans "thx for choosing Qabel" %}
+{% endlanguage %}
 {% endblock %}
 
 {% block englishcontent %}
+{% language "en" %}
 {% trans "click on following link" %}
 
 {{ activate_url }}
@@ -34,6 +36,6 @@
 {% trans "have fun testing" %}
 
 {% trans "abuse paragraph" context "plaintext" %}
-{% endblock %}
 {% endlanguage %}
+{% endblock %}
 {% endautoescape %}
