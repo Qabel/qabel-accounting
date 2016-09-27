@@ -85,8 +85,8 @@ msgstr ""
 #| msgid "title, lined with dashes"
 msgid "registered mail title, lined with dashes"
 msgstr ""
-"------------------ "
-"Your Qabel Account "
+"------------------\n"
+"Your Qabel Account\n"
 "------------------"
 
 #: templates/account/email/email_confirmation_message.txt:20
@@ -195,8 +195,8 @@ msgstr "Your Qabel username is %(username)s"
 #| msgid "title, lined with dashes"
 msgid "account created mail title, lined with dashes"
 msgstr ""
-"------------------ "
-"Your Qabel Account "
+"------------------\n"
+"Your Qabel Account\n"
 "------------------"
 
 #: templates/registration/account_created_subject.txt:1
