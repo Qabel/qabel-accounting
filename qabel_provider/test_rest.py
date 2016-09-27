@@ -17,6 +17,14 @@ def loads(foo):
     return json.loads(foo.decode('utf-8'))
 
 
+@pytest.fixture()
+def write_mail(tests_output_path):
+    def mail_writer(where, outbox_index=0):
+        with (tests_output_path / ('email-' + where)).with_suffix('.eml').open('wb') as file:
+            file.write(mail.outbox[outbox_index].message().as_bytes())
+    return mail_writer
+
+
 @pytest.fixture
 def auth_resource_path():
     return '/api/v0/internal/user/'
@@ -323,9 +331,10 @@ def test_register_on_behalf_dup(external_api_client, register_on_behalf_path, re
 
 
 @pytest.mark.django_db
-def test_register_on_behalf_email(api_client, register_on_behalf_base):
+def test_register_on_behalf_email(api_client, register_on_behalf_base, write_mail):
     email, username = register_on_behalf_base()
 
+    write_mail('register-on-behalf')
     sent_mail = mail.outbox.pop()
     assert not mail.outbox
     assert email in sent_mail.to
@@ -478,7 +487,7 @@ def test_register_user_with_bad_password(api_client):
 
 
 @pytest.mark.django_db
-def test_confirm_email(api_client, token):
+def test_confirm_email(api_client, token, write_mail):
     response = api_client.post('/api/v0/auth/registration/',
                                {'username': 'testtest',
                                 'email': 'test@example.com',
@@ -486,6 +495,7 @@ def test_confirm_email(api_client, token):
                                 'password2': 'foobar1234'})
     assert response.status_code == 201
     assert len(mail.outbox) == 1
+    write_mail('confirm')
     assert mail.outbox[0].subject == '[example.com] Please Confirm Your E-mail Address'
     user = User.objects.get(username='testtest')
     email = EmailAddress.objects.get(user=user.id)
@@ -523,11 +533,12 @@ def test_no_login_throttle(api_client, user):
 
 
 @pytest.mark.django_db
-def test_password_reset(api_client, user):
+def test_password_reset(api_client, user, write_mail):
     response = api_client.post('/api/v0/auth/password/reset/', {'email': user.email})
     assert response.status_code == 200
     assert len(mail.outbox) == 1
     mail_body = mail.outbox[0].body
+    write_mail('reset')
     url = mail_body[mail_body.find('/accounts/reset/'):].split()[0]
     response = api_client.get(url)
     assert response.status_code == 200
