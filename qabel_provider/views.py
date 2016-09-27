@@ -9,8 +9,15 @@ from allauth.account.models import EmailAddress
 from axes import decorators as axes_dec
 from django.conf import settings
 from django.contrib.auth.forms import PasswordResetForm
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.contrib.auth.views import login
+from django.core.cache import cache
 from django.db import transaction
+from django import forms
+from django.shortcuts import redirect
+from django.template.response import TemplateResponse as render
+from django.utils.translation import ugettext_lazy as _
 from rest_auth.registration.views import RegisterView
 from rest_auth.views import LoginView
 from rest_framework.authtoken.models import Token
@@ -21,6 +28,7 @@ from rest_framework.reverse import reverse
 
 from log_request_id import local as request_local
 
+from .block import get_block_quota_of_user
 from .serializers import UserSerializer, PlanSubscriptionSerializer, PlanIntervalSerializer, RegisterOnBehalfSerializer
 from .models import ProfilePlanLog
 from .utils import get_request_origin, gen_username
@@ -284,3 +292,105 @@ class ThrottledLoginView(LoginView):
 
 class PasswordPolicyRegisterView(RegisterView):
     serializer_class = UserSerializer
+
+
+def get_used_quota_of_user(user):
+    cache_key = 'user-quota-%d' % user.id
+    quota_used = cache.get(cache_key)
+    if quota_used is not None:
+        return quota_used
+    try:
+        _, quota_used = get_block_quota_of_user(user)
+    except Exception:
+        logger.exception('Unable to retrieve block quota.')
+        return 0
+    else:
+        cache.set(cache_key, quota_used, 60)
+        return quota_used
+
+
+@login_required
+def user_profile(request):
+    user = request.user
+    profile = user.profile
+
+    quota_used = get_used_quota_of_user(user)
+    user_greeting = '{} {}'.format(user.first_name, user.last_name).strip() or user.username
+
+    return render(request, 'accounts/profile.html', {
+        'user_greeting': user_greeting,
+        'profile': profile,
+        'block_used': quota_used,
+        'block_quota': profile.plan.block_quota,
+        'block_percentage': int((quota_used / profile.plan.block_quota) * 100),
+    })
+
+
+class ProfileForm(forms.ModelForm):
+    primary_email = forms.EmailField()
+
+    def __init__(self, *args, **kwargs):
+        profile = kwargs['instance'].profile
+        if profile.primary_email:
+            kwargs.setdefault('initial', {})['primary_email'] = profile.primary_email.email
+        super().__init__(*args, **kwargs)
+
+    def save(self, commit=True):
+        new_mail = self.cleaned_data['primary_email']
+        primary_mail = self.instance.profile.primary_email
+        if not primary_mail:
+            EmailAddress.objects.create(email=new_mail, user=self.instance, primary=True)
+        else:
+            primary_mail.verified = False
+            primary_mail.email = new_mail
+            primary_mail.save()
+        self.instance.profile.check_confirmation_and_send_mail()
+        return super().save(commit)
+
+    class Meta:
+        model = User
+        fields = ('username', 'first_name', 'last_name',)
+
+
+@login_required
+def change_user_profile(request):
+    form = ProfileForm(request.POST or None, instance=request.user)
+    if request.POST and form.is_valid():
+        form.save()
+        return redirect(user_profile)
+    return render(request, 'accounts/change_profile.html', {
+        'form': form,
+        'title': _('Change profile'),
+    })
+
+event_describers = {
+    'start-interval': _('Started using prepaid plan {.plan}').format,
+    'expired-interval': _('Prepaid plan {.plan} expired').format,
+    'add-interval': _('Prepaid plan {.plan} of duration {.interval.duration} added').format,
+    'set-plan': _('Subscribed to {.plan}').format,
+}
+
+
+@login_required
+def user_history(request):
+    user = request.user
+    profile = user.profile
+
+    events = []
+    for event in ProfilePlanLog.objects.filter(profile=profile):
+        events.append(event_describers[event.action](event))
+
+    return render(request, 'accounts/history.html', {
+        'profile': profile,
+        'events': events,
+    })
+
+
+def user_login(request, **kwargs):
+    if request.user.is_authenticated():
+        return redirect(user_profile)  # Could introspect "next" etc here
+    return login(request, **kwargs)
+
+
+def user_mail_confirmed(request):
+    return render(request, 'accounts/confirmed.html')

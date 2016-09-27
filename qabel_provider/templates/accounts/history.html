@@ -1,0 +1,29 @@
+{% extends "accounting.html" %}
+{% load i18n %}
+{% block title %}{% trans "Account history" %}{{ block.super }}{% endblock %}
+
+{% block content %}
+<h1>{% trans "Account history" %}</h1>
+
+<table class="table">
+    <caption>Optional table caption.</caption>
+    <thead>
+    <tr>
+        <th>{% trans "Date" %}</th>
+        <th>{% trans "Event" %}</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>{{ profile.created_at }}</td>
+        <td>{% trans "Account created" %}</td>
+    </tr>
+    {% for event in events %}
+    <tr>
+        <td>{{ event.timestamp }}</td>
+        <td>{{ event.description }}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

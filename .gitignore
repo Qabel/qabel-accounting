@@ -48,7 +48,6 @@ coverage.xml
 *,cover
 
 # Translations
-*.mo
 *.pot
 
 # Django stuff:
@@ -71,3 +70,5 @@ trees
 deployed
 activate.sh
 _venv
+
+*~

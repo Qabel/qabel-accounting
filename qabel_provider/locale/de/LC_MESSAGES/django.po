@@ -1,0 +1,361 @@
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+#
+# mabe <beermann@qabel.de>, 2016.
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2016-09-26 23:55+0200\n"
+"PO-Revision-Date: 2016-09-26 23:56+0100\n"
+"Last-Translator: mabe <beermann@qabel.de>\n"
+"Language-Team: English <kde-i18n-doc@kde.org>\n"
+"Language: en_GB\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Lokalize 2.0\n"
+
+#: admin.py:10
+msgid "Accounting"
+msgstr ""
+
+#: admin.py:11 admin.py:12
+msgid "Qabel Account Management"
+msgstr "Qabel Accountverwaltung"
+
+#: templates/account/email/email_confirmation_message.html:4
+#: templates/account/email/email_confirmation_message.html:6
+msgid "registered mail title"
+msgstr "Qabel Account Registrierung"
+
+#: templates/account/email/email_confirmation_message.html:10
+#: templates/account/email/email_confirmation_message.html:32
+#: templates/account/email/email_confirmation_message.txt:10
+#: templates/account/email/email_confirmation_message.txt:26
+#: templates/registration/account_created_email.html:10
+#: templates/registration/account_created_email.html:34
+#: templates/registration/account_created_email.txt:10
+#: templates/registration/account_created_email.txt:28
+msgid "thx for choosing Qabel"
+msgstr "Danke, dass Sie sich für Qabel entschieden haben."
+
+#: templates/account/email/email_confirmation_message.html:17
+#: templates/account/email/email_confirmation_message.html:41
+#: templates/account/email/email_confirmation_message.txt:14
+#: templates/account/email/email_confirmation_message.txt:30
+#: templates/registration/account_created_email.html:17
+#: templates/registration/account_created_email.html:43
+#: templates/registration/account_created_email.txt:14
+#: templates/registration/account_created_email.txt:32
+msgid "click on following link"
+msgstr ""
+"Bitte klicken Sie auf den nachfolgenden Link, um die Registrierung Ihres "
+"Qabel Accounts abzuschließen."
+
+#: templates/account/email/email_confirmation_message.html:21
+#: templates/account/email/email_confirmation_message.html:45
+#: templates/registration/account_created_email.html:23
+#: templates/registration/account_created_email.html:49
+msgid "activation link text"
+msgstr "Aktivierungslink"
+
+#: templates/account/email/email_confirmation_message.html:24
+#: templates/account/email/email_confirmation_message.html:48
+#: templates/account/email/email_confirmation_message.txt:18
+#: templates/account/email/email_confirmation_message.txt:34
+#: templates/registration/account_created_email.html:26
+#: templates/registration/account_created_email.html:52
+#: templates/registration/account_created_email.txt:20
+#: templates/registration/account_created_email.txt:38
+msgid "have fun testing"
+msgstr "Viel Spaß beim Testen, wir freuen uns auf Ihr Feedback!"
+
+#: templates/account/email/email_confirmation_message.html:26
+#: templates/account/email/email_confirmation_message.html:50
+#: templates/registration/account_created_email.html:28
+#: templates/registration/account_created_email.html:54
+msgctxt "HTML"
+msgid "abuse paragraph"
+msgstr ""
+"Wenn Sie sich nicht bei Qabel angemeldet haben, dann ignorierenSie diese "
+"Mail bitte, oder schreiben Sie uns einen Hinweis an<a href=\"mailto:"
+"abuse@qabel.de\">abuse@qabel.de</a>."
+
+#: templates/account/email/email_confirmation_message.txt:6
+#| msgid "title, lined with dashes"
+msgid "registered mail title, lined with dashes"
+msgstr ""
+"--------------------------- "
+"Qabel Account Registrierung "
+"---------------------------"
+
+#: templates/account/email/email_confirmation_message.txt:20
+#: templates/account/email/email_confirmation_message.txt:36
+#: templates/registration/account_created_email.txt:22
+#: templates/registration/account_created_email.txt:40
+msgctxt "plaintext"
+msgid "abuse paragraph"
+msgstr ""
+"Wenn Sie sich nicht bei Qabel angemeldet haben, dann ignorierenSie diese "
+"Mail bitte, oder schreiben Sie uns einen Hinweis anabuse@qabel.de"
+
+#: templates/accounts/change_profile.html:20
+msgid "Save changes"
+msgstr "Änderungen speichern"
+
+#: templates/accounts/confirmed.html:3
+msgid "Email address confirmed"
+msgstr "E-Mail-Addresse bestätigt"
+
+#: templates/accounts/confirmed.html:6
+msgid "Your email address has been confirmed. Your account is now active."
+msgstr ""
+"Ihre E-Mail-Addresse wurde erfolgreich bestätigt. Ihr Account ist nun aktiv."
+
+#: templates/accounts/history.html:3 templates/accounts/history.html.py:6
+msgid "Account history"
+msgstr "Accountverlauf"
+
+#: templates/accounts/history.html:12
+msgid "Date"
+msgstr "Datum"
+
+#: templates/accounts/history.html:13
+msgid "Event"
+msgstr "Ereignis"
+
+#: templates/accounts/history.html:19 templates/accounts/profile.html.py:10
+msgid "Account created"
+msgstr "Account erstellt"
+
+#: templates/accounts/profile.html:3
+msgid "My account"
+msgstr "Mein Account"
+
+#: templates/accounts/profile.html:6
+#, python-format
+msgid "Welcome, %(username)s"
+msgstr "Willkommen, %(username)s"
+
+#: templates/accounts/profile.html:16
+msgid "Last login"
+msgstr "Letze Anmeldung"
+
+#: templates/accounts/profile.html:22
+msgid "Your username"
+msgstr "Ihr Benutzername"
+
+#: templates/accounts/profile.html:24 templates/accounts/profile.html.py:30
+#: templates/accounts/profile.html:36
+msgid "Change"
+msgstr "Ändern"
+
+#: templates/accounts/profile.html:28
+msgid "Your password"
+msgstr "Ihr Passwort"
+
+#: templates/accounts/profile.html:34
+msgid "Primary email address"
+msgstr "E-Mail-Addresse"
+
+#: templates/accounts/profile.html:38
+msgid "This address hasn't been confirmed yet."
+msgstr "Diese E-Mail-Addresse wurde noch nicht bestätigt."
+
+#: templates/accounts/profile.html:43
+msgid "Current plan"
+msgstr "Tarif"
+
+#: templates/accounts/profile.html:45
+msgid "Available plans"
+msgstr "Verfügbare Tarife"
+
+#: templates/accounts/profile.html:49
+msgid "Qabel Box Storage"
+msgstr "Qabel Box Speicherplatz"
+
+#: templates/accounts/profile.html:57
+#, python-format
+msgid "%(used)s used out of %(quota)s"
+msgstr "%(used)s von %(quota)s genutzt"
+
+#: templates/registration/account_created_email.html:4
+#: templates/registration/account_created_email.html:6
+#| msgid "Account created"
+msgid "account created mail title"
+msgstr "Ihr Qabel Account"
+
+#: templates/registration/account_created_email.html:19
+#: templates/registration/account_created_email.html:45
+#: templates/registration/account_created_email.txt:16
+#: templates/registration/account_created_email.txt:34
+#, python-format
+#| msgid "Welcome, %(username)s"
+msgid "username is %(username)s"
+msgstr "Ihr Qabel-Benutzername ist %(username)s"
+
+#: templates/registration/account_created_email.txt:6
+#| msgid "title, lined with dashes"
+msgid "account created mail title, lined with dashes"
+msgstr ""
+"----------------- "
+"Ihr Qabel Account "
+"-----------------"
+
+#: templates/registration/account_created_subject.txt:1
+#, python-format
+msgid "new account at %(site_name)s"
+msgstr "Ihr %(site_name)s Account"
+
+#: templates/registration/logged_out.html:9
+msgid "Log in again"
+msgstr "Erneut einloggen"
+
+#: templates/registration/login.html:4 templates/registration/login.html:30
+#: templates/registration/login.html:38
+msgid "Login"
+msgstr "Login"
+
+#: templates/registration/login.html:13
+msgid ""
+"\n"
+"        Your account doesn't have access to this page. To proceed,\n"
+"        please login with an account that has access.\n"
+"        "
+msgstr ""
+
+#: templates/registration/login.html:26
+msgid ""
+"\n"
+"            Please login to see this page.\n"
+"            "
+msgstr ""
+
+#: templates/registration/login.html:45
+msgid "Lost your password?"
+msgstr "Passwort vergessen?"
+
+#: templates/registration/password_change_done.html:9
+msgid "Your password was changed."
+msgstr "Ihr Passwort wurde erfolgreich geändert."
+
+#: templates/registration/password_change_done.html:11
+msgid "Back to your user profile »"
+msgstr "Zurück zu Ihrem Account »"
+
+#: templates/registration/password_change_form.html:13
+msgid ""
+"Please enter your old password, for security's sake, and then enter your new "
+"password twice so we can verify you typed it in correctly."
+msgstr ""
+"Bitte geben Sie aus Sicherheitsgründen erst Ihr altes Passwort und darunter "
+"dann zweimal (um sicherzustellen, dass Sie es korrekt eingegeben haben) das "
+"neue Passwort ein."
+
+#: templates/registration/password_change_form.html:20
+#: templates/registration/password_reset_confirm.html:21
+msgid "Change my password"
+msgstr "Mein Passwort ändern"
+
+#: templates/registration/password_reset_complete.html:9
+msgid "Your password has been set.  You may go ahead and log in now."
+msgstr ""
+"Ihr Passwort wurde übernommen. Sie können sich jetzt mit Ihrem neuen "
+"Passwort anmelden."
+
+#: templates/registration/password_reset_complete.html:11
+msgid "Log in"
+msgstr "Login"
+
+#: templates/registration/password_reset_confirm.html:14
+msgid ""
+"Please enter your new password twice so we can verify you typed it in "
+"correctly."
+msgstr ""
+
+#: templates/registration/password_reset_confirm.html:26
+msgid ""
+"The password reset link was invalid, possibly because it has already been "
+"used.  Please request a new password reset."
+msgstr ""
+
+#: templates/registration/password_reset_done.html:9
+msgid ""
+"We've emailed you instructions for setting your password, if an account "
+"exists with the email you entered. You should receive them shortly."
+msgstr ""
+
+#: templates/registration/password_reset_done.html:11
+msgid ""
+"If you don't receive an email, please make sure you've entered the address "
+"you registered with, and check your spam folder."
+msgstr ""
+
+#: templates/registration/password_reset_email.html:2
+#, python-format
+msgid ""
+"You're receiving this email because you requested a password reset for your "
+"user account at %(site_name)s."
+msgstr ""
+
+#: templates/registration/password_reset_email.html:4
+msgid "Please go to the following page and choose a new password:"
+msgstr ""
+
+#: templates/registration/password_reset_email.html:8
+msgid "Your username, in case you've forgotten:"
+msgstr ""
+
+#: templates/registration/password_reset_email.html:10
+msgid "Thanks for using our site!"
+msgstr ""
+
+#: templates/registration/password_reset_email.html:12
+#, python-format
+msgid "The %(site_name)s team"
+msgstr ""
+
+#: templates/registration/password_reset_form.html:13
+msgid ""
+"Forgotten your password? Enter your email address below, and we'll email "
+"instructions for setting a new one."
+msgstr ""
+
+#: templates/registration/password_reset_form.html:20
+msgid "Reset my password"
+msgstr "Passwort zurücksetzen"
+
+#: views.py:356
+msgid "Change profile"
+msgstr "Account bearbeiten"
+
+#: views.py:360
+msgid "Started using prepaid plan {.plan}"
+msgstr ""
+
+#: views.py:361
+msgid "Prepaid plan {.plan} expired"
+msgstr ""
+
+#: views.py:362
+msgid "Prepaid plan {.plan} of duration {.interval.duration} added"
+msgstr ""
+
+#: views.py:363
+msgid "Subscribed to {.plan}"
+msgstr ""
+
+#~ msgid "HTML title"
+#~ msgstr "Ihr Qabel Account"
+
+#~ msgid "title"
+#~ msgstr "Qabel Account Registrierung"
+
+#~ msgid ""
+#~ "(We don't store your password in plain-text, we use %(reassuring_string)s "
+#~ "instead)"
+#~ msgstr ""
+#~ "(Wir speichern Ihr Passwort nicht im Klartext, sondern mittels "
+#~ "%(reassuring_string)s)"

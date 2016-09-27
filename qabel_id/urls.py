@@ -13,8 +13,14 @@ Including another URLconf
     1. Add an import:  from blog import urls as blog_urls
     2. Add a URL to urlpatterns:  url(r'^blog/', include(blog_urls))
 """
+from django.conf import settings
 from django.conf.urls import include, url
 from django.contrib import admin
+from django.contrib.auth import urls as auth_urls
+from django.core.urlresolvers import reverse
+from django.shortcuts import redirect
+from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import pgettext_lazy as _context
 from qabel_provider import views
 from rest_auth.views import (
     LogoutView, UserDetailsView, PasswordChangeView,
@@ -24,6 +30,7 @@ from rest_auth.registration.views import VerifyEmailView
 from allauth.account.views import ConfirmEmailView, EmailVerificationSentView
 import nested_admin.urls
 
+from qabel_web_theme import urls as theme_urls
 from dispatch_service.views import dispatch
 
 rest_auth_register_urls = [
@@ -54,20 +61,85 @@ rest_urls = [
     url(r'^plan/add-interval/$', views.plan_add_interval),
 ]
 
-dispatch_urls = [
-    url(r'(?P<redirect_from>.*)/$', dispatch),
+profile_urls = [
+    url(r'^$', views.user_profile, name='user-profile'),
+    url(r'^account/history$', views.user_history),
+    url(r'^change/profile$', views.change_user_profile, name='change-user-profile'),
 ]
+
+if not settings.FACET_USER_PROFILE:
+    # knock knock
+    settings.MENU = []
+    profile_urls = [
+        url(r'^$', lambda request: redirect('https://www.qabel.de/'), name='user-profile'),
+    ]
+
+
+dispatch_urls = [
+    url(r'(?P<redirect_from>.*)/$', dispatch, name='dispatch'),
+]
+
+
+def redirect_to_login(request):
+    return redirect(reverse(views.user_login) + '?' + request.GET.urlencode())
 
 urlpatterns = [
     url(r'^dispatch/', include(dispatch_urls)),
+    url(r'^admin/login/$', redirect_to_login),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^nested_admin/', include(nested_admin.urls)),
-    url(r'^accounts/', include('django.contrib.auth.urls')),
-    url(r'^accounts/login/', 'django.contrib.auth.views.login'),
+    url(r'^accounts/login/', views.user_login, name='login'),  # overrides auth_urls.login
+    url(r'^accounts/', include(auth_urls)),
     url(r'^api/v0/', include(rest_urls)),
+    url('', include(profile_urls)),
     url('', include('django_prometheus.urls')),
     url(r'^account-confirm-email/(?P<key>\w+)/$', ConfirmEmailView.as_view(),
         name='account_confirm_email'),
     url(r'^account-email-verification-sent/$', EmailVerificationSentView.as_view(),
         name='account_email_verification_sent'),
+    url(r'^accounts/confirmed/', views.user_mail_confirmed, name='account_email_confirmed'),
+    url(r'^', include(theme_urls)),
 ]
+
+
+def authenticated_menu(request, menu_items):
+    if not request.user.is_authenticated():
+        return
+    menu_items += (
+        {
+            'title': _('Your profile'),
+            'view': views.user_profile,
+        },
+        {
+            'title': _context('account', 'History'),
+            'view': views.user_history,
+        },
+        {
+            'title': _('Change profile'),
+            'view': views.change_user_profile,
+        },
+        {
+            'title': _('Logout'),
+            'view': 'logout',
+        }
+    )
+
+
+def anonymous_menu(request, menu_items):
+    if request.user.is_authenticated():
+        return
+    menu_items += (
+        {
+            'title': _('Login'),
+            'view': 'login',
+        },
+    )
+
+
+def staff_menu(request, menu_items):
+    if not request.user.is_staff:
+        return
+    menu_items.insert(-1, {
+            'title': _('Admin'),
+            'view': 'admin:index',
+    })

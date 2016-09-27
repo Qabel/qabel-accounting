@@ -1,33 +1,52 @@
-<!DOCTYPE html>
-<html lang="en">
-<body>
-    <p>English version below.</p>
-    <p>
-    Danke, dass Sie sich für Qabel entschieden haben.<br/>
-    Bitte klicken Sie auf den nachfolgenden Link, um die Registrierung Ihres Qabel Accounts abzuschließen.<br/>
-    <a href="{{ activate_url }}">Aktivierungslink</a><br/>
-    Viel Spaß beim Testen, wir freuen uns auf Ihr Feedback!</p>
-    <p>Wenn sie sich nicht bei Qabel angemeldet haben, dann ignorieren sie diese Mail bitte, oder schreiben Sie uns einen Hinweis an abuse@qabel.de</p>
-    <p>
-    Hier finden Sie weitere Infos über Qabel.<br/>
-    <a href="https://qabel.de/de">qabel.de</a></p>
+{% extends "mail_base.html" %}
+{% load i18n %}
 
+{% block content %}{% trans "registered mail title" %}{% endblock %}
+
+{% block maintitle %}<h2>{% trans "registered mail title" %}</h2>{% endblock %}
+
+{% block nativeheading %}
+<tr>
+    <td width="50%" colspan="3" style="text-align: right; background-color: #bbb;">{% trans "thx for choosing Qabel" %}
+        <span style="color: white; font-size: 150%;">♥</span></td>
+    <td colspan="2"></td>
+</tr>
+{% endblock %}
+
+{% block nativecontent %}
+    <p>{% trans "click on following link" %}</p>
 
     <p>
-    Thank you for choosing Qabel.<br/>
-    Please click on the link below to complete the registration of your Qabel account, or make us aware of this by sending a mail to abuse@qabel.de<br/>
-    <a href="{{ activate_url }}">Activation link</a><br/>
-    Enjoy testing Qabel! We’re looking forward to your feedback.</p>
-    <p>If you did not sign up for Qabel, please ignore this mail.</p>
+        <a href="{{ activate_url }}"
+           style="background-color: #ff5908; border-radius: 4px; color: white; padding: 5px; text-decoration: none;">{% trans "activation link text" %}</a>
+    </p>
+
+    <p>{% trans "have fun testing" %}</p>
+
+    <p>{% trans "abuse paragraph" context "HTML" %}</p>
+{% endblock %}
+
+{% block englishheading %}
+{% language 'en' %}
+    <tr>
+        <td width="33%" colspan="2" style="text-align: right; background-color: #bbb;">{% trans "thx for choosing Qabel" %}
+            <span style="color: white; font-size: 150%;">♥</span></td>
+        <td colspan="3"></td>
+    </tr>
+{% endlanguage %}
+{% endblock %}
+
+{% block englishcontent %}
+{% language 'en' %}
+    <p>{% trans "click on following link" %}</p>
+
     <p>
-    For further information regarding Qabel, please visit<br/>
-    <a href="https://qabel.de/en">qabel.de</a></p>
-<p>
-Qabel GmbH
-Goseriede 4 / Tiedthof  .  30159 Hannover
-Registergericht: Amtsgericht Hannover  .  HRB 210757
-USt-IdNr.: DE293570022
-Geschäftsführer: Peter Leppelt, Benjamin Schuetze
-</p>
-</body>
-</html>
+        <a href="{{ activate_url }}"
+           style="background-color: #ff5908; border-radius: 4px; color: white; padding: 5px; text-decoration: none;">{% trans "activation link text" %}</a>
+    </p>
+
+    <p>{% trans "have fun testing" %}</p>
+
+    <p>{% trans "abuse paragraph" context "HTML" %}</p>
+{% endlanguage %}
+{% endblock %}

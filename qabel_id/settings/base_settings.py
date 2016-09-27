@@ -1,6 +1,9 @@
 import os
 import datetime
 
+from django.core.urlresolvers import reverse_lazy
+from django.utils.translation import ugettext_lazy as _
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 ALLOWED_HOSTS = []
@@ -8,6 +11,8 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = (
+    'qabel_web_theme',
+    'qabel_provider',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -19,12 +24,12 @@ INSTALLED_APPS = (
     'rest_framework',
     'rest_framework.authtoken',
     'rest_auth',
-    'qabel_provider',
     'allauth',
     'allauth.account',
     'rest_auth.registration',
     'corsheaders',
     'axes',
+    'bootstrapform',
     'nested_admin',
     'dispatch_service',
 )
@@ -43,6 +48,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.security.SecurityMiddleware',
     'axes.middleware.FailedLoginMiddleware',
     'django.middleware.locale.LocaleMiddleware',
+    'qabel_web_theme.middleware.MenuMiddleware',
     'django_prometheus.middleware.PrometheusAfterMiddleware',
 )
 
@@ -79,8 +85,8 @@ REST_FRAMEWORK = {
 AXES_COOLOFF_TIME = datetime.timedelta(minutes=1)
 AXES_LOGIN_FAILURE_LIMIT = 5
 
-ACCOUNT_EMAIL_CONFIRMATION_ANONYMOUS_REDIRECT_URL = 'https://qabel.de'
-ACCOUNT_EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URL = 'https://qabel.de'
+ACCOUNT_EMAIL_CONFIRMATION_ANONYMOUS_REDIRECT_URL = reverse_lazy('account_email_confirmed')
+ACCOUNT_EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URL = reverse_lazy('account_email_confirmed')
 
 ACCOUNT_ADAPTER = 'qabel_provider.adapters.IgnoreInvalidMailsAdapter'
 
@@ -140,7 +146,12 @@ LOGGING = {
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i19n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGES = [
+    ('de', _('German')),
+    ('en', _('English')),
+]
+
+LANGUAGE_CODE = 'de'
 
 TIME_ZONE = 'UTC'
 
@@ -164,4 +175,16 @@ ACCOUNT_EMAIL_REQUIRED = True
 # Allows, that the email address can be confirmed with a GET request
 ACCOUNT_CONFIRM_EMAIL_ON_GET = True
 
-LANDING_QABEL_NOW = 'https://qabel.de/de/registrierung'
+LOGIN_REDIRECT_URL = reverse_lazy('user-profile')
+
+MENU = (
+    'qabel_id.urls.authenticated_menu',
+    'qabel_id.urls.anonymous_menu',
+    'qabel_id.urls.staff_menu',
+)
+
+# No trailing slash please
+BLOCK_URL = 'https://block.qabel.org'
+OUTGOING_REQUEST_ID_HEADER = 'X-Request-ID'
+
+FACET_USER_PROFILE = False
