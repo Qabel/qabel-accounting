@@ -23,7 +23,7 @@
 
     <p>{% trans "have fun testing" %}</p>
 
-    <p>{% trans "abuse paragraph" context "HTML" %}</p>
+    <p>{% blocktrans context "HTML" %}abuse paragraph{% endblocktrans %}</p>
 {% endblock %}
 
 {% block englishheading %}
@@ -47,6 +47,6 @@
 
     <p>{% trans "have fun testing" %}</p>
 
-    <p>{% trans "abuse paragraph" context "HTML" %}</p>
+    <p>{% blocktrans context "HTML" %}abuse paragraph{% endblocktrans %}</p>
 {% endlanguage %}
 {% endblock %}
