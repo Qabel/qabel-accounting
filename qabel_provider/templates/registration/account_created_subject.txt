@@ -1,1 +1,1 @@
-{% load i18n %}{% blocktrans with site_name %}new account at {{ site_name }}{% endblocktrans %}
+{% load i18n %}{% blocktrans with site_name=site_name %}new account at {{ site_name }}{% endblocktrans %}
