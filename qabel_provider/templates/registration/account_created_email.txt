@@ -23,12 +23,14 @@
 {% endblock %}
 
 
-{% language "en" %}
 {% block englishheading %}
+{% language "en" %}
 {% trans "thx for choosing Qabel" %}
+{% endlanguage %}
 {% endblock %}
 
 {% block englishcontent %}
+{% language "en" %}
 {% trans "click on following link" %}
 
 {% blocktrans with username=user.get_username %}username is {{ username }}{% endblocktrans %}
@@ -38,6 +40,6 @@
 {% trans "have fun testing" %}
 
 {% trans "abuse paragraph" context "plaintext" %}
-{% endblock %}
 {% endlanguage %}
+{% endblock %}
 {% endautoescape %}
