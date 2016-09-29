@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-09-27 10:26+0200\n"
-"PO-Revision-Date: 2016-09-26 23:58+0100\n"
+"POT-Creation-Date: 2016-09-29 14:19+0200\n"
+"PO-Revision-Date: 2016-09-29 14:20+0100\n"
 "Last-Translator: mabe <beermann@qabel.de>\n"
 "Language-Team: English <kde-i18n-doc@kde.org>\n"
 "Language: en_GB\n"
@@ -17,13 +17,24 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Lokalize 2.0\n"
 
-#: admin.py:10
+#: admin.py:14
 msgid "Accounting"
 msgstr ""
 
-#: admin.py:11 admin.py:12
+#: admin.py:15 admin.py:16
 msgid "Qabel Account Management"
 msgstr ""
+
+#: admin.py:77
+#, python-brace-format
+msgid "admin user data export {written_rows} {failed_no_address}"
+msgstr ""
+"Exported {written_rows} users ({failed_no_address} had no (confirmed) address"
+" and where not exported)"
+
+#: admin.py:82
+msgid "admin user action export data label"
+msgstr "Export as CSV"
 
 #: templates/account/email/email_confirmation_message.html:4
 #: templates/account/email/email_confirmation_message.html:6
@@ -33,71 +44,58 @@ msgid "registered mail title"
 msgstr "Your Qabel Account"
 
 #: templates/account/email/email_confirmation_message.html:10
-#: templates/account/email/email_confirmation_message.html:32
+#: templates/account/email/email_confirmation_message.html:30
 #: templates/account/email/email_confirmation_message.txt:10
-#: templates/account/email/email_confirmation_message.txt:26
+#: templates/account/email/email_confirmation_message.txt:23
 #: templates/account/email/email_confirmation_signup_message.html:10
-#: templates/account/email/email_confirmation_signup_message.html:32
+#: templates/account/email/email_confirmation_signup_message.html:30
 #: templates/account/email/email_confirmation_signup_message.txt:10
-#: templates/account/email/email_confirmation_signup_message.txt:26
+#: templates/account/email/email_confirmation_signup_message.txt:23
 #: templates/registration/account_created_email.html:10
-#: templates/registration/account_created_email.html:34
+#: templates/registration/account_created_email.html:32
 #: templates/registration/account_created_email.txt:10
-#: templates/registration/account_created_email.txt:28
+#: templates/registration/account_created_email.txt:25
 msgid "thx for choosing Qabel"
 msgstr "Thank you for choosing Qabel."
 
 #: templates/account/email/email_confirmation_message.html:17
-#: templates/account/email/email_confirmation_message.html:41
+#: templates/account/email/email_confirmation_message.html:39
 #: templates/account/email/email_confirmation_message.txt:14
-#: templates/account/email/email_confirmation_message.txt:30
+#: templates/account/email/email_confirmation_message.txt:27
 #: templates/account/email/email_confirmation_signup_message.html:17
-#: templates/account/email/email_confirmation_signup_message.html:41
+#: templates/account/email/email_confirmation_signup_message.html:39
 #: templates/account/email/email_confirmation_signup_message.txt:14
-#: templates/account/email/email_confirmation_signup_message.txt:30
+#: templates/account/email/email_confirmation_signup_message.txt:27
 #: templates/registration/account_created_email.html:17
-#: templates/registration/account_created_email.html:43
+#: templates/registration/account_created_email.html:41
 #: templates/registration/account_created_email.txt:14
-#: templates/registration/account_created_email.txt:32
+#: templates/registration/account_created_email.txt:30
 msgid "click on following link"
 msgstr "Please click on the link below to complete the registration."
 
 #: templates/account/email/email_confirmation_message.html:21
-#: templates/account/email/email_confirmation_message.html:45
+#: templates/account/email/email_confirmation_message.html:43
 #: templates/account/email/email_confirmation_signup_message.html:21
-#: templates/account/email/email_confirmation_signup_message.html:45
+#: templates/account/email/email_confirmation_signup_message.html:43
 #: templates/registration/account_created_email.html:23
-#: templates/registration/account_created_email.html:49
+#: templates/registration/account_created_email.html:47
 msgid "activation link text"
 msgstr "Activation"
 
 #: templates/account/email/email_confirmation_message.html:24
-#: templates/account/email/email_confirmation_message.html:48
+#: templates/account/email/email_confirmation_message.html:46
 #: templates/account/email/email_confirmation_message.txt:18
-#: templates/account/email/email_confirmation_message.txt:34
+#: templates/account/email/email_confirmation_message.txt:31
 #: templates/account/email/email_confirmation_signup_message.html:24
-#: templates/account/email/email_confirmation_signup_message.html:48
+#: templates/account/email/email_confirmation_signup_message.html:46
 #: templates/account/email/email_confirmation_signup_message.txt:18
-#: templates/account/email/email_confirmation_signup_message.txt:34
+#: templates/account/email/email_confirmation_signup_message.txt:31
 #: templates/registration/account_created_email.html:26
-#: templates/registration/account_created_email.html:52
+#: templates/registration/account_created_email.html:50
 #: templates/registration/account_created_email.txt:20
-#: templates/registration/account_created_email.txt:38
+#: templates/registration/account_created_email.txt:36
 msgid "have fun testing"
 msgstr "Enjoy testing Qabel! We're looking forward to your feedback."
-
-#: templates/account/email/email_confirmation_message.html:26
-#: templates/account/email/email_confirmation_message.html:50
-#: templates/account/email/email_confirmation_signup_message.html:26
-#: templates/account/email/email_confirmation_signup_message.html:50
-#: templates/registration/account_created_email.html:28
-#: templates/registration/account_created_email.html:54
-msgctxt "HTML"
-msgid "abuse paragraph"
-msgstr ""
-"If you did not sign up for Qabel, please ignore this mail, or make us aware "
-"ofthis by sending a mail to <a href=\"mailto:abuse@qabel.de\">abuse@qabel."
-"de</a>."
 
 #: templates/account/email/email_confirmation_message.txt:6
 #: templates/account/email/email_confirmation_signup_message.txt:6
@@ -107,17 +105,12 @@ msgstr ""
 "Your Qabel Account\n"
 "------------------"
 
-#: templates/account/email/email_confirmation_message.txt:20
-#: templates/account/email/email_confirmation_message.txt:36
-#: templates/account/email/email_confirmation_signup_message.txt:20
-#: templates/account/email/email_confirmation_signup_message.txt:36
-#: templates/registration/account_created_email.txt:22
-#: templates/registration/account_created_email.txt:40
-msgctxt "plaintext"
-msgid "abuse paragraph"
-msgstr ""
-"If you did not sign up for Qabel, please ignore this mail, ormake us aware "
-"of this by sending a mail to abuse@qabel.de"
+#: templates/account/email/email_confirmation_signup_subject.txt:1
+#: templates/account/email/email_confirmation_subject.txt:1
+#: templates/registration/account_created_subject.txt:1
+#, python-format
+msgid "new account at %(site_name)s"
+msgstr "Your new account at %(site_name)s"
 
 #: templates/accounts/change_profile.html:20
 msgid "Save changes"
@@ -204,9 +197,9 @@ msgid "account created mail title"
 msgstr "Your Qabel Account"
 
 #: templates/registration/account_created_email.html:19
-#: templates/registration/account_created_email.html:45
+#: templates/registration/account_created_email.html:43
 #: templates/registration/account_created_email.txt:16
-#: templates/registration/account_created_email.txt:34
+#: templates/registration/account_created_email.txt:32
 #, python-format
 msgid "username is %(username)s"
 msgstr "Your Qabel username is %(username)s"
@@ -217,11 +210,6 @@ msgstr ""
 "------------------\n"
 "Your Qabel Account\n"
 "------------------"
-
-#: templates/registration/account_created_subject.txt:1
-#, python-format
-msgid "new account at %(site_name)s"
-msgstr "Your new account at %(site_name)s"
 
 #: templates/registration/logged_out.html:9
 msgid "Log in again"
@@ -336,25 +324,38 @@ msgstr ""
 msgid "Reset my password"
 msgstr ""
 
-#: views.py:363
+#: views.py:395
 msgid "Change profile"
 msgstr ""
 
-#: views.py:367
+#: views.py:399
 msgid "Started using prepaid plan {.plan}"
 msgstr ""
 
-#: views.py:368
+#: views.py:400
 msgid "Prepaid plan {.plan} expired"
 msgstr ""
 
-#: views.py:369
+#: views.py:401
 msgid "Prepaid plan {.plan} of duration {.interval.duration} added"
 msgstr ""
 
-#: views.py:370
+#: views.py:402
 msgid "Subscribed to {.plan}"
 msgstr ""
+
+#~ msgctxt "HTML"
+#~ msgid "abuse paragraph"
+#~ msgstr ""
+#~ "If you did not sign up for Qabel, please ignore this mail, or make us "
+#~ "aware ofthis by sending a mail to <a href=\"mailto:abuse@qabel.de"
+#~ "\">abuse@qabel.de</a>."
+
+#~ msgctxt "plaintext"
+#~ msgid "abuse paragraph"
+#~ msgstr ""
+#~ "If you did not sign up for Qabel, please ignore this mail, ormake us "
+#~ "aware of this by sending a mail to abuse@qabel.de"
 
 #~ msgid "HTML title"
 #~ msgstr "Your Qabel Account"
