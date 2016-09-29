@@ -13,9 +13,11 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib.auth.views import login
 from django.core.cache import cache
+from django.core.mail import EmailMultiAlternatives
 from django.db import transaction
 from django import forms
 from django.shortcuts import redirect
+from django.template import loader
 from django.template.response import TemplateResponse as render
 from django.utils.translation import ugettext_lazy as _
 from rest_auth.registration.views import RegisterView
@@ -138,6 +140,32 @@ def auth_resource(request, format=None):
     })
 
 
+class PasswordSetForm(PasswordResetForm):
+    def send_mail(self, subject_template_name, email_template_name,
+                  context, from_email, to_email, html_email_template_name=None):
+        """
+        Sends a django.core.mail.EmailMultiAlternatives to `to_email`.
+        """
+        cc_emails = context.pop('cc_emails')
+        subject = loader.render_to_string(subject_template_name, context)
+        # Email subject *must not* contain newlines
+        subject = ''.join(subject.splitlines())
+        body = loader.render_to_string(email_template_name, context)
+
+        email_message = EmailMultiAlternatives(subject, body, from_email, [to_email], cc=cc_emails)
+        if html_email_template_name is not None:
+            html_email = loader.render_to_string(html_email_template_name, context)
+            email_message.attach_alternative(html_email, 'text/html')
+
+        email_message.send()
+
+    def save(self, cc_emails, **kwargs):
+        # Judica me, Deus, et discerne causam meam de gente non sancta: ab homine iniquo et doloso erue me.
+        extra_email_context = kwargs.setdefault('extra_email_context', {})
+        extra_email_context['cc_emails'] = cc_emails
+        super().save(**kwargs)
+
+
 @api_view(('POST',))
 @require_api_key
 def register_on_behalf(request, format=None):
@@ -162,10 +190,13 @@ def register_on_behalf(request, format=None):
                                             last_name=userdata.last_name)
             EmailAddress.objects.create(user=user, email=userdata.email,
                                         primary=True, verified=True)
+            for email in userdata.secondary_emails:
+                EmailAddress.objects.create(user=user, email=email,
+                                            primary=False, verified=True)
             user.profile.created_on_behalf = True
             user.profile.save()
 
-            password_form = PasswordResetForm(data={'email': userdata.email})
+            password_form = PasswordSetForm(data={'email': userdata.email})
             if not password_form.is_valid():
                 # Should not be possible to hit, unless drf3 and django use different email validators w/ different accepting sets
                 logger.error('register_on_behalf failed, password reset form with validated email is invalid?! '
@@ -173,6 +204,7 @@ def register_on_behalf(request, format=None):
                 return Response({'status': 'Registration failed.'}, status=500)
 
             password_form.save(
+                cc_emails=userdata.secondary_emails,
                 request=request,
                 use_https=request.is_secure(),
                 from_email=settings.DEFAULT_FROM_EMAIL,

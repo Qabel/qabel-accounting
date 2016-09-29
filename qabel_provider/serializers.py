@@ -31,10 +31,15 @@ class UserSerializer(RegisterSerializer):
         read_only = ('username',)
 
 
-class RegisterOnBehalfSerializer(serializers.Serializer):
-    RegisterOnBehalf = namedtuple('RegisterOnBehalf', 'email,first_name,last_name,newsletter,language')
+class SecondaryEmailsField(serializers.ListField):
+    child = serializers.EmailField(max_length=254)
 
-    email = serializers.EmailField()
+
+class RegisterOnBehalfSerializer(serializers.Serializer):
+    RegisterOnBehalf = namedtuple('RegisterOnBehalf', 'email,secondary_emails,first_name,last_name,newsletter,language')
+
+    email = serializers.EmailField(max_length=254)
+    secondary_emails = SecondaryEmailsField(required=False, default=[])
     first_name = serializers.CharField(max_length=30, required=False, default='')
     last_name = serializers.CharField(max_length=30, required=False, default='')
     newsletter = serializers.BooleanField()

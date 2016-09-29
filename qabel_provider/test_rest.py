@@ -338,6 +338,7 @@ def test_register_on_behalf_email(api_client, register_on_behalf_base, write_mai
     sent_mail = mail.outbox.pop()
     assert not mail.outbox
     assert email in sent_mail.to
+    assert not sent_mail.cc
     mail_body = sent_mail.body
     assert (' %s\n' % username) in mail_body
     # Find the password reset URL in the body: "words url-prefix/accounts/reset/?stuff other words"
@@ -352,6 +353,26 @@ def test_register_on_behalf_email(api_client, register_on_behalf_base, write_mai
         'password': new_password,
     })
     assert response.status_code == 200, response.json()
+
+
+@pytest.mark.django_db
+def test_register_on_behalf_email_cc(external_api_client, register_on_behalf_path, write_mail):
+    email = 'manfred@example.net'
+    secondary_mail = 'mmueller@example.com'
+    response = external_api_client.post(register_on_behalf_path, {
+        'email': email,
+        'secondary_emails': [secondary_mail],
+        'newsletter': True,
+        'language': 'Deutsch-mit-Umlauten',  # 'language' is not normalized, at least not now.
+    })
+    data = response.json()
+    assert response.status_code == 200, data
+
+    write_mail('register-on-behalf-with-cc')
+    sent_mail = mail.outbox.pop()
+    assert not mail.outbox
+    assert email in sent_mail.to
+    assert secondary_mail in sent_mail.cc
 
 
 def test_register_on_behalf_no_username(external_api_client, register_on_behalf_path):
