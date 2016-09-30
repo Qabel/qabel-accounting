@@ -1,5 +1,6 @@
 import csv
 
+from allauth.account.models import EmailAddress
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as OriginalUserAdmin
 from django.contrib.auth.models import User
@@ -65,15 +66,11 @@ class UserAdmin(OriginalUserAdmin, nested_admin.NestedModelAdmin):
 
         csv_writer = csv.writer(response)
         csv_writer.writerow(['username', 'email'])
-        failed_no_address = 0
-        written_rows = 0
-        for user in queryset:
-            email = user.profile.primary_email
-            if not email or not email.verified:
-                failed_no_address += 1
-                continue
-            csv_writer.writerow([user.username, email.email])
-            written_rows += 1
+
+        emails = EmailAddress.objects.filter(user__in=queryset, primary=True, verified=True).select_related('user')
+        written_rows = emails.count()
+        failed_no_address = queryset.count() - written_rows
+        csv_writer.writerows((email.user.username, email.email) for email in emails)
         self.message_user(request, _('admin user data export {written_rows} {failed_no_address}').format(
             written_rows=written_rows,
             failed_no_address=failed_no_address,
