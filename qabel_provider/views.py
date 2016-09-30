@@ -420,7 +420,7 @@ def user_history(request):
 
 def user_login(request, **kwargs):
     if request.user.is_authenticated():
-        return redirect(user_profile)  # Could introspect "next" etc here
+        return redirect('user-profile')  # Could introspect "next" etc here
     return login(request, **kwargs)
 
 
