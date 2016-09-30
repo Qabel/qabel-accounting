@@ -1,12 +1,13 @@
 import csv
 
-from allauth.account.models import EmailAddress
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as OriginalUserAdmin
 from django.contrib.auth.models import User
 from django.http import HttpResponse
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
+
+from allauth.account.models import EmailAddress
 
 import nested_admin
 
@@ -56,7 +57,8 @@ class UserProfileInline(nested_admin.NestedStackedInline):
 class UserAdmin(OriginalUserAdmin, nested_admin.NestedModelAdmin):
     inlines = [UserProfileInline]
     list_filter = OriginalUserAdmin.list_filter + \
-        ('profile__plus_notification_mail', 'profile__pro_notification_mail')
+        ('profile__plus_notification_mail', 'profile__pro_notification_mail',
+         'profile__subscribed_plan',)
 
     actions = ('export_user_data',)
 
