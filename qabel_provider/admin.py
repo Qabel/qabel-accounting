@@ -50,7 +50,8 @@ class UserProfileInline(nested_admin.NestedStackedInline):
 
     fields = (
         'plus_notification_mail', 'pro_notification_mail',
-        'subscribed_plan',
+        'subscribed_plan', 'created_on_behalf',
+        'next_confirmation_mail', 'needs_confirmation_after'
     )
 
 
@@ -58,7 +59,8 @@ class UserAdmin(OriginalUserAdmin, nested_admin.NestedModelAdmin):
     inlines = [UserProfileInline]
     list_filter = OriginalUserAdmin.list_filter + \
         ('profile__plus_notification_mail', 'profile__pro_notification_mail',
-         'profile__subscribed_plan',)
+         'profile__subscribed_plan',
+         'profile__next_confirmation_mail', 'profile__needs_confirmation_after',)
 
     actions = ('export_user_data',)
 
