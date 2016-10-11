@@ -118,7 +118,10 @@ class Profile(models.Model, ExportModelOperationsMixin('profile')):
         return False
 
     def send_confirmation_mail(self):
-        self.primary_email.send_confirmation(signup=False)
+        mail = self.primary_email
+        logger.info('Sending confirmation mail to %r', mail.email)
+        mail.send_confirmation(signup=False)
+        logger.info('Sent confirmation mail to %r', mail.email)
 
 
 class PlanInterval(models.Model, ExportModelOperationsMixin('planinterval')):
