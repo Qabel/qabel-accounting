@@ -1,16 +1,17 @@
 import json
 import uuid
 from datetime import timedelta
-from smtplib import SMTPRecipientsRefused
+from smtplib import SMTPRecipientsRefused, SMTPException
 
 import pytest
 
 from django.utils import timezone
 from django.core import mail
+from django.db import DatabaseError
 from django.contrib.auth.models import User
 from allauth.account.models import EmailConfirmation, EmailAddress
 
-from .models import Plan, PlanInterval, ProfilePlanLog
+from .models import Plan, PlanInterval, ProfilePlanLog, Profile
 
 
 def loads(foo):
@@ -248,6 +249,53 @@ def test_failed_auth_resource_after_7_days(external_api_client, user, token, aut
     response = external_api_client.post(auth_resource_path, request_body)
     assert response.status_code == 200
     assert len(mail.outbox) == 2
+
+
+@pytest.fixture()
+def user_needing_confirmation(user):
+    user.profile.needs_confirmation_after = timezone.now() - timedelta(days=7)
+    user.profile.save()
+    user.profile.refresh_from_db()
+    return user
+
+
+def test_confirmation_mail_race1(external_api_client, token, auth_resource_path, monkeypatch, user_needing_confirmation):
+    # Race to updating the mail state; no mail shall be sent here.
+
+    def explode(self):
+        raise DatabaseError('Have you in fact got any cheese here at all? ')
+
+    monkeypatch.setattr(Profile, 'was_email_sent_last_24_hours', explode)
+
+    request_body = {'auth': 'Token {}'.format(token)}
+    response = external_api_client.post(auth_resource_path, request_body)
+    assert response.status_code == 200
+    data = loads(response.content)
+    assert data['active'] is False
+    assert len(mail.outbox) == 0
+
+
+def test_confirmation_mail_rollback(external_api_client, token, auth_resource_path, monkeypatch, user_needing_confirmation):
+    # Mail sending explodes after updating the mail state; mail state must be restored to pristinity.
+
+    def explode(self):
+        raise SMTPException('Have you in fact got any cheese here at all? ')
+
+    monkeypatch.setattr(Profile, 'send_confirmation_mail', explode)
+
+    profile = user_needing_confirmation.profile
+    original_state = profile.next_confirmation_mail
+
+    request_body = {'auth': 'Token {}'.format(token)}
+    response = external_api_client.post(auth_resource_path, request_body)
+    assert response.status_code == 200
+    data = loads(response.content)
+    assert data['active'] is False
+    assert len(mail.outbox) == 0
+
+    profile.refresh_from_db()
+    rollback_state = profile.next_confirmation_mail
+    assert rollback_state == original_state
 
 
 @pytest.fixture

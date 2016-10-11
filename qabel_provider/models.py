@@ -4,7 +4,7 @@ import logging
 from allauth.account.models import EmailAddress
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
-from django.db import models, transaction
+from django.db import models, transaction, DatabaseError
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils import timezone
@@ -89,15 +89,39 @@ class Profile(models.Model, ExportModelOperationsMixin('profile')):
 
     def check_confirmation_and_send_mail(self) -> bool:
         if not self.is_allowed():
-            if not self.was_email_sent_last_24_hours():
-                self.send_confirmation_mail()
-                self.set_next_mail_date()
-            self.save()
+            # First we commit to the DB as-if we already sent the mail. If that fails, then another concurrent txn
+            # already did this. Then we actually send the mail, if that fails, we rollback the DB manually.
+            # In other words, 2PC between the DB and the mail server.
+            try:
+                with transaction.atomic():
+                    self.refresh_from_db()
+                    send_mail = not self.was_email_sent_last_24_hours()
+                    if send_mail:
+                        # Store original timestamp, so we can rollback manually
+                        original_next_confirmation_mail = self.next_confirmation_mail
+                        self.set_next_mail_date()
+                        self.save()
+            except DatabaseError as exc:
+                logger.warning('check_confirmation_and_send_mail: raced transaction, assuming it worked for the other end: %s', str(exc))
+                # Raced commit, someone else send it already.
+                return True
+            if send_mail:
+                try:
+                    self.send_confirmation_mail()
+                except Exception:
+                    logger.exception('Failed to send confirmation mail to user %d, email %r', self.user.pk, self.primary_email)
+                    # Rollback!
+                    with transaction.atomic():
+                        self.next_confirmation_mail = original_next_confirmation_mail
+                        self.save()
             return True
         return False
 
     def send_confirmation_mail(self):
-        self.primary_email.send_confirmation(signup=False)
+        mail = self.primary_email
+        logger.info('Sending confirmation mail to %r', mail.email)
+        mail.send_confirmation(signup=False)
+        logger.info('Sent confirmation mail to %r', mail.email)
 
 
 class PlanInterval(models.Model, ExportModelOperationsMixin('planinterval')):
