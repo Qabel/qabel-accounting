@@ -277,6 +277,7 @@ def test_confirmation_mail_race1(external_api_client, token, auth_resource_path,
 
 def test_confirmation_mail_rollback(external_api_client, token, auth_resource_path, monkeypatch, user_needing_confirmation):
     # Mail sending explodes after updating the mail state; mail state must be restored to pristinity.
+
     def explode(self):
         raise SMTPException('Have you in fact got any cheese here at all? ')
 

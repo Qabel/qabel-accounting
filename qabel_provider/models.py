@@ -101,7 +101,8 @@ class Profile(models.Model, ExportModelOperationsMixin('profile')):
                         original_next_confirmation_mail = self.next_confirmation_mail
                         self.set_next_mail_date()
                         self.save()
-            except DatabaseError:
+            except DatabaseError as exc:
+                logger.warning('check_confirmation_and_send_mail: raced transaction, assuming it worked for the other end: %s', str(exc))
                 # Raced commit, someone else send it already.
                 return True
             if send_mail:
