@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-09-29 14:19+0200\n"
-"PO-Revision-Date: 2016-09-29 14:20+0100\n"
+"POT-Creation-Date: 2016-10-18 14:43+0200\n"
+"PO-Revision-Date: 2016-10-18 14:43+0100\n"
 "Last-Translator: mabe <beermann@qabel.de>\n"
 "Language-Team: English <kde-i18n-doc@kde.org>\n"
 "Language: en_GB\n"
@@ -17,22 +17,22 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Lokalize 2.0\n"
 
-#: admin.py:14
+#: admin.py:16
 msgid "Accounting"
 msgstr ""
 
-#: admin.py:15 admin.py:16
+#: admin.py:17 admin.py:18
 msgid "Qabel Account Management"
 msgstr "Qabel Accountverwaltung"
 
-#: admin.py:77
+#: admin.py:78
 #, python-brace-format
 msgid "admin user data export {written_rows} {failed_no_address}"
 msgstr ""
-"{written_rows} Benutzer exportiert ({failed_no_address} hatten keine"
-" (bestätigte) Addresse und wurden daher nicht exportiert)"
+"{written_rows} Benutzer exportiert ({failed_no_address} hatten keine "
+"(bestätigte) Addresse und wurden daher nicht exportiert)"
 
-#: admin.py:82
+#: admin.py:83
 msgid "admin user action export data label"
 msgstr "Als CSV exportieren"
 
@@ -44,13 +44,13 @@ msgid "registered mail title"
 msgstr "Qabel Account Registrierung"
 
 #: templates/account/email/email_confirmation_message.html:10
-#: templates/account/email/email_confirmation_message.html:30
+#: templates/account/email/email_confirmation_message.html:32
 #: templates/account/email/email_confirmation_message.txt:10
-#: templates/account/email/email_confirmation_message.txt:23
+#: templates/account/email/email_confirmation_message.txt:25
 #: templates/account/email/email_confirmation_signup_message.html:10
-#: templates/account/email/email_confirmation_signup_message.html:30
+#: templates/account/email/email_confirmation_signup_message.html:32
 #: templates/account/email/email_confirmation_signup_message.txt:10
-#: templates/account/email/email_confirmation_signup_message.txt:23
+#: templates/account/email/email_confirmation_signup_message.txt:25
 #: templates/registration/account_created_email.html:10
 #: templates/registration/account_created_email.html:32
 #: templates/registration/account_created_email.txt:10
@@ -59,13 +59,27 @@ msgid "thx for choosing Qabel"
 msgstr "Danke, dass Sie sich für Qabel entschieden haben."
 
 #: templates/account/email/email_confirmation_message.html:17
-#: templates/account/email/email_confirmation_message.html:39
+#: templates/account/email/email_confirmation_message.html:41
 #: templates/account/email/email_confirmation_message.txt:14
-#: templates/account/email/email_confirmation_message.txt:27
+#: templates/account/email/email_confirmation_message.txt:29
 #: templates/account/email/email_confirmation_signup_message.html:17
-#: templates/account/email/email_confirmation_signup_message.html:39
+#: templates/account/email/email_confirmation_signup_message.html:41
 #: templates/account/email/email_confirmation_signup_message.txt:14
-#: templates/account/email/email_confirmation_signup_message.txt:27
+#: templates/account/email/email_confirmation_signup_message.txt:29
+msgid "not yet confirmed, remininding you to pls confirm"
+msgstr ""
+"Vor einiger Zeit haben wir bereits eine Nachricht mit einem Aktivierungslink"
+" an Ihre E-Mail-Adresse gesendet. Bisher konnten wir jedoch keinen Abschluss"
+" Ihrer Registrierung feststellen."
+
+#: templates/account/email/email_confirmation_message.html:19
+#: templates/account/email/email_confirmation_message.html:43
+#: templates/account/email/email_confirmation_message.txt:16
+#: templates/account/email/email_confirmation_message.txt:31
+#: templates/account/email/email_confirmation_signup_message.html:19
+#: templates/account/email/email_confirmation_signup_message.html:43
+#: templates/account/email/email_confirmation_signup_message.txt:16
+#: templates/account/email/email_confirmation_signup_message.txt:31
 #: templates/registration/account_created_email.html:17
 #: templates/registration/account_created_email.html:41
 #: templates/registration/account_created_email.txt:14
@@ -75,23 +89,23 @@ msgstr ""
 "Bitte klicken Sie auf den nachfolgenden Link, um die Registrierung Ihres "
 "Qabel Accounts abzuschließen."
 
-#: templates/account/email/email_confirmation_message.html:21
-#: templates/account/email/email_confirmation_message.html:43
-#: templates/account/email/email_confirmation_signup_message.html:21
-#: templates/account/email/email_confirmation_signup_message.html:43
+#: templates/account/email/email_confirmation_message.html:23
+#: templates/account/email/email_confirmation_message.html:47
+#: templates/account/email/email_confirmation_signup_message.html:23
+#: templates/account/email/email_confirmation_signup_message.html:47
 #: templates/registration/account_created_email.html:23
 #: templates/registration/account_created_email.html:47
 msgid "activation link text"
 msgstr "Aktivierungslink"
 
-#: templates/account/email/email_confirmation_message.html:24
-#: templates/account/email/email_confirmation_message.html:46
-#: templates/account/email/email_confirmation_message.txt:18
-#: templates/account/email/email_confirmation_message.txt:31
-#: templates/account/email/email_confirmation_signup_message.html:24
-#: templates/account/email/email_confirmation_signup_message.html:46
-#: templates/account/email/email_confirmation_signup_message.txt:18
-#: templates/account/email/email_confirmation_signup_message.txt:31
+#: templates/account/email/email_confirmation_message.html:26
+#: templates/account/email/email_confirmation_message.html:50
+#: templates/account/email/email_confirmation_message.txt:20
+#: templates/account/email/email_confirmation_message.txt:35
+#: templates/account/email/email_confirmation_signup_message.html:26
+#: templates/account/email/email_confirmation_signup_message.html:50
+#: templates/account/email/email_confirmation_signup_message.txt:20
+#: templates/account/email/email_confirmation_signup_message.txt:35
 #: templates/registration/account_created_email.html:26
 #: templates/registration/account_created_email.html:50
 #: templates/registration/account_created_email.txt:20

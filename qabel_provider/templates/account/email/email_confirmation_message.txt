@@ -11,6 +11,8 @@
 {% endblock %}
 
 {% block nativecontent %}
+{% trans "not yet confirmed, remininding you to pls confirm" %}
+
 {% trans "click on following link" %}
 
 {{ activate_url }}
@@ -24,6 +26,8 @@
 {% endlanguage %}{% endblock %}
 
 {% block englishcontent %}{% language "en" %}
+{% trans "not yet confirmed, remininding you to pls confirm" %}
+
 {% trans "click on following link" %}
 
 {{ activate_url }}

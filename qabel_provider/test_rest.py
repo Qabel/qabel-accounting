@@ -222,7 +222,7 @@ def test_auth_resource_no_body(external_api_client, auth_resource_path):
     assert data['error']
 
 
-def test_failed_auth_resource_after_7_days(external_api_client, user, token, auth_resource_path):
+def test_failed_auth_resource_after_7_days(external_api_client, user, token, auth_resource_path, write_mail):
     user.profile.needs_confirmation_after = timezone.now() - timedelta(days=7)
     user.profile.save()
     user.profile.refresh_from_db()
@@ -249,6 +249,7 @@ def test_failed_auth_resource_after_7_days(external_api_client, user, token, aut
     response = external_api_client.post(auth_resource_path, request_body)
     assert response.status_code == 200
     assert len(mail.outbox) == 2
+    write_mail('email-confirm-repeated', outbox_index=-1)
 
 
 @pytest.fixture()
