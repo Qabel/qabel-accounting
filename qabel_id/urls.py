@@ -30,6 +30,7 @@ from rest_auth.registration.views import VerifyEmailView
 from rest_auth.registration import urls as registration_urls
 from allauth.account.views import ConfirmEmailView, EmailVerificationSentView
 import nested_admin.urls
+import django_prometheus.urls
 
 from qabel_web_theme import urls as theme_urls
 from dispatch_service.views import dispatch
@@ -93,7 +94,7 @@ urlpatterns = [
     url(r'^accounts/', include(auth_urls)),
     url(r'^api/v0/', include(rest_urls)),
     url('', include(profile_urls)),
-    url('', include('django_prometheus.urls')),
+    url('', include(django_prometheus.urls)),
     url(r'^account-confirm-email/(?P<key>\w+)/$', ConfirmEmailView.as_view(),
         name='account_confirm_email'),
     url(r'^account-email-verification-sent/$', EmailVerificationSentView.as_view(),
