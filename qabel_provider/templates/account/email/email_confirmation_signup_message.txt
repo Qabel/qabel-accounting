@@ -1,1 +1,33 @@
-email_confirmation_message.txt
+{% extends "mail_base.txt" %}
+{% load i18n %}
+{% autoescape off %}
+
+{% block maintitle %}
+{% trans "registered mail title, lined with dashes" %}
+{% endblock %}
+
+{% block nativeheading %}
+{% trans "thx for choosing Qabel" %}
+{% endblock %}
+
+{% block nativecontent %}
+{% trans "click on following link" %}
+
+{{ activate_url }}
+
+{% trans "have fun testing" %}
+{% endblock %}
+
+
+{% block englishheading %}{% language "en" %}
+{% trans "thx for choosing Qabel" %}
+{% endlanguage %}{% endblock %}
+
+{% block englishcontent %}{% language "en" %}
+{% trans "click on following link" %}
+
+{{ activate_url }}
+
+{% trans "have fun testing" %}
+{% endlanguage %}{% endblock %}
+{% endautoescape %}

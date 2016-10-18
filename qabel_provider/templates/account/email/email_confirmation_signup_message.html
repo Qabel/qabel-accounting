@@ -1,1 +1,48 @@
-email_confirmation_message.html
+{% extends "mail_base.html" %}
+{% load i18n %}
+
+{% block content %}{% trans "registered mail title" %}{% endblock %}
+
+{% block maintitle %}<h2>{% trans "registered mail title" %}</h2>{% endblock %}
+
+{% block nativeheading %}
+<tr>
+    <td width="50%" colspan="3" style="text-align: right; background-color: #bbb;">{% trans "thx for choosing Qabel" %}
+        <span style="color: white; font-size: 150%;">♥</span></td>
+    <td colspan="2"></td>
+</tr>
+{% endblock %}
+
+{% block nativecontent %}
+    <p>{% trans "click on following link" %}</p>
+
+    <p>
+        <a href="{{ activate_url }}"
+           style="background-color: #ff5908; border-radius: 4px; color: white; padding: 5px; text-decoration: none;">{% trans "activation link text" %}</a>
+    </p>
+
+    <p>{% trans "have fun testing" %}</p>
+{% endblock %}
+
+{% block englishheading %}
+{% language 'en' %}
+    <tr>
+        <td width="33%" colspan="2" style="text-align: right; background-color: #bbb;">{% trans "thx for choosing Qabel" %}
+            <span style="color: white; font-size: 150%;">♥</span></td>
+        <td colspan="3"></td>
+    </tr>
+{% endlanguage %}
+{% endblock %}
+
+{% block englishcontent %}
+{% language 'en' %}
+    <p>{% trans "click on following link" %}</p>
+
+    <p>
+        <a href="{{ activate_url }}"
+           style="background-color: #ff5908; border-radius: 4px; color: white; padding: 5px; text-decoration: none;">{% trans "activation link text" %}</a>
+    </p>
+
+    <p>{% trans "have fun testing" %}</p>
+{% endlanguage %}
+{% endblock %}
