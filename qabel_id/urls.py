@@ -35,6 +35,9 @@ import django_prometheus.urls
 from qabel_web_theme import urls as theme_urls
 from dispatch_service.views import dispatch
 
+# Import the module somewhere, so it can register itself.
+import qabel_provider.monitoring
+
 rest_auth_register_urls = [
     url(r'^$', views.PasswordPolicyRegisterView.as_view(), name='rest_register'),
     url(r'^verify-email/$', VerifyEmailView.as_view(), name='rest_verify_email'),
