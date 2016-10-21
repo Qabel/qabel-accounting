@@ -365,29 +365,3 @@ msgstr ""
 #: views.py:402
 msgid "Subscribed to {.plan}"
 msgstr ""
-
-#~ msgctxt "HTML"
-#~ msgid "abuse paragraph"
-#~ msgstr ""
-#~ "Wenn Sie sich nicht bei Qabel angemeldet haben, dann ignorierenSie diese "
-#~ "Mail bitte, oder schreiben Sie uns einen Hinweis an <a href=\"mailto:"
-#~ "abuse@qabel.de\">abuse@qabel.de</a>."
-
-#~ msgctxt "plaintext"
-#~ msgid "abuse paragraph"
-#~ msgstr ""
-#~ "Wenn Sie sich nicht bei Qabel angemeldet haben, dann ignorierenSie diese "
-#~ "Mail bitte, oder schreiben Sie uns einen Hinweis an abuse@qabel.de"
-
-#~ msgid "HTML title"
-#~ msgstr "Ihr Qabel Account"
-
-#~ msgid "title"
-#~ msgstr "Qabel Account Registrierung"
-
-#~ msgid ""
-#~ "(We don't store your password in plain-text, we use %(reassuring_string)s "
-#~ "instead)"
-#~ msgstr ""
-#~ "(Wir speichern Ihr Passwort nicht im Klartext, sondern mittels "
-#~ "%(reassuring_string)s)"

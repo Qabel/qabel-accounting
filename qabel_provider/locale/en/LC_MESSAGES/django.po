@@ -357,22 +357,3 @@ msgstr ""
 #: views.py:402
 msgid "Subscribed to {.plan}"
 msgstr ""
-
-#~ msgctxt "HTML"
-#~ msgid "abuse paragraph"
-#~ msgstr ""
-#~ "If you did not sign up for Qabel, please ignore this mail, or make us "
-#~ "aware ofthis by sending a mail to <a href=\"mailto:abuse@qabel.de"
-#~ "\">abuse@qabel.de</a>."
-
-#~ msgctxt "plaintext"
-#~ msgid "abuse paragraph"
-#~ msgstr ""
-#~ "If you did not sign up for Qabel, please ignore this mail, ormake us "
-#~ "aware of this by sending a mail to abuse@qabel.de"
-
-#~ msgid "HTML title"
-#~ msgstr "Your Qabel Account"
-
-#~ msgid "title"
-#~ msgstr "Your Qabel Account"
