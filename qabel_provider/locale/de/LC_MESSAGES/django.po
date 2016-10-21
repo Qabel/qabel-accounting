@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-10-18 14:43+0200\n"
-"PO-Revision-Date: 2016-10-18 14:43+0100\n"
+"PO-Revision-Date: 2016-10-18 14:44+0100\n"
 "Last-Translator: mabe <beermann@qabel.de>\n"
 "Language-Team: English <kde-i18n-doc@kde.org>\n"
 "Language: en_GB\n"
@@ -19,7 +19,7 @@ msgstr ""
 
 #: admin.py:16
 msgid "Accounting"
-msgstr ""
+msgstr "Accounting"
 
 #: admin.py:17 admin.py:18
 msgid "Qabel Account Management"
@@ -68,9 +68,9 @@ msgstr "Danke, dass Sie sich für Qabel entschieden haben."
 #: templates/account/email/email_confirmation_signup_message.txt:29
 msgid "not yet confirmed, remininding you to pls confirm"
 msgstr ""
-"Vor einiger Zeit haben wir bereits eine Nachricht mit einem Aktivierungslink"
-" an Ihre E-Mail-Adresse gesendet. Bisher konnten wir jedoch keinen Abschluss"
-" Ihrer Registrierung feststellen."
+"Vor einiger Zeit haben wir bereits eine Nachricht mit einem Aktivierungslink "
+"an Ihre E-Mail-Adresse gesendet. Bisher konnten wir jedoch keinen Abschluss "
+"Ihrer Registrierung feststellen."
 
 #: templates/account/email/email_confirmation_message.html:19
 #: templates/account/email/email_confirmation_message.html:43
@@ -138,8 +138,7 @@ msgstr "E-Mail-Addresse bestätigt"
 
 #: templates/accounts/confirmed.html:6
 msgid "Your email address has been confirmed. Your account is now active."
-msgstr ""
-"Ihre E-Mail-Addresse wurde erfolgreich bestätigt. Ihr Account ist nun aktiv."
+msgstr "Ihre E-Mail-Addresse wurde erfolgreich bestätigt. Ihr Account ist nun aktiv."
 
 #: templates/accounts/history.html:3 templates/accounts/history.html.py:6
 msgid "Account history"
@@ -244,6 +243,10 @@ msgid ""
 "        please login with an account that has access.\n"
 "        "
 msgstr ""
+"\n"
+"        Your account doesn't have access to this page. To proceed,\n"
+"        please login with an account that has access.\n"
+"        "
 
 #: templates/registration/login.html:26
 msgid ""
@@ -251,6 +254,9 @@ msgid ""
 "            Please login to see this page.\n"
 "            "
 msgstr ""
+"\n"
+"            Please login to see this page.\n"
+"            "
 
 #: templates/registration/login.html:45
 msgid "Lost your password?"
@@ -293,24 +299,32 @@ msgid ""
 "Please enter your new password twice so we can verify you typed it in "
 "correctly."
 msgstr ""
+"Please enter your new password twice so we can verify you typed it in "
+"correctly."
 
 #: templates/registration/password_reset_confirm.html:26
 msgid ""
 "The password reset link was invalid, possibly because it has already been "
 "used.  Please request a new password reset."
 msgstr ""
+"The password reset link was invalid, possibly because it has already been "
+"used.  Please request a new password reset."
 
 #: templates/registration/password_reset_done.html:9
 msgid ""
 "We've emailed you instructions for setting your password, if an account "
 "exists with the email you entered. You should receive them shortly."
 msgstr ""
+"We've emailed you instructions for setting your password, if an account "
+"exists with the email you entered. You should receive them shortly."
 
 #: templates/registration/password_reset_done.html:11
 msgid ""
 "If you don't receive an email, please make sure you've entered the address "
 "you registered with, and check your spam folder."
 msgstr ""
+"If you don't receive an email, please make sure you've entered the address "
+"you registered with, and check your spam folder."
 
 #: templates/registration/password_reset_email.html:2
 #, python-format
@@ -318,29 +332,33 @@ msgid ""
 "You're receiving this email because you requested a password reset for your "
 "user account at %(site_name)s."
 msgstr ""
+"You're receiving this email because you requested a password reset for your "
+"user account at %(site_name)s."
 
 #: templates/registration/password_reset_email.html:4
 msgid "Please go to the following page and choose a new password:"
-msgstr ""
+msgstr "Please go to the following page and choose a new password:"
 
 #: templates/registration/password_reset_email.html:8
 msgid "Your username, in case you've forgotten:"
-msgstr ""
+msgstr "Your username, in case you've forgotten:"
 
 #: templates/registration/password_reset_email.html:10
 msgid "Thanks for using our site!"
-msgstr ""
+msgstr "Thanks for using our site!"
 
 #: templates/registration/password_reset_email.html:12
 #, python-format
 msgid "The %(site_name)s team"
-msgstr ""
+msgstr "The %(site_name)s team"
 
 #: templates/registration/password_reset_form.html:13
 msgid ""
 "Forgotten your password? Enter your email address below, and we'll email "
 "instructions for setting a new one."
 msgstr ""
+"Forgotten your password? Enter your email address below, and we'll email "
+"instructions for setting a new one."
 
 #: templates/registration/password_reset_form.html:20
 msgid "Reset my password"
@@ -352,16 +370,16 @@ msgstr "Account bearbeiten"
 
 #: views.py:399
 msgid "Started using prepaid plan {.plan}"
-msgstr ""
+msgstr "Started using prepaid plan {.plan}"
 
 #: views.py:400
 msgid "Prepaid plan {.plan} expired"
-msgstr ""
+msgstr "Prepaid plan {.plan} expired"
 
 #: views.py:401
 msgid "Prepaid plan {.plan} of duration {.interval.duration} added"
-msgstr ""
+msgstr "Prepaid plan {.plan} of duration {.interval.duration} added"
 
 #: views.py:402
 msgid "Subscribed to {.plan}"
-msgstr ""
+msgstr "Subscribed to {.plan}"
