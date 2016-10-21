@@ -19,11 +19,11 @@ msgstr ""
 
 #: admin.py:16
 msgid "Accounting"
-msgstr "Accounting"
+msgstr ""
 
 #: admin.py:17 admin.py:18
 msgid "Qabel Account Management"
-msgstr "Qabel Account Management"
+msgstr ""
 
 #: admin.py:78
 #, python-brace-format
@@ -128,82 +128,82 @@ msgstr "Your new account at %(site_name)s"
 
 #: templates/accounts/change_profile.html:20
 msgid "Save changes"
-msgstr "Save changes"
+msgstr ""
 
 #: templates/accounts/confirmed.html:3
 msgid "Email address confirmed"
-msgstr "Email address confirmed"
+msgstr ""
 
 #: templates/accounts/confirmed.html:6
 msgid "Your email address has been confirmed. Your account is now active."
-msgstr "Your email address has been confirmed. Your account is now active."
+msgstr ""
 
 #: templates/accounts/history.html:3 templates/accounts/history.html.py:6
 msgid "Account history"
-msgstr "Account history"
+msgstr ""
 
 #: templates/accounts/history.html:12
 msgid "Date"
-msgstr "Date"
+msgstr ""
 
 #: templates/accounts/history.html:13
 msgid "Event"
-msgstr "Event"
+msgstr ""
 
 #: templates/accounts/history.html:19 templates/accounts/profile.html.py:10
 msgid "Account created"
-msgstr "Account created"
+msgstr ""
 
 #: templates/accounts/profile.html:3
 msgid "My account"
-msgstr "My account"
+msgstr ""
 
 #: templates/accounts/profile.html:6
 #, python-format
 msgid "Welcome, %(username)s"
-msgstr "Welcome, %(username)s"
+msgstr ""
 
 #: templates/accounts/profile.html:16
 msgid "Last login"
-msgstr "Last login"
+msgstr ""
 
 #: templates/accounts/profile.html:22
 msgid "Your username"
-msgstr "Your username"
+msgstr ""
 
 #: templates/accounts/profile.html:24 templates/accounts/profile.html.py:30
 #: templates/accounts/profile.html:36
 msgid "Change"
-msgstr "Change"
+msgstr ""
 
 #: templates/accounts/profile.html:28
 msgid "Your password"
-msgstr "Your password"
+msgstr ""
 
 #: templates/accounts/profile.html:34
 msgid "Primary email address"
-msgstr "Primary email address"
+msgstr ""
 
 #: templates/accounts/profile.html:38
 msgid "This address hasn't been confirmed yet."
-msgstr "This address hasn't been confirmed yet."
+msgstr ""
 
 #: templates/accounts/profile.html:43
 msgid "Current plan"
-msgstr "Current plan"
+msgstr ""
 
 #: templates/accounts/profile.html:45
 msgid "Available plans"
-msgstr "Available plans"
+msgstr ""
 
 #: templates/accounts/profile.html:49
 msgid "Qabel Box Storage"
-msgstr "Qabel Box Storage"
+msgstr ""
 
 #: templates/accounts/profile.html:57
 #, python-format
 msgid "%(used)s used out of %(quota)s"
-msgstr "%(used)s used out of %(quota)s"
+msgstr ""
 
 #: templates/registration/account_created_email.html:4
 #: templates/registration/account_created_email.html:6
@@ -227,12 +227,12 @@ msgstr ""
 
 #: templates/registration/logged_out.html:9
 msgid "Log in again"
-msgstr "Log in again"
+msgstr ""
 
 #: templates/registration/login.html:4 templates/registration/login.html:30
 #: templates/registration/login.html:38
 msgid "Login"
-msgstr "Login"
+msgstr ""
 
 #: templates/registration/login.html:13
 msgid ""
@@ -241,10 +241,6 @@ msgid ""
 "        please login with an account that has access.\n"
 "        "
 msgstr ""
-"\n"
-"        Your account doesn't have access to this page. To proceed,\n"
-"        please login with an account that has access.\n"
-"        "
 
 #: templates/registration/login.html:26
 msgid ""
@@ -252,74 +248,61 @@ msgid ""
 "            Please login to see this page.\n"
 "            "
 msgstr ""
-"\n"
-"            Please login to see this page.\n"
-"            "
 
 #: templates/registration/login.html:45
 msgid "Lost your password?"
-msgstr "Lost your password?"
+msgstr ""
 
 #: templates/registration/password_change_done.html:9
 msgid "Your password was changed."
-msgstr "Your password was changed."
+msgstr ""
 
 #: templates/registration/password_change_done.html:11
 msgid "Back to your user profile »"
-msgstr "Back to your user profile »"
+msgstr ""
 
 #: templates/registration/password_change_form.html:13
 msgid ""
 "Please enter your old password, for security's sake, and then enter your new "
 "password twice so we can verify you typed it in correctly."
 msgstr ""
-"Please enter your old password, for security's sake, and then enter your new "
-"password twice so we can verify you typed it in correctly."
 
 #: templates/registration/password_change_form.html:20
 #: templates/registration/password_reset_confirm.html:21
 msgid "Change my password"
-msgstr "Change my password"
+msgstr ""
 
 #: templates/registration/password_reset_complete.html:9
 msgid "Your password has been set.  You may go ahead and log in now."
-msgstr "Your password has been set.  You may go ahead and log in now."
+msgstr ""
 
 #: templates/registration/password_reset_complete.html:11
 msgid "Log in"
-msgstr "Log in"
+msgstr ""
 
 #: templates/registration/password_reset_confirm.html:14
 msgid ""
 "Please enter your new password twice so we can verify you typed it in "
 "correctly."
 msgstr ""
-"Please enter your new password twice so we can verify you typed it in "
-"correctly."
 
 #: templates/registration/password_reset_confirm.html:26
 msgid ""
 "The password reset link was invalid, possibly because it has already been "
 "used.  Please request a new password reset."
 msgstr ""
-"The password reset link was invalid, possibly because it has already been "
-"used.  Please request a new password reset."
 
 #: templates/registration/password_reset_done.html:9
 msgid ""
 "We've emailed you instructions for setting your password, if an account "
 "exists with the email you entered. You should receive them shortly."
 msgstr ""
-"We've emailed you instructions for setting your password, if an account "
-"exists with the email you entered. You should receive them shortly."
 
 #: templates/registration/password_reset_done.html:11
 msgid ""
 "If you don't receive an email, please make sure you've entered the address "
 "you registered with, and check your spam folder."
 msgstr ""
-"If you don't receive an email, please make sure you've entered the address "
-"you registered with, and check your spam folder."
 
 #: templates/registration/password_reset_email.html:2
 #, python-format
@@ -327,54 +310,50 @@ msgid ""
 "You're receiving this email because you requested a password reset for your "
 "user account at %(site_name)s."
 msgstr ""
-"You're receiving this email because you requested a password reset for your "
-"user account at %(site_name)s."
 
 #: templates/registration/password_reset_email.html:4
 msgid "Please go to the following page and choose a new password:"
-msgstr "Please go to the following page and choose a new password:"
+msgstr ""
 
 #: templates/registration/password_reset_email.html:8
 msgid "Your username, in case you've forgotten:"
-msgstr "Your username, in case you've forgotten:"
+msgstr ""
 
 #: templates/registration/password_reset_email.html:10
 msgid "Thanks for using our site!"
-msgstr "Thanks for using our site!"
+msgstr ""
 
 #: templates/registration/password_reset_email.html:12
 #, python-format
 msgid "The %(site_name)s team"
-msgstr "The %(site_name)s team"
+msgstr ""
 
 #: templates/registration/password_reset_form.html:13
 msgid ""
 "Forgotten your password? Enter your email address below, and we'll email "
 "instructions for setting a new one."
 msgstr ""
-"Forgotten your password? Enter your email address below, and we'll email "
-"instructions for setting a new one."
 
 #: templates/registration/password_reset_form.html:20
 msgid "Reset my password"
-msgstr "Reset my password"
+msgstr ""
 
 #: views.py:395
 msgid "Change profile"
-msgstr "Change profile"
+msgstr ""
 
 #: views.py:399
 msgid "Started using prepaid plan {.plan}"
-msgstr "Started using prepaid plan {.plan}"
+msgstr ""
 
 #: views.py:400
 msgid "Prepaid plan {.plan} expired"
-msgstr "Prepaid plan {.plan} expired"
+msgstr ""
 
 #: views.py:401
 msgid "Prepaid plan {.plan} of duration {.interval.duration} added"
-msgstr "Prepaid plan {.plan} of duration {.interval.duration} added"
+msgstr ""
 
 #: views.py:402
 msgid "Subscribed to {.plan}"
-msgstr "Subscribed to {.plan}"
+msgstr ""
