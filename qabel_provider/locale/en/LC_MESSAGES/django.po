@@ -144,7 +144,7 @@ msgstr ""
 
 #: templates/accounts/history.html:12
 msgid "Date"
-msgstr ""
+msgstr "Date"
 
 #: templates/accounts/history.html:13
 msgid "Event"
@@ -174,7 +174,7 @@ msgstr ""
 #: templates/accounts/profile.html:24 templates/accounts/profile.html.py:30
 #: templates/accounts/profile.html:36
 msgid "Change"
-msgstr ""
+msgstr "Change"
 
 #: templates/accounts/profile.html:28
 msgid "Your password"
@@ -232,7 +232,7 @@ msgstr ""
 #: templates/registration/login.html:4 templates/registration/login.html:30
 #: templates/registration/login.html:38
 msgid "Login"
-msgstr ""
+msgstr "Login"
 
 #: templates/registration/login.html:13
 msgid ""
