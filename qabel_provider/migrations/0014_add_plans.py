@@ -42,6 +42,9 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        migrations.RunSQL('SET CONSTRAINTS ALL IMMEDIATE',
+                          reverse_sql=migrations.RunSQL.noop),
+
         # (comments are for forward migration, backwards is the semantic opposite)
         migrations.CreateModel(
             name='Plan',
@@ -128,4 +131,7 @@ class Migration(migrations.Migration):
             name='profileplanlog',
             index_together={('timestamp',), ('profile',)},
         ),
+
+        migrations.RunSQL(migrations.RunSQL.noop,
+                          reverse_sql='SET CONSTRAINTS ALL IMMEDIATE'),
     ]

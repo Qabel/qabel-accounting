@@ -10,9 +10,13 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        migrations.RunSQL(migrations.RunSQL.noop,
+                          reverse_sql='SET CONSTRAINTS ALL IMMEDIATE'),
         migrations.AddField(
             model_name='profile',
             name='created_on_behalf',
             field=models.BooleanField(default=False),
         ),
+        migrations.RunSQL(migrations.RunSQL.noop,
+                          reverse_sql='SET CONSTRAINTS ALL IMMEDIATE'),
     ]
