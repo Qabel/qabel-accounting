@@ -1,7 +1,7 @@
 requests==2.7.0
-Django==1.9
+Django==1.9.12
 py==1.4.30
-pytest==2.8.0
+pytest==2.9.2
 pytest-django==2.8.0
 djangorestframework==3.2.4
 Markdown==2.6.2
@@ -14,7 +14,7 @@ django-axes==1.6.0
 django-redis-cache==1.6.5
 hiredis==0.2.0
 pytest-mock==0.11.0
-pytest-flake8>=0.5
+pytest-flake8==0.8.1
 psycopg2==2.6.1
 invoke==0.13.0
 pprintpp==0.2.3
