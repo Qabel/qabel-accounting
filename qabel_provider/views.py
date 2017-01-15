@@ -395,6 +395,7 @@ def change_user_profile(request):
         'title': _('Change profile'),
     })
 
+
 event_describers = {
     'start-interval': _('Started using prepaid plan {.plan}').format,
     'expired-interval': _('Prepaid plan {.plan} expired').format,

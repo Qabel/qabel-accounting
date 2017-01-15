@@ -90,6 +90,7 @@ class PlanAdmin(admin.ModelAdmin):
         'id', 'name', 'block_quota', 'monthly_traffic_quota',
     )
 
+
 try:
     admin.site.unregister(User)
 finally:

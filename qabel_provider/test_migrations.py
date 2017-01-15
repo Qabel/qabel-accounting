@@ -40,6 +40,7 @@ def models(apps, *models):
 def migrate_to_and_get_models(migration, *_models):
     return models(migrate_to(migration), *_models)
 
+
 # Ok to hardcode these here, they are part of the migration
 block_quota = 2 * 1024 ** 3
 monthly_traffic_quota = 20 * 1024 ** 3
