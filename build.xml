@@ -54,7 +54,7 @@
             <arg value="requirements.txt"/>
         </exec>
     </target>
-    
+
     <available file="npm" filepath="${env.PATH}" property="npm.exists"/>
     <available file="phantomjs" filepath="${env.PATH}" property="phantomjs.exists"/>
     <target name="install-phantom-npm" unless="phantomjs.exists">
@@ -80,7 +80,7 @@
             </condition>
         </fail>
     </target>
-    
+
     <target name="test" depends="install,clean-db">
         <exec executable="${vbin}/py.test" dir="${basedir}" failonerror="true">
             <env key="PATH" path="${env.PATH}:${vbin}"/>
