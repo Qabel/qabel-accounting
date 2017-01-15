@@ -27,5 +27,8 @@ class ProfileStatsCollector:
         yield from self.plan_interval()
         yield from self.subscriptions()
 
+    def describe(self):
+        return []
+
 
 REGISTRY.register(ProfileStatsCollector())
