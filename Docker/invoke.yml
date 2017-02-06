@@ -1,0 +1,36 @@
+
+qabel:
+   accounting:
+       DEBUG:  false 
+       SECRET_KEY: "askldjas9duasdlkjasd912jlkasd90128i3lkajsdasd"
+       CSRF_COOKIE_SECURE: false
+       CSRF_COOKIE_HTTPONLY: false
+       X_FRAME_OPTIONS: DENY
+       API_SECRET: asdasdagsdf234dfg35sgsdf3asdf234sdafsadf
+       EMAIL_BACKEND: ''
+       EMAIL_USE_TLS: ''
+       EMAIL_HOST: ''
+       EMAIL_PORT: ''
+       EMAIL_HOST_USER: ''
+       EMAIL_HOST_PASSWORD: ''
+       DEFAULT_FROM_EMAIL: ''
+
+       ALLOWED_HOSTS:
+         - '*'
+       CORS_ORIGIN_WHITELIST:
+         - '*' 
+
+
+       DATABASES:
+           default:
+               ENGINE: django.db.backends.postgresql
+               NAME: accounting-live
+               USER: postgres
+               HOST: postgres
+               PORT: 5432
+               PASSWORD: 'test'
+
+       uwsgi:
+           processes: 4
+           http-socket: :5000 
+           plugin: python3
