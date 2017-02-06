@@ -194,6 +194,14 @@ Insert this line in qabel_id/settings/default_settings.py :
 In your django settings you have to set an API_SECRET that should be known only by the
 qabel-block server.
 
+# Run it using Docker!!1!
+
+1. Clone this Repository
+2. Change Docker/invoke.yml according to your needs
+3. run Docker build
+4. Run the Container
+
+
 # Contributing
 
 Please refer to https://github.com/Qabel/qabel-core/blob/master/CONTRIBUTING.md
