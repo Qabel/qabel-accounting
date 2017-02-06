@@ -24,7 +24,7 @@ qabel:
        DATABASES:
            default:
                ENGINE: django.db.backends.postgresql
-               NAME: accounting-live
+               NAME: accounting-demo
                USER: postgres
                HOST: postgres
                PORT: 5432
