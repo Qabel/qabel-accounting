@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+  accounting:
+    build:
+      context: .
+      dockerfile: ./compose/production/accounting/Dockerfile
+    image: docker.qabel.de/qabel-accounting
+  postgres:
+    build:
+      context: .
+      dockerfile: ./compose/production/postgres/Dockerfile
+    image: docker.qabel.de/qabel-postgres

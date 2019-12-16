@@ -1,0 +1,12 @@
+version: '3'
+
+services:
+  accounting:
+    build:
+      context: .
+      dockerfile: ./compose/debug/accounting/Dockerfile
+    image: docker.qabel.de/qabel-accounting-dev
+    env_file:
+      - ./.envs/.local/.accounting
+      - ./.envs/.local/.postgres
+    command: /start

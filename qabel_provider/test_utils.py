@@ -8,7 +8,7 @@ from .utils import elide, get_request_origin, gen_username
 
 @pytest.mark.parametrize('text, length, output', (
     ('1234', None, '1234'),
-    ('12345', 4, '1...'),
+    ('12345', 4, '123…'),
 ))
 def test_elide(text, length, output):
     assert elide(text, length) == output

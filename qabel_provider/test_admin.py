@@ -1,6 +1,6 @@
 from allauth.account.models import EmailAddress
 from django.contrib.auth.models import User
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 
 def test_an_admin_view(admin_client):

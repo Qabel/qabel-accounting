@@ -1,0 +1,34 @@
+version: '3'
+
+volumes:
+  local_postgres_data: {}
+  local_postgres_data_backups: {}
+
+services:
+  accounting:
+    build:
+      context: .
+      dockerfile: ./compose/local/accounting/Dockerfile
+    image: qabel_accounting_local_accounting
+    depends_on:
+      - postgres
+    volumes:
+      - .:/app
+    env_file:
+      - ./.envs/.local/.accounting
+      - ./.envs/.local/.postgres
+    ports:
+      - "9696:9696"
+    command: /start
+
+  postgres:
+    build:
+      context: .
+      dockerfile: ./compose/production/postgres/Dockerfile
+    image: qabel_accounting_production_postgres
+    volumes:
+      - local_postgres_data:/var/lib/postgresql/data
+      - local_postgres_data_backups:/backups
+    env_file:
+      - ./.envs/.local/.postgres
+

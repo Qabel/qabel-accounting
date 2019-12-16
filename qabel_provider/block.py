@@ -20,7 +20,7 @@ def check_response(response, logger=None, ok_codes=(200,)):
     if logger:
         try:
             reason = response.json()
-        except:
+        except ValueError:
             reason = response.text
         logger.error('Request failed (status code %d): %s', response.status_code, reason)
     response.raise_for_status()

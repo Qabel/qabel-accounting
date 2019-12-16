@@ -44,7 +44,7 @@ class Profile(models.Model, ExportModelOperationsMixin('profile')):
     # Note that subscriptions are managed outside qabel-accounting. If the subscription state
     # changes an appropriate update request is sent to the plan/subscription API.
     # The default value is constructed during the 0014_add_plans database migration.
-    subscribed_plan = models.ForeignKey(Plan, default='free')
+    subscribed_plan = models.ForeignKey(Plan, default='free', on_delete=models.PROTECT)
 
     @property
     def plan(self):
@@ -126,8 +126,8 @@ class Profile(models.Model, ExportModelOperationsMixin('profile')):
 
 class PlanInterval(models.Model, ExportModelOperationsMixin('planinterval')):
     # A user may own any number of (presumably prepaid) plan intervals
-    profile = models.ForeignKey(Profile)
-    plan = models.ForeignKey(Plan)
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    plan = models.ForeignKey(Plan, on_delete=models.CASCADE)
 
     # Duration the interval can be used
     duration = models.DurationField()
@@ -228,11 +228,11 @@ class PlanInterval(models.Model, ExportModelOperationsMixin('planinterval')):
 
 
 class ProfilePlanLog(models.Model, ExportModelOperationsMixin('profileplanlog')):
-    profile = models.ForeignKey(Profile)
+    profile = models.ForeignKey(Profile, on_delete=models.PROTECT)
     timestamp = models.DateTimeField(auto_now_add=True)
     action = models.CharField(max_length=100)
-    plan = models.ForeignKey(Plan)
-    interval = models.ForeignKey(PlanInterval, blank=True, null=True)
+    plan = models.ForeignKey(Plan, on_delete=models.PROTECT)
+    interval = models.ForeignKey(PlanInterval, blank=True, null=True, on_delete=models.PROTECT)
 
     def save(self, *args, **kwargs):
         if self.id is None:

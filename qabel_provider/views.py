@@ -1,38 +1,34 @@
 import functools
 import hashlib
 import hmac
-import os
 import logging
+import os
 from smtplib import SMTPException
 
 from allauth.account.models import EmailAddress
-from axes import decorators as axes_dec
+from django import forms
 from django.conf import settings
-from django.contrib.auth.forms import PasswordResetForm
+from django.contrib.auth.views import LoginView
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import PasswordResetForm
 from django.contrib.auth.models import User
-from django.contrib.auth.views import login
 from django.core.cache import cache
 from django.core.mail import EmailMultiAlternatives
 from django.db import transaction
-from django import forms
 from django.shortcuts import redirect
 from django.template import loader
 from django.template.response import TemplateResponse as render
 from django.utils.translation import ugettext_lazy as _
+from log_request_id import local as request_local
 from rest_auth.registration.views import RegisterView
-from rest_auth.views import LoginView
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view
-from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 
-from log_request_id import local as request_local
-
 from .block import get_block_quota_of_user
-from .serializers import UserSerializer, PlanSubscriptionSerializer, PlanIntervalSerializer, RegisterOnBehalfSerializer
 from .models import ProfilePlanLog
+from .serializers import UserSerializer, PlanSubscriptionSerializer, PlanIntervalSerializer, RegisterOnBehalfSerializer
 from .utils import get_request_origin, gen_username
 
 logger = logging.getLogger(__name__)
@@ -283,45 +279,6 @@ def plan_add_interval(request, format=None):
     return Response()
 
 
-class ThrottledLoginView(LoginView):
-
-    @staticmethod
-    def lockout_response():
-        return Response(status=429, data={'error': 'Too many login attempts'})
-
-    # noinspection PyAttributeOutsideInit
-    def post(self, request, *args, **kwargs):
-        if axes_dec.is_already_locked(request):
-            return self.lockout_response()
-
-        self.serializer = self.get_serializer(data=self.request.data)
-        try:
-            self.serializer.is_valid(raise_exception=True)
-        except ValidationError:
-            if self.watch_login(request, False):
-                raise
-            else:
-                return self.lockout_response()
-
-        if self.watch_login(request, True):
-            self.login()
-            return self.get_response()
-        else:
-            return self.lockout_response()
-
-    @staticmethod
-    def watch_login(request, successful):
-        axes_dec.AccessLog.objects.create(
-            user_agent=request.META.get('HTTP_USER_AGENT', '<unknown>')[:255],
-            ip_address=axes_dec.get_ip(request),
-            username=request.data['username'],
-            http_accept=request.META.get('HTTP_ACCEPT', '<unknown>'),
-            path_info=request.META.get('PATH_INFO', '<unknown>'),
-            trusted=successful
-        )
-        return axes_dec.check_request(request, not successful)
-
-
 class PasswordPolicyRegisterView(RegisterView):
     serializer_class = UserSerializer
 
@@ -420,9 +377,9 @@ def user_history(request):
 
 
 def user_login(request, **kwargs):
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         return redirect('user-profile')  # Could introspect "next" etc here
-    return login(request, **kwargs)
+    return LoginView.as_view()(request, **kwargs)
 
 
 def user_mail_confirmed(request):

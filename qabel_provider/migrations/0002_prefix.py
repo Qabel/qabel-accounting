@@ -18,7 +18,7 @@ class Migration(migrations.Migration):
             name='Prefix',
             fields=[
                 ('id', models.UUIDField(editable=False, serialize=False, default=uuid.uuid4, primary_key=True)),
-                ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+                ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.PROTECT)),
             ],
         ),
     ]
